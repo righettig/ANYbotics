@@ -1,0 +1,23 @@
+1) I want a c# console application that represents a robotic agent. The agent has an id and a name. The agent has a status (idle, active, offline), a location, battery level and can perform activities. I would like to track of all the activities history as well as the current task. I want to know the health metrics and sensors data too.
+This data should be simulated initially (I am planning on improving on this later). I want the agent to be able to provide real time updates using web sockets for status and location using web sockets (or any other suitable technology, like gRPC perhaps?).
+The robot should be capable of storing inspection data and logs using a noSQL database, please provide an abstraction for that.
+
+2) I have a dashboard application that display the status data for each robotic agent and send commands to specific robot(s). Write an API to serve this application. Updates for the front-end should come via signalR. Use ASP.Net stack.
+
+3) I am implementing an application where I have multiple users and groups, each with their own group and role as below. 
+
+“The supported roles ares:
+Admin - can see all bots (including their statuses, battery levels, current and past activities, can send command to all of them, can manage users. A command is issued by a user. Commands are tracked and stored somewhere for auditing purposes. Admin users have full access to the audit list.
+Managing users means add/remove users, move a user from a group to another, amend user details.
+
+Normal user (can see only bots belonging to their own group). A group can have one more or agent fleet(s). Normal users do NOT have access to the audit of the group. Can send commands to an agent/fleet. Normal users have access to each bots data metric.
+
+Group manager: can do everything that a normal user is capable of doing plus it can assign/revoke view rights to specific guest users. This means one or more metric can be seen by the target user. They can also see the audit trail of a group.
+
+Guest, can be granted read-only access to one and one only fleet at a given time. They cannot see audit, no data other than bot id, location, and current activity can be accessed by default. They can be granted access to specific metrics by the group manager. The access lasts as long as the group manager decides for it to be (= no time).
+
+Each user as an id a full name and email, a groupId.”
+
+Help me cleaning up the model and highlight any potential issues with that.
+
+4) Help me setting up a blank Angular project using Angular Material, Jest, Nx, NgRx, Storybook and Cypress

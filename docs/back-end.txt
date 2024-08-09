@@ -1,0 +1,59 @@
+ANYbotics logo
+Senior Backend Engineer
+Zurich, SwitzerlandSoftware R&D – Interfaces & Data /Full Time /Remote
+ANYbotics is a fast-growing tech company dedicated to shaping the future of mobile robotics across multiple industries. Join our highly talented and motivated team of more than 130 people and work on cutting-edge robot technology.
+
+The Opportunity
+
+We are looking for a remote Senior Backend Engineer to join our fast-paced software engineering #Ateam. Your role will be to design and develop the backend of the next generation of robotic applications for ANYmal, together with your team and top robotics engineers at ANYbotics. This involves designing and implementing software solutions so that ANYmal can perform ever-more complex jobs. For this our users require end-to-end applications (e.g. automatic reading of machinery sensors, heat source detection, leak detection, and sound assessment of the environment) as well as a means to interact with, operate  and monitor ANYmal. 
+
+The APIs you and your team create, provide the foundations for collaborations with software and cloud technology partners, enabling deep integrations into our customers' facility fleet management systems and unlocking the opportunity to create holistic robotic inspection solutions.
+
+We constantly come up with new ways to optimize the performance and skills of our robots, allowing customers to gain valuable insights into their facilities and processes as easily and efficiently as possible. With your technical expertise, in e.g. web technologies, you actively contribute to making our robots smarter, more robust, and more user-friendly.
+
+
+The Market & Our Technology
+
+ANYbotics transforms the industrial sector by introducing robotics to a wide range of novel applications that so far were beyond reach (see our case studies in Chemicals, Oil & Gas, Railways, Wind Energy, Mining, Construction). Our customers are large asset operators and service providers of industrial plants pioneering robotics technology for inspection and maintenance. Our solution enables autonomous routine inspections and monitoring of large-scale industrial facilities for increased safety and productivity. We develop numerous customized hardware systems, including the entire robotic platform, actuators, sensors, inspection payloads, charging systems, and software to achieve world-class mobility, autonomy, and inspection capabilities, often based on AI. We have proven the technology and the business impact on our customers in long-term pilot projects. We are now scaling the commercialization of our solution(s) and deploying directly into operation at customer facilities worldwide.
+
+
+About Us
+
+ANYbotics is a leading robotics company specializing in advanced autonomous systems. With a successful Series B financing round recently closed, we are poised for rapid growth and international expansion. Our mission is to revolutionize the robotics industry through cutting-edge technology and innovation. As we embark on this exciting journey, we are seeking a dynamic and experienced Backend Engineer to join our team and help us shape the future of robotics.
+
+Remote Statement: You will work with and be led by people who have already made remote development work at scale. Therefore, we believe that this important and exciting work can be performed remotely. To enable you and make this work (i.e. you feel connected to the company, team and product, our development is effective) the concept of periodic co-location (i.e. physical visits) and other remote-compatible elements have been consciously planned and ingrained into our culture and way of developing.
+
+Read more about how ANYbotics team members work, think and interact with each other.
+Here is a small teaser what ANYmal can achieve: ANYbotics Introduces End-to-End Robotic Inspection Solution
+Your Contributions
+Implementing backend changes to enhance our main GUI: Workforce, as well as to enable end-to-end solutions (e.g. inspection workflows)
+Design, extend and maintain scalable and consistent APIs (for internal and external users)
+Designing and implementation the foundational systems to enable effective web development
+Debugging and testing the applications, in simulation, physically in house and in the field with the robot
+Advocating the use of 3rd-party web frameworks and technologies and demonstrating their effectiveness in your own work.
+Evaluating, integrating and testing solutions from and collaborating with external partners
+Participation in planning, organization and tracking of personal and team objectives and tasks
+Writing testable code and writing precise and effective software documentation
+Be an example to the company for the feasibility of well-executed remote work
+Your Profile
+Engineering or science degree with a focus on computer science, electrical engineering or robotics
+You have succeeded in building maintainable APIs which contributed to a seamless user experience and a successful product.
+Excellent at leveraging web frameworks and technologies to build scalable backend systems
+Strong and effective at writing clean and maintainable code in a broad range of languages and frameworks (typescript, python, C++,  .NET) 
+Strong interface-driven thinking, able to design consistent, scalable and maintainable APIs
+Strong user focus: interested in collaborating with designers, product managers and frontend developers to understand the customers needs and challenges
+Strong at communicating and collaborating with team members to contribute to a productive and engaging team environment in a remote setting
+Capable in effectively testing, debugging,monitoring and improving existing backend systems
+Capable in managing your workload in a remote setting and able to demonstrate the successful execution and completion of past projects
+Capable in staying up to date with developments in web and cloud technologies, frameworks and practices
+Capable in clearly communicating technical concepts to both technical and non-technical audiences
+Willing to work on topics outside of the formal area of expertise (e.g. resource constraint systems, sensor data processing)
+Willing to travel ca. 2-3 weeks per year to co-locate with ANYbotics team members and users
+Bonus Points
+Experience with gRPC and protobufs
+Experience in creating physical products and working with embedded systems
+Experience in frontend development
+We offer you a very exciting and dynamic work environment, the opportunity to become part of a fast-growing company and an ambitious team that is on a mission to change the industrial inspection market, a chance to leverage your experience and bring in your own ideas, a fair market salary, an attractive employee stock ownership plan, and a job in the city of Zurich.
+ANYbotics Home Page
+
+Jobs powered byLever logo
