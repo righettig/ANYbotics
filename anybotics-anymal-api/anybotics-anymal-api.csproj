@@ -12,14 +12,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Grpc.AspNetCore" Version="2.65.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="Protos\anymal.proto">
-      <GrpcServices>Server</GrpcServices>
-    </Protobuf>
+    <ProjectReference Include="..\anybotics-anymal-common\anybotics-anymal-common.csproj" />
   </ItemGroup>
 
 </Project>

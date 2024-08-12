@@ -2,3 +2,5 @@
 /.vs
 /anybotics-anymal-api/bin
 /anybotics-anymal-api/obj
+/anybotics-anymal-common/obj
+/anybotics-anymal-common/bin
