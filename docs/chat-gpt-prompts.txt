@@ -21,3 +21,9 @@ Each user as an id a full name and email, a groupId.”
 Help me cleaning up the model and highlight any potential issues with that.
 
 4) Help me setting up a blank Angular project using Angular Material, Jest, Nx, NgRx, Storybook and Cypress
+
+5) I want a c# console application that represent an agent called "anymal". Each agent has an id, a name and an initial battery level of 100. 
+Every 10 seconds the battery level decreses by 1 until it reaches zero. I want to be able to register this agent with an API using gRPC and I want to communicate every time the battery decreases as well. I also want to send a message when the battery level finally reaches 0.
+
+The api should be able to track in memory the details of each connected agent and expose an endpoint to retrieve all agents and an agent
+given its id. Please use ASP.Net Core web api for the API. I want the API to log on the console every event that it receives from the anymal agents.

@@ -1,0 +1,29 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "AnymalGrpc";
+
+service AnymalService {
+  rpc RegisterAgent (Agent) returns (RegistrationResponse);
+  rpc UpdateBattery (BatteryUpdate) returns (UpdateResponse);
+}
+
+message Agent {
+  string id = 1;
+  string name = 2;
+  int32 batteryLevel = 3;
+}
+
+message BatteryUpdate {
+  string id = 1;
+  int32 batteryLevel = 2;
+}
+
+message RegistrationResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message UpdateResponse {
+  bool success = 1;
+  string message = 2;
+}
