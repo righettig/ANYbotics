@@ -7,11 +7,8 @@ namespace AnymalApi.Services;
 public class AnymalService : AnymalGrpc.AnymalService.AnymalServiceBase
 {
     private readonly ILogger<AnymalService> _logger;
-    
-    private static readonly ConcurrentDictionary<string, Agent> _agents = new();
 
-    // Concurrent dictionary to keep track of connected clients
-    private readonly ConcurrentDictionary<string, IServerStreamWriter<RechargeBatteryEvent>> _clients = new();
+    private static readonly ConcurrentDictionary<string, AgentClient> _agentClients = new();
 
     public AnymalService(ILogger<AnymalService> logger)
     {
@@ -20,120 +17,82 @@ public class AnymalService : AnymalGrpc.AnymalService.AnymalServiceBase
 
     public override Task<RegistrationResponse> RegisterAgent(Agent request, ServerCallContext context)
     {
-        _agents[request.Id] = request;
-        _logger.LogInformation($"Agent {request.Name} with ID {request.Id} registered.");
+        var agentClient = new AgentClient { Agent = request };
+        _agentClients[request.Id] = agentClient;
 
-        return Task.FromResult(new RegistrationResponse
-        {
-            Success = true,
-            Message = "Agent registered successfully."
-        });
+        _logger.LogInformation($"Registered agent {request.Name} with ID {request.Id}.");
+        return Task.FromResult(new RegistrationResponse { Success = true, Message = "Agent registered successfully." });
     }
 
     public override Task<UpdateResponse> UpdateBattery(BatteryUpdate request, ServerCallContext context)
-    {
-        if (_agents.TryGetValue(request.Id, out var agent))
-        {
-            agent.BatteryLevel = request.BatteryLevel;
-
-            _logger.LogInformation($"Agent {agent.Name} (ID: {agent.Id}) battery updated to {agent.BatteryLevel}.");
-
-            var message = agent.BatteryLevel > 0
-                ? "Battery level updated."
-                : "Battery level is now 0. Shutting down.";
-
-            return Task.FromResult(new UpdateResponse
-            {
-                Success = true,
-                Message = message
-            });
-        }
-
-        return Task.FromResult(new UpdateResponse
-        {
-            Success = false,
-            Message = "Agent not found."
-        });
-    }
+        => UpdateAgentField(request.Id, agent => agent.BatteryLevel = request.BatteryLevel, "battery level", request.BatteryLevel);
 
     public override Task<UpdateResponse> UpdateStatus(StatusUpdate request, ServerCallContext context)
+        => UpdateAgentField(request.Id, agent => agent.Status = request.Status, "status", request.Status);
+
+    public override async Task StreamRechargeBatteryEvents(RechargeBatteryEvent request, IServerStreamWriter<RechargeBatteryEvent> responseStream, ServerCallContext context)
     {
-        if (_agents.TryGetValue(request.Id, out var agent))
+        if (_agentClients.TryGetValue(request.Id, out var agentClient))
         {
-            agent.Status = request.Status;
+            agentClient.ClientStream = responseStream;
 
-            _logger.LogInformation($"Agent {agent.Name} (ID: {agent.Id}) status updated to {agent.Status}.");
-
-            return Task.FromResult(new UpdateResponse
+            try
             {
-                Success = true,
-                Message = "Status updated."
-            });
+                // Keep the stream open until the client disconnects
+                while (!context.CancellationToken.IsCancellationRequested)
+                {
+                    await Task.Delay(1000, context.CancellationToken);
+                }
+            }
+            finally
+            {
+                _agentClients.TryRemove(request.Id, out _);
+            }
         }
-
-        return Task.FromResult(new UpdateResponse
-        {
-            Success = false,
-            Message = "Agent not found."
-        });
     }
 
-    // StreamRechargeBatteryEvents: A method to register clients and stream recharge events
-    public override async Task StreamRechargeBatteryEvents(
-        RechargeBatteryEvent request, 
-        IServerStreamWriter<RechargeBatteryEvent> responseStream, 
-        ServerCallContext context)
-    {
-        // Register the client
-        _clients[request.Id] = responseStream;
-
-        // Keep the stream open
-        while (!context.CancellationToken.IsCancellationRequested)
-        {
-            await Task.Delay(1000); // Keep alive, adjust as necessary
-        }
-
-        // Remove client on disconnection
-        _clients.TryRemove(request.Id, out _);
-    }
-
-    // Method to send a recharge battery event to a specific client
     public async Task<UpdateResponse> NotifyRechargeBatteryAsync(string id)
     {
-        if (_clients.TryGetValue(id, out var clientStream))
+        if (_agentClients.TryGetValue(id, out var agentClient))
         {
-            var rechargeEvent = new RechargeBatteryEvent
+            var rechargeEvent = new RechargeBatteryEvent { Id = id };
+
+            if (agentClient.ClientStream != null)
             {
-                Id = id,
-            };
-
-            await clientStream.WriteAsync(rechargeEvent);
-
-            if (_agents.TryGetValue(id, out var agent))
-            {
-                agent.BatteryLevel = 100;
-                agent.Status = AnymalGrpc.Status.Active;
-
-                _logger.LogInformation($"Agent {agent.Name} (ID: {agent.Id}) battery recharged to 100%.");
+                await agentClient.ClientStream.WriteAsync(rechargeEvent);
             }
 
-            return new UpdateResponse
-            {
-                Success = true,
-                Message = "Battery recharged successfully."
-            };
+            agentClient.Agent.BatteryLevel = 100;
+            agentClient.Agent.Status = AnymalGrpc.Status.Active;
+
+            _logger.LogInformation($"Recharged agent {agentClient.Agent.Name} (ID: {agentClient.Agent.Id}) to 100%.");
+
+            return new UpdateResponse { Success = true, Message = "Battery recharged successfully." };
         }
-        else 
-        {
-            return new UpdateResponse
-            {
-                Success = false,
-                Message = "Agent not found."
-            };
-        }
+        return new UpdateResponse { Success = false, Message = "Agent not found." };
     }
 
-    public IEnumerable<Agent> GetAllAgents() => _agents.Values;
+    public IEnumerable<Agent> GetAllAgents() => _agentClients.Values.Select(ac => ac.Agent);
 
-    public Agent GetAgentById(string id) => _agents.GetValueOrDefault(id);
+    public Agent GetAgentById(string id) => _agentClients.GetValueOrDefault(id)?.Agent;
+
+    private Task<UpdateResponse> UpdateAgentField(string id, Action<Agent> updateAction, string fieldName, object updatedValue)
+    {
+        if (_agentClients.TryGetValue(id, out var agentClient))
+        {
+            // Apply the update action to the agent
+            updateAction(agentClient.Agent);
+
+            // Log the updated value
+            _logger.LogInformation($"Updated agent {agentClient.Agent.Name} (ID: {agentClient.Agent.Id}) {fieldName}. New value: {updatedValue}.");
+
+            // Prepare the message based on the fieldName and updated value
+            var message = fieldName == "battery" && agentClient.Agent.BatteryLevel == 0
+                ? "Battery level is now 0. Shutting down."
+                : $"{fieldName.CapitalizeFirstLetter()} updated to {updatedValue}.";
+
+            return Task.FromResult(new UpdateResponse { Success = true, Message = message });
+        }
+        return Task.FromResult(new UpdateResponse { Success = false, Message = "Agent not found." });
+    }
 }

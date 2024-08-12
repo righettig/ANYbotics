@@ -6,8 +6,8 @@ using Grpc.Net.Client;
 // Parse the agent name from the command-line arguments
 string agentName = args.Length > 0 ? args[0] : "Anymal";
 
+// Create a channel to the gRPC server
 using var channel = GrpcChannel.ForAddress("https://localhost:7272");
-
 var client = new AnymalService.AnymalServiceClient(channel);
 
 var agent = new Agent
@@ -20,26 +20,20 @@ var agent = new Agent
 
 // Register the agent
 var registrationResponse = await client.RegisterAgentAsync(agent);
-
 Console.WriteLine($"Registration: {registrationResponse.Message}");
 
 // Start monitoring for battery recharge notifications
-Task.Run(async () =>
+_ = Task.Run(async () =>
 {
-    using (var call = client.StreamRechargeBatteryEvents(new RechargeBatteryEvent { Id = agent.Id }))
+    using var call = client.StreamRechargeBatteryEvents(new RechargeBatteryEvent { Id = agent.Id });
+
+    await foreach (var response in call.ResponseStream.ReadAllAsync())
     {
-        await foreach (var response in call.ResponseStream.ReadAllAsync())
+        if (response.Id == agent.Id)
         {
-            var rechargeEvent = call.ResponseStream.Current;
-
-            // Handle the recharge event (e.g., update battery level)
-            if (rechargeEvent.Id == agent.Id)
-            {
-                agent.BatteryLevel = 100;
-                agent.Status = AnymalGrpc.Status.Active;
-
-                Console.WriteLine($"Battery recharged to 100% for Agent {agent.Name} (ID: {agent.Id})");
-            }
+            agent.BatteryLevel = 100;
+            agent.Status = AnymalGrpc.Status.Active;
+            Console.WriteLine($"Battery recharged to 100% for Agent {agent.Name} (ID: {agent.Id})");
         }
     }
 });
