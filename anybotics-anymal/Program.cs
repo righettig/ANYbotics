@@ -19,60 +19,75 @@ var agent = new Agent
 };
 
 // Register the agent
-var registrationResponse = await client.RegisterAgentAsync(agent);
-Console.WriteLine($"Registration: {registrationResponse.Message}");
-
-// Start monitoring for battery recharge notifications
-_ = Task.Run(async () =>
+try
 {
-    using var call = client.StreamRechargeBatteryEvents(new RechargeBatteryEvent { Id = agent.Id });
+    var registrationResponse = await client.RegisterAgentAsync(agent);
+    Console.WriteLine($"Registration: {registrationResponse.Message}");
 
-    await foreach (var response in call.ResponseStream.ReadAllAsync())
+    // Start monitoring for battery recharge notifications
+    _ = Task.Run(async () =>
     {
-        if (response.Id == agent.Id)
+        using var call = client.StreamRechargeBatteryEvents(new RechargeBatteryEvent { Id = agent.Id });
+
+        await foreach (var response in call.ResponseStream.ReadAllAsync())
         {
-            agent.BatteryLevel = 100;
-            agent.Status = AnymalGrpc.Status.Active;
-            Console.WriteLine($"Battery recharged to 100% for Agent {agent.Name} (ID: {agent.Id})");
+            if (response.Id == agent.Id)
+            {
+                agent.BatteryLevel = 100;
+                agent.Status = AnymalGrpc.Status.Active;
+                Console.WriteLine($"Battery recharged to 100% for Agent {agent.Name} (ID: {agent.Id})");
+            }
         }
+    });
+
+    // Battery decrease loop
+    while (agent.BatteryLevel > 0)
+    {
+        await Task.Delay(10 * 1000); // 10 seconds delay
+
+        agent.BatteryLevel--;
+
+        var updateResponse = await client.UpdateBatteryAsync(
+            new BatteryUpdate
+            {
+                Id = agent.Id,
+                BatteryLevel = agent.BatteryLevel
+            });
+
+        Console.WriteLine($"Battery Update: {updateResponse.Message}");
     }
-});
 
-// Battery decrease loop
-while (agent.BatteryLevel > 0)
-{
-    await Task.Delay(10 * 1000); // 10 seconds delay
-
-    agent.BatteryLevel--;
-
-    var updateResponse = await client.UpdateBatteryAsync(
+    // Notify the server when the battery reaches 0
+    var finalUpdateResponse = await client.UpdateBatteryAsync(
         new BatteryUpdate
         {
             Id = agent.Id,
             BatteryLevel = agent.BatteryLevel
         });
 
-    Console.WriteLine($"Battery Update: {updateResponse.Message}");
+    Console.WriteLine($"Final Battery Update: {finalUpdateResponse.Message}");
+
+    // When battery reaches 0, update status to Unavailable and notify the server
+    agent.Status = AnymalGrpc.Status.Unavailable;
+
+    var statusUpdateResponse = await client.UpdateStatusAsync(
+        new StatusUpdate
+        {
+            Id = agent.Id,
+            Status = agent.Status
+        });
+
+    Console.WriteLine($"Status Update: {statusUpdateResponse.Message}");
 }
-
-// Notify the server when the battery reaches 0
-var finalUpdateResponse = await client.UpdateBatteryAsync(
-    new BatteryUpdate
-    {
-        Id = agent.Id,
-        BatteryLevel = agent.BatteryLevel
-    });
-
-Console.WriteLine($"Final Battery Update: {finalUpdateResponse.Message}");
-
-// When battery reaches 0, update status to Unavailable and notify the server
-agent.Status = AnymalGrpc.Status.Unavailable;
-
-var statusUpdateResponse = await client.UpdateStatusAsync(
-    new StatusUpdate
-    {
-        Id = agent.Id,
-        Status = agent.Status
-    });
-
-Console.WriteLine($"Status Update: {statusUpdateResponse.Message}");
+catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+{
+    Console.WriteLine($"Error: Server is unavailable.");
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Unexpected error: {ex.Message}");
+}
+finally
+{
+    channel.ShutdownAsync().Wait();
+}

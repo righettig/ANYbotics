@@ -44,9 +44,19 @@ public class AnymalService : AnymalGrpc.AnymalService.AnymalServiceBase
                     await Task.Delay(1000, context.CancellationToken);
                 }
             }
+            catch (TaskCanceledException)
+            {
+                _logger.LogWarning($"Stream for {context.Peer} was canceled.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while streaming recharge battery events.");
+            }
             finally
             {
                 _agentClients.TryRemove(request.Id, out _);
+
+                _logger.LogInformation($"Client {context.Peer} stopped streaming recharge events.");
             }
         }
     }
