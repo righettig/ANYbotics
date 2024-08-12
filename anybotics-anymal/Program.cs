@@ -13,7 +13,8 @@ var agent = new Agent
 {
     Id = Guid.NewGuid().ToString(),
     Name = agentName,
-    BatteryLevel = 100
+    BatteryLevel = 100,
+    Status = Status.Active
 };
 
 // Register the agent
@@ -47,3 +48,15 @@ var finalUpdateResponse = await client.UpdateBatteryAsync(
     });
 
 Console.WriteLine($"Final Battery Update: {finalUpdateResponse.Message}");
+
+// When battery reaches 0, update status to Unavailable and notify the server
+agent.Status = Status.Unavailable;
+
+var statusUpdateResponse = await client.UpdateStatusAsync(
+    new StatusUpdate
+    {
+        Id = agent.Id,
+        Status = agent.Status
+    });
+
+Console.WriteLine($"Status Update: {statusUpdateResponse.Message}");

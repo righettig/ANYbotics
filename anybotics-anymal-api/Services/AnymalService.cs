@@ -52,6 +52,28 @@ public class AnymalService : AnymalGrpc.AnymalService.AnymalServiceBase
         });
     }
 
+    public override Task<UpdateResponse> UpdateStatus(StatusUpdate request, ServerCallContext context)
+    {
+        if (_agents.TryGetValue(request.Id, out var agent))
+        {
+            agent.Status = request.Status;
+
+            _logger.LogInformation($"Agent {agent.Name} (ID: {agent.Id}) status updated to {agent.Status}.");
+
+            return Task.FromResult(new UpdateResponse
+            {
+                Success = true,
+                Message = "Status updated."
+            });
+        }
+
+        return Task.FromResult(new UpdateResponse
+        {
+            Success = false,
+            Message = "Agent not found."
+        });
+    }
+
     public static IEnumerable<Agent> GetAllAgents() => _agents.Values;
 
     public static Agent GetAgentById(string id) => _agents.GetValueOrDefault(id);

@@ -5,17 +5,29 @@ option csharp_namespace = "AnymalGrpc";
 service AnymalService {
   rpc RegisterAgent (Agent) returns (RegistrationResponse);
   rpc UpdateBattery (BatteryUpdate) returns (UpdateResponse);
+  rpc UpdateStatus (StatusUpdate) returns (UpdateResponse);
 }
 
 message Agent {
   string id = 1;
   string name = 2;
   int32 batteryLevel = 3;
+  Status status = 4;
 }
 
 message BatteryUpdate {
   string id = 1;
   int32 batteryLevel = 2;
+}
+
+message StatusUpdate {
+  string id = 1;
+  Status status = 2;
+}
+
+enum Status {
+  Unavailable = 0;
+  Active = 1;
 }
 
 message RegistrationResponse {

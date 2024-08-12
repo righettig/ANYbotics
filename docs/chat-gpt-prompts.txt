@@ -27,3 +27,9 @@ Every 10 seconds the battery level decreses by 1 until it reaches zero. I want t
 
 The api should be able to track in memory the details of each connected agent and expose an endpoint to retrieve all agents and an agent
 given its id. Please use ASP.Net Core web api for the API. I want the API to log on the console every event that it receives from the anymal agents.
+
+6) Now I want the agent name to be configurable via command line option
+
+7) Let's introduce the Status property to an agent. The possible values are: Unavailable, and Active (which is the default value).
+When the battery level reaches 0 then set the status to Unavailable. Make sure we have a way to notify the API when status goes to 
+Unavailable via gRPC. Additionally I want the controller to return a more restricted model for an agent that only exposes the id, name, status and battery level.
