@@ -2,6 +2,9 @@
 using AnymalGrpc;
 using Grpc.Net.Client;
 
+// Parse the agent name from the command-line arguments
+string agentName = args.Length > 0 ? args[0] : "Anymal";
+
 using var channel = GrpcChannel.ForAddress("https://localhost:7272");
 
 var client = new AnymalService.AnymalServiceClient(channel);
@@ -9,7 +12,7 @@ var client = new AnymalService.AnymalServiceClient(channel);
 var agent = new Agent
 {
     Id = Guid.NewGuid().ToString(),
-    Name = "Anymal",
+    Name = agentName,
     BatteryLevel = 100
 };
 
