@@ -7,7 +7,11 @@ namespace AnymalApi.Services;
 public class AnymalService : AnymalGrpc.AnymalService.AnymalServiceBase
 {
     private readonly ILogger<AnymalService> _logger;
+    
     private static readonly ConcurrentDictionary<string, Agent> _agents = new();
+
+    // Concurrent dictionary to keep track of connected clients
+    private readonly ConcurrentDictionary<string, IServerStreamWriter<RechargeBatteryEvent>> _clients = new();
 
     public AnymalService(ILogger<AnymalService> logger)
     {
@@ -74,7 +78,62 @@ public class AnymalService : AnymalGrpc.AnymalService.AnymalServiceBase
         });
     }
 
-    public static IEnumerable<Agent> GetAllAgents() => _agents.Values;
+    // StreamRechargeBatteryEvents: A method to register clients and stream recharge events
+    public override async Task StreamRechargeBatteryEvents(
+        RechargeBatteryEvent request, 
+        IServerStreamWriter<RechargeBatteryEvent> responseStream, 
+        ServerCallContext context)
+    {
+        // Register the client
+        _clients[request.Id] = responseStream;
 
-    public static Agent GetAgentById(string id) => _agents.GetValueOrDefault(id);
+        // Keep the stream open
+        while (!context.CancellationToken.IsCancellationRequested)
+        {
+            await Task.Delay(1000); // Keep alive, adjust as necessary
+        }
+
+        // Remove client on disconnection
+        _clients.TryRemove(request.Id, out _);
+    }
+
+    // Method to send a recharge battery event to a specific client
+    public async Task<UpdateResponse> NotifyRechargeBatteryAsync(string id)
+    {
+        if (_clients.TryGetValue(id, out var clientStream))
+        {
+            var rechargeEvent = new RechargeBatteryEvent
+            {
+                Id = id,
+            };
+
+            await clientStream.WriteAsync(rechargeEvent);
+
+            if (_agents.TryGetValue(id, out var agent))
+            {
+                agent.BatteryLevel = 100;
+                agent.Status = AnymalGrpc.Status.Active;
+
+                _logger.LogInformation($"Agent {agent.Name} (ID: {agent.Id}) battery recharged to 100%.");
+            }
+
+            return new UpdateResponse
+            {
+                Success = true,
+                Message = "Battery recharged successfully."
+            };
+        }
+        else 
+        {
+            return new UpdateResponse
+            {
+                Success = false,
+                Message = "Agent not found."
+            };
+        }
+    }
+
+    public IEnumerable<Agent> GetAllAgents() => _agents.Values;
+
+    public Agent GetAgentById(string id) => _agents.GetValueOrDefault(id);
 }

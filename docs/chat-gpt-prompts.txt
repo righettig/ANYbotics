@@ -33,3 +33,5 @@ given its id. Please use ASP.Net Core web api for the API. I want the API to log
 7) Let's introduce the Status property to an agent. The possible values are: Unavailable, and Active (which is the default value).
 When the battery level reaches 0 then set the status to Unavailable. Make sure we have a way to notify the API when status goes to 
 Unavailable via gRPC. Additionally I want the controller to return a more restricted model for an agent that only exposes the id, name, status and battery level.
+
+8) I want to be able to recharge the agent's battery to its full level. I want to do so from the api via a post method accepting the id of the agent to recharge

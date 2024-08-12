@@ -4,8 +4,12 @@ option csharp_namespace = "AnymalGrpc";
 
 service AnymalService {
   rpc RegisterAgent (Agent) returns (RegistrationResponse);
+  
   rpc UpdateBattery (BatteryUpdate) returns (UpdateResponse);
   rpc UpdateStatus (StatusUpdate) returns (UpdateResponse);
+
+  // Server-side streaming RPC for the API to notify ANYmal(s) about "recharge battery" events
+  rpc StreamRechargeBatteryEvents(RechargeBatteryEvent) returns (stream RechargeBatteryEvent);
 }
 
 message Agent {
@@ -38,4 +42,8 @@ message RegistrationResponse {
 message UpdateResponse {
   bool success = 1;
   string message = 2;
+}
+
+message RechargeBatteryEvent {
+  string id = 1;
 }
