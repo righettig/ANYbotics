@@ -68,3 +68,5 @@ TODO
 18) UI notifications
 
 19) Unit testing, story book, e2e tests
+
+20) Vertical scrollbar to be only visible for the "agents" area
