@@ -41,3 +41,16 @@ When Shutdown is invoked the agent status transitions to "Offline" and it should
 When Wakeup is invoked the agent status goes back to "Active" unless the battery level is 0. In this case it stays Unavailable.
 When going back to the Active status it should also start sending the updates for battery level.
 If an agent is Offline then it should also ignore the Recharge requests
+
+10) I need to expose a signalR endpoint to stream all the agents data to a front-end app. I need to get data in the shape of the AgentDto class. 
+Also create a basic angular material app that shows this data.
+
+I'd like to have more space between the cards and for the cards to be placed inside a container so that I have more space on the left and right. Also put a slight hover effect on the cards themselves.
+
+11) Run ANYmals from command line by passing a json object
+
+12) Search
+
+12) ANYmal details view
+
+13) It should be possible to record the commands history. Use known framework
