@@ -30,210 +30,136 @@ public class AnymalService : AnymalGrpc.AnymalService.AnymalServiceBase
     public override Task<UpdateResponse> UpdateStatus(StatusUpdate request, ServerCallContext context)
         => UpdateAgentField(request.Id, agent => agent.Status = request.Status, "status", request.Status);
 
-    public override async Task StreamRechargeBatteryEvents(RechargeBatteryEvent request,
-                                                           IServerStreamWriter<RechargeBatteryEvent> responseStream,
-                                                           ServerCallContext context)
-    {
-        if (_agentClients.TryGetValue(request.Id, out var agentClient))
-        {
-            agentClient.RechargeBatteryStream = responseStream;
+    public override Task StreamRechargeBatteryEvents(RechargeBatteryEvent request,
+                                                     IServerStreamWriter<RechargeBatteryEvent> responseStream,
+                                                     ServerCallContext context)
+        => StreamEvents(request.Id, client => client.RechargeBatteryStream = responseStream, context);
 
-            try
-            {
-                // Keep the stream open until the client disconnects
-                while (!context.CancellationToken.IsCancellationRequested)
-                {
-                    await Task.Delay(1000, context.CancellationToken);
-                }
-            }
-            catch (TaskCanceledException)
-            {
-                _logger.LogWarning($"Stream for {context.Peer} was canceled.");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while streaming recharge battery events.");
-            }
-            finally
-            {
-                _agentClients.TryRemove(request.Id, out _);
+    public override Task StreamShutdownEvents(ShutdownEvent request,
+                                              IServerStreamWriter<ShutdownEvent> responseStream,
+                                              ServerCallContext context)
+        => StreamEvents(request.Id, client => client.ShutdownStream = responseStream, context);
 
-                _logger.LogInformation($"Client {context.Peer} stopped streaming recharge events.");
-            }
-        }
-    }
+    public override Task StreamWakeupEvents(WakeupEvent request,
+                                            IServerStreamWriter<WakeupEvent> responseStream,
+                                            ServerCallContext context)
+        => StreamEvents(request.Id, client => client.WakeupStream = responseStream, context);
 
-    public override async Task StreamShutdownEvents(ShutdownEvent request,
-                                                    IServerStreamWriter<ShutdownEvent> responseStream,
-                                                    ServerCallContext context)
-    {
-        if (_agentClients.TryGetValue(request.Id, out var agentClient))
-        {
-            agentClient.ShutdownStream = responseStream;
-
-            try
-            {
-                // Keep the stream open until the client disconnects
-                while (!context.CancellationToken.IsCancellationRequested)
-                {
-                    await Task.Delay(1000, context.CancellationToken);
-                }
-            }
-            catch (TaskCanceledException)
-            {
-                _logger.LogWarning($"Stream for {context.Peer} was canceled.");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while streaming shutdown events.");
-            }
-            finally
-            {
-                _agentClients.TryRemove(request.Id, out _);
-
-                _logger.LogInformation($"Client {context.Peer} stopped streaming shutdown events.");
-            }
-        }
-    }
-
-    public override async Task StreamWakeupEvents(WakeupEvent request,
-                                                  IServerStreamWriter<WakeupEvent> responseStream,
-                                                  ServerCallContext context)
-    {
-        if (_agentClients.TryGetValue(request.Id, out var agentClient))
-        {
-            agentClient.WakeupStream = responseStream;
-
-            try
-            {
-                // Keep the stream open until the client disconnects
-                while (!context.CancellationToken.IsCancellationRequested)
-                {
-                    await Task.Delay(1000, context.CancellationToken);
-                }
-            }
-            catch (TaskCanceledException)
-            {
-                _logger.LogWarning($"Stream for {context.Peer} was canceled.");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while streaming wakeup events.");
-            }
-            finally
-            {
-                _agentClients.TryRemove(request.Id, out _);
-
-                _logger.LogInformation($"Client {context.Peer} stopped streaming wakeup events.");
-            }
-        }
-    }
-
-    public async Task<UpdateResponse> RechargeBatteryAsync(string id)
-    {
-        if (_agentClients.TryGetValue(id, out var agentClient))
+    public Task<UpdateResponse> RechargeBatteryAsync(string id)
+        => PerformAgentActionAsync(id, async agentClient =>
         {
             if (agentClient.Agent.Status == AnymalGrpc.Status.Offline)
             {
-                return new UpdateResponse { Success = false, Message = "Agent is Offline. Recharge requests are ignored." };
+                throw new InvalidOperationException("Agent is Offline. Recharge requests are ignored.");
             }
 
             var @event = new RechargeBatteryEvent { Id = id };
-
-            var stream = agentClient.RechargeBatteryStream;
-            if (stream != null)
-            {
-                await stream.WriteAsync(@event);
-            }
+            await agentClient.RechargeBatteryStream?.WriteAsync(@event);
 
             agentClient.Agent.BatteryLevel = 100;
             agentClient.Agent.Status = AnymalGrpc.Status.Active;
+        },
+        $"Recharged agent {id} to 100%.", "Agent not found.");
 
-            _logger.LogInformation($"Recharged agent {agentClient.Agent.Name} (ID: {agentClient.Agent.Id}) to 100%.");
-
-            return new UpdateResponse { Success = true, Message = "Battery recharged successfully." };
-        }
-        return new UpdateResponse { Success = false, Message = "Agent not found." };
-    }
-
-    public async Task<UpdateResponse> ShutdownAsync(string id)
-    {
-        if (_agentClients.TryGetValue(id, out var agentClient))
+    public Task<UpdateResponse> ShutdownAsync(string id)
+        => PerformAgentActionAsync(id, async agentClient =>
         {
             if (agentClient.Agent.Status == AnymalGrpc.Status.Offline)
             {
-                return new UpdateResponse { Success = false, Message = "Agent is Offline. Shutdown requests are ignored." };
+                throw new InvalidOperationException("Agent is Offline. Shutdown requests are ignored.");
             }
 
             var @event = new ShutdownEvent { Id = id };
-
-            var stream = agentClient.ShutdownStream;
-            if (stream != null)
-            {
-                await stream.WriteAsync(@event);
-            }
+            await agentClient.ShutdownStream?.WriteAsync(@event);
 
             agentClient.Agent.Status = AnymalGrpc.Status.Offline;
+        },
+        $"Shutting down agent {id}.", "Agent not found.");
 
-            _logger.LogInformation($"Shutting down agent {agentClient.Agent.Name} (ID: {agentClient.Agent.Id}).");
-
-            return new UpdateResponse { Success = true, Message = "Shutdown successful." };
-        }
-        return new UpdateResponse { Success = false, Message = "Agent not found." };
-    }
-
-    public async Task<UpdateResponse> WakeupAsync(string id)
-    {
-        if (_agentClients.TryGetValue(id, out var agentClient))
+    public Task<UpdateResponse> WakeupAsync(string id)
+        => PerformAgentActionAsync(id, async agentClient =>
         {
-            if (agentClient.Agent.Status == AnymalGrpc.Status.Unavailable || 
+            if (agentClient.Agent.Status == AnymalGrpc.Status.Unavailable ||
                 agentClient.Agent.Status == AnymalGrpc.Status.Active)
             {
-                return new UpdateResponse 
-                { 
-                    Success = false, 
-                    Message = "Agent is either already Active or Unavailable. Wake up requests are ignored."
-                };
+                throw new InvalidOperationException("Agent is either already Active or Unavailable. Wake up requests are ignored.");
             }
 
             var @event = new WakeupEvent { Id = id };
-
-            var stream = agentClient.WakeupStream;
-            if (stream != null)
-            {
-                await stream.WriteAsync(@event);
-            }
+            await agentClient.WakeupStream?.WriteAsync(@event);
 
             agentClient.Agent.Status = AnymalGrpc.Status.Active;
-
-            _logger.LogInformation($"Waking up agent {agentClient.Agent.Name} (ID: {agentClient.Agent.Id}).");
-
-            return new UpdateResponse { Success = true, Message = "Wake up successful." };
-        }
-        return new UpdateResponse { Success = false, Message = "Agent not found." };
-    }
+        },
+        $"Waking up agent {id}.", "Agent not found.");
 
     public IEnumerable<Agent> GetAllAgents() => _agentClients.Values.Select(ac => ac.Agent);
 
     public Agent GetAgentById(string id) => _agentClients.GetValueOrDefault(id)?.Agent;
 
-    private Task<UpdateResponse> UpdateAgentField(string id, Action<Agent> updateAction, string fieldName, object updatedValue)
+    private async Task StreamEvents<T>(string id,
+                                       Func<AgentClient, IServerStreamWriter<T>> getStream,
+                                       ServerCallContext context) where T : class
     {
         if (_agentClients.TryGetValue(id, out var agentClient))
         {
-            // Apply the update action to the agent
-            updateAction(agentClient.Agent);
+            _ = getStream(agentClient);
 
-            // Log the updated value
-            _logger.LogInformation($"Updated agent {agentClient.Agent.Name} (ID: {agentClient.Agent.Id}) {fieldName}. New value: {updatedValue}.");
-
-            // Prepare the message based on the fieldName and updated value
-            var message = fieldName == "battery" && agentClient.Agent.BatteryLevel == 0
-                ? "Battery level is now 0. Shutting down."
-                : $"{fieldName.CapitalizeFirstLetter()} updated to {updatedValue}.";
-
-            return Task.FromResult(new UpdateResponse { Success = true, Message = message });
+            try
+            {
+                while (!context.CancellationToken.IsCancellationRequested)
+                {
+                    await Task.Delay(1000, context.CancellationToken);
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                _logger.LogWarning($"Stream for {context.Peer} was canceled.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while streaming events.");
+            }
+            finally
+            {
+                _agentClients.TryRemove(id, out _);
+                _logger.LogInformation($"Client {context.Peer} stopped streaming events.");
+            }
         }
-        return Task.FromResult(new UpdateResponse { Success = false, Message = "Agent not found." });
+    }
+
+    private Task<UpdateResponse> UpdateAgentField(string id,
+                                                  Action<Agent> updateAction,
+                                                  string fieldName,
+                                                  object updatedValue)
+    {
+        if (_agentClients.TryGetValue(id, out var agentClient))
+        {
+            updateAction(agentClient.Agent);
+            var message = $"{fieldName.CapitalizeFirstLetter()} updated to {updatedValue}.";
+            return _logger.LogAndReturn(message, true);
+        }
+        return _logger.LogAndReturn("Agent not found.", false);
+    }
+
+    private Task<UpdateResponse> PerformAgentActionAsync(string id,
+                                                         Func<AgentClient, Task> action,
+                                                         string successMessage,
+                                                         string failureMessage)
+    {
+        if (_agentClients.TryGetValue(id, out var agentClient))
+        {
+            try
+            {
+                action(agentClient).Wait();
+                _logger.LogInformation(successMessage);
+                return Task.FromResult(new UpdateResponse { Success = true, Message = successMessage });
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex.Message);
+                return Task.FromResult(new UpdateResponse { Success = false, Message = ex.Message });
+            }
+        }
+        return Task.FromResult(new UpdateResponse { Success = false, Message = failureMessage });
     }
 }
