@@ -10,6 +10,12 @@ service AnymalService {
 
   // Server-side streaming RPC for the API to notify ANYmal(s) about "recharge battery" events
   rpc StreamRechargeBatteryEvents(RechargeBatteryEvent) returns (stream RechargeBatteryEvent);
+
+  // Server-side streaming RPC for the API to notify ANYmal(s) about "shutdown" events
+  rpc StreamShutdownEvents(ShutdownEvent) returns (stream ShutdownEvent);
+
+  // Server-side streaming RPC for the API to notify ANYmal(s) about "wakeup" events
+  rpc StreamWakeupEvents(WakeupEvent) returns (stream WakeupEvent);
 }
 
 message Agent {
@@ -32,6 +38,7 @@ message StatusUpdate {
 enum Status {
   Unavailable = 0;
   Active = 1;
+  Offline = 2;
 }
 
 message RegistrationResponse {
@@ -45,5 +52,13 @@ message UpdateResponse {
 }
 
 message RechargeBatteryEvent {
+  string id = 1;
+}
+
+message ShutdownEvent {
+  string id = 1;
+}
+
+message WakeupEvent {
   string id = 1;
 }

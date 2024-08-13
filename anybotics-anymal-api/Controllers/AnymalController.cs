@@ -54,6 +54,34 @@ public class AnymalController : ControllerBase
         return Ok(agentDto);
     }
 
+    // POST: api/anymal/shutdown
+    [HttpPost("shutdown")]
+    public async Task<IActionResult> ShutdownAgent([FromBody] string id)
+    {
+        if (string.IsNullOrEmpty(id))
+        {
+            return BadRequest("Invalid id.");
+        }
+
+        var response = await _anymalService.ShutdownAsync(id);
+
+        return Ok(response);
+    }
+
+    // POST: api/anymal/wakeup
+    [HttpPost("wakeup")]
+    public async Task<IActionResult> WakeupAgent([FromBody] string id)
+    {
+        if (string.IsNullOrEmpty(id))
+        {
+            return BadRequest("Invalid id.");
+        }
+
+        var response = await _anymalService.WakeupAsync(id);
+
+        return Ok(response);
+    }
+
     // POST: api/anymal/recharge
     [HttpPost("recharge")]
     public async Task<IActionResult> RechargeAgentBattery([FromBody] string id)
@@ -63,7 +91,7 @@ public class AnymalController : ControllerBase
             return BadRequest("Invalid id.");
         }
 
-        var response = await _anymalService.NotifyRechargeBatteryAsync(id);
+        var response = await _anymalService.RechargeBatteryAsync(id);
 
         return Ok(response);
     }

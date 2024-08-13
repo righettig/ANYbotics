@@ -18,43 +18,26 @@ var agent = new Agent
     Status = AnymalGrpc.Status.Active
 };
 
-// Register the agent
-try
+var batteryDecreaseLoop = async () =>
 {
-    var registrationResponse = await client.RegisterAgentAsync(agent);
-    Console.WriteLine($"Registration: {registrationResponse.Message}");
-
-    // Start monitoring for battery recharge notifications
-    _ = Task.Run(async () =>
-    {
-        using var call = client.StreamRechargeBatteryEvents(new RechargeBatteryEvent { Id = agent.Id });
-
-        await foreach (var response in call.ResponseStream.ReadAllAsync())
-        {
-            if (response.Id == agent.Id)
-            {
-                agent.BatteryLevel = 100;
-                agent.Status = AnymalGrpc.Status.Active;
-                Console.WriteLine($"Battery recharged to 100% for Agent {agent.Name} (ID: {agent.Id})");
-            }
-        }
-    });
-
     // Battery decrease loop
     while (agent.BatteryLevel > 0)
     {
         await Task.Delay(10 * 1000); // 10 seconds delay
 
-        agent.BatteryLevel--;
+        if (agent.Status == AnymalGrpc.Status.Active) 
+        {
+            agent.BatteryLevel--;
 
-        var updateResponse = await client.UpdateBatteryAsync(
-            new BatteryUpdate
-            {
-                Id = agent.Id,
-                BatteryLevel = agent.BatteryLevel
-            });
+            var updateResponse = await client.UpdateBatteryAsync(
+                new BatteryUpdate
+                {
+                    Id = agent.Id,
+                    BatteryLevel = agent.BatteryLevel
+                });
 
-        Console.WriteLine($"Battery Update: {updateResponse.Message}");
+            Console.WriteLine($"Battery Update: {updateResponse.Message}");
+        }
     }
 
     // Notify the server when the battery reaches 0
@@ -78,6 +61,66 @@ try
         });
 
     Console.WriteLine($"Status Update: {statusUpdateResponse.Message}");
+};
+
+// Register the agent
+try
+{
+    var registrationResponse = await client.RegisterAgentAsync(agent);
+    Console.WriteLine($"Registration: {registrationResponse.Message} (ID: {agent.Id})");
+
+    // Start monitoring for battery recharge notifications
+    _ = Task.Run(async () =>
+    {
+        using var call = client.StreamRechargeBatteryEvents(new RechargeBatteryEvent { Id = agent.Id });
+
+        await foreach (var response in call.ResponseStream.ReadAllAsync())
+        {
+            if (response.Id == agent.Id && agent.Status == AnymalGrpc.Status.Active)
+            {
+                agent.BatteryLevel = 100;
+                agent.Status = AnymalGrpc.Status.Active;
+
+                Console.WriteLine($"Battery recharged to 100% for Agent {agent.Name} (ID: {agent.Id})");
+            }
+        }
+    });
+
+    // Shutdown
+    _ = Task.Run(async () =>
+    {
+        using var call = client.StreamShutdownEvents(new ShutdownEvent { Id = agent.Id });
+
+        await foreach (var response in call.ResponseStream.ReadAllAsync())
+        {
+            if (response.Id == agent.Id && agent.Status == AnymalGrpc.Status.Active)
+            {
+                agent.Status = AnymalGrpc.Status.Offline;
+
+                Console.WriteLine($"Shutting down {agent.Name} (ID: {agent.Id})");
+            }
+        }
+    });
+
+    // Wakeup
+    _ = Task.Run(async () =>
+    {
+        using var call = client.StreamWakeupEvents(new WakeupEvent { Id = agent.Id });
+
+        await foreach (var response in call.ResponseStream.ReadAllAsync())
+        {
+            if (response.Id == agent.Id && agent.Status == AnymalGrpc.Status.Offline && agent.BatteryLevel > 0)
+            {
+                agent.Status = AnymalGrpc.Status.Active;
+
+                Console.WriteLine($"Waking up {agent.Name} (ID: {agent.Id})");
+
+                //await batteryDecreaseLoop();
+            }
+        }
+    });
+
+    await batteryDecreaseLoop();
 }
 catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
 {

@@ -35,3 +35,9 @@ When the battery level reaches 0 then set the status to Unavailable. Make sure w
 Unavailable via gRPC. Additionally I want the controller to return a more restricted model for an agent that only exposes the id, name, status and battery level.
 
 8) I want to be able to recharge the agent's battery to its full level. I want to do so from the api via a post method accepting the id of the agent to recharge
+
+9) I want to introduce 2 new endpoints that can be invoked via the API: Shutdown & Wakeup.
+When Shutdown is invoked the agent status transitions to "Offline" and it should stop sending the updates for battery level.
+When Wakeup is invoked the agent status goes back to "Active" unless the battery level is 0. In this case it stays Unavailable.
+When going back to the Active status it should also start sending the updates for battery level.
+If an agent is Offline then it should also ignore the Recharge requests
