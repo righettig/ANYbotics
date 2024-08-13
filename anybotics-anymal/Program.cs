@@ -114,8 +114,6 @@ try
                 agent.Status = AnymalGrpc.Status.Active;
 
                 Console.WriteLine($"Waking up {agent.Name} (ID: {agent.Id})");
-
-                //await batteryDecreaseLoop();
             }
         }
     });
