@@ -32,4 +32,25 @@ public class AgentsHub : Hub
             await Task.Delay(1000);
         }
     }
+
+    public async Task StreamAgentData(string id)
+    {
+        while (true)
+        {
+            var agent = _anymalService.GetAgentById(id);
+
+            var agentDto = new AgentDto
+            {
+                Id = agent.Id,
+                Name = agent.Name,
+                BatteryLevel = agent.BatteryLevel,
+                Status = agent.Status
+            };
+
+            await Clients.All.SendAsync("ReceiveAgentData", agentDto);
+
+            // Adjust the delay as needed
+            await Task.Delay(1000);
+        }
+    }
 }

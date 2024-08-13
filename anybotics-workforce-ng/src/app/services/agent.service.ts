@@ -9,12 +9,15 @@ import * as signalR from '@microsoft/signalr';
 })
 export class AgentService {
   private hubConnection: signalR.HubConnection;
+
   private agentsSubject = new BehaviorSubject<AgentDto[]>([]);
+  private agentSubject = new BehaviorSubject<AgentDto | null>(null);
 
   private baseUrl = 'https://localhost:7272';
   private baseApiUrl = `${this.baseUrl}/Anymal`;
 
   agents$ = this.agentsSubject.asObservable();
+  agent$ = this.agentSubject.asObservable();
 
   constructor() {
     this.hubConnection = new signalR.HubConnectionBuilder()
@@ -23,31 +26,66 @@ export class AgentService {
       .configureLogging(signalR.LogLevel.Information)
       .build();
 
-    this.startConnection();
-
     this.hubConnection.on('ReceiveAgentsData', (agents: AgentDto[]) => {
       this.agentsSubject.next(agents);
     });
 
-    this.hubConnection.onreconnected(() => {
-      this.startStreaming();
+    this.hubConnection.on('ReceiveAgentData', (agent: AgentDto) => {
+      this.agentSubject.next(agent);
     });
   }
 
-  startConnection() {
+  startAgentsStreaming() {
     this.hubConnection
       .start()
       .then(() => {
         console.log('SignalR Connected');
-        this.startStreaming();
+
+        this.hubConnection
+          .invoke('StreamAgentsData')
+          .catch((err) =>
+            console.error('Error while starting the stream', err)
+          );
       })
       .catch((err) => console.log('Error while starting connection: ' + err));
+
+    this.hubConnection.onreconnected(() => {
+      this.hubConnection
+        .invoke('StreamAgentsData')
+        .catch((err) => console.error('Error while starting the stream', err));
+    });
+  }
+  
+  stopConnection() {
+    if (this.hubConnection) {
+      this.hubConnection
+        .stop()
+        .then(() => console.log('SignalR Disconnected'))
+        .catch((err) => console.log('Error while stopping connection: ' + err));
+    }
   }
 
-  private startStreaming() {
+  startAgentStreaming(id: string) {
     this.hubConnection
-      .invoke('StreamAgentsData')
-      .catch((err) => console.error('Error while starting the stream', err));
+      .start()
+      .then(() => {
+        console.log('SignalR Connected');
+
+        this.hubConnection
+          .invoke('StreamAgentData', id)
+          .catch((err) =>
+            console.error('Error while starting the agent stream', err)
+          );
+      })
+      .catch((err) => console.log('Error while starting connection: ' + err));
+
+    this.hubConnection.onreconnected(() => {
+      this.hubConnection
+        .invoke('StreamAgentData', id)
+        .catch((err) =>
+          console.error('Error while starting the agent stream', err)
+        );
+    });
   }
 
   async rechargeAgent(id: string): Promise<void> {
@@ -72,7 +110,7 @@ export class AgentService {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(id)
+        body: JSON.stringify(id),
       });
 
       if (!response.ok) {

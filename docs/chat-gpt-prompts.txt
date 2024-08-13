@@ -57,18 +57,23 @@ The api url is https://localhost:7272. Please encapsulate all network calls into
 
 14) I would like to be able to sort the agents either by name (ascending/descending) or by  battery level (ascending/descending)
 
+15) I want to be add a "view details" button for each agent card. When clicking on the button I should be redirected to a 
+different route. I should then be presented with a more details view for the selected agent.
+
+That is nice but the agent details screen does not show real time data. Also when routing from the browser url directly data is not shown as agentService.getAgentById cannot find data. Could you fix this while also ensuring live data is served?
+
 TODO
 ====
-15) ANYmal details view, by clicking a card routed to a different component
+Cleanup signalR server side subscriptions
 
-15) Introduce navbar, logo, convert "status enum" to string
+16) Introduce navbar, logo, convert "status enum" to string
 	app
 		app-navbar
 			app-logo | app-search (including search results counter) | app-sorting | app-login (??) 
 			
 		app-agents
 			
-16) when logged is I should be able to perform actions (recharge/shutdown/wakeup)
+17) when logged is I should be able to perform actions (recharge/shutdown/wakeup)
 
 -----
 

@@ -1,0 +1,11 @@
+@if (agent) {
+<div class="agent-details">
+  <h2>{{ agent.name }} - Details</h2>
+  <p>ID: {{ agent.id }}</p>
+  <app-agent-battery-level [batteryLevel]="agent.batteryLevel"></app-agent-battery-level>
+  <app-agent-status [status]="agent.status"></app-agent-status>
+  <button mat-raised-button color="primary" [routerLink]="['/agents']">
+    Back to Agents
+  </button>
+</div>
+}

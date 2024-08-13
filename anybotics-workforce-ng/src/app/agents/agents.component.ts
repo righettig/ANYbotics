@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AgentService } from '../services/agent.service';
 import { AgentDto } from '../models/agent-dto.model';
 import { AgentCardComponent } from '../agent-card/agent-card.component';
@@ -6,6 +6,7 @@ import { SearchComponent } from '../search/search.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { SortingComponent } from '../sorting/sorting.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-agents',
@@ -20,19 +21,33 @@ import { SortingComponent } from '../sorting/sorting.component';
   templateUrl: './agents.component.html',
   styleUrls: ['./agents.component.scss'],
 })
-export class AgentsComponent implements OnInit {
+export class AgentsComponent implements OnInit, OnDestroy {
   agents: AgentDto[] = [];
   filteredAgents: AgentDto[] = [];
   currentSearchTerm: string = '';
   sortOption: string = 'nameAsc';
 
+  private subscription!: Subscription;
+
   constructor(private agentService: AgentService) {}
 
   ngOnInit(): void {
-    this.agentService.agents$.subscribe((agents) => {
+    // Start streaming real-time updates for the agent
+    this.agentService.startAgentsStreaming();
+
+    this.subscription = this.agentService.agents$.subscribe((agents) => {
       this.agents = agents;
       this.applyFilterAndSort();
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+
+    // Stop the connection when the component is destroyed
+    this.agentService.stopConnection();
   }
 
   onSearch(searchTerm: string): void {

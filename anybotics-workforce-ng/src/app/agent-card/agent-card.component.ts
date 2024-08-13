@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { AgentBatteryLevelComponent } from '../agent-battery-level/agent-battery-level.component';
 import { AgentStatusComponent } from '../agent-status/agent-status.component';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-agent-card',
@@ -14,6 +15,7 @@ import { AgentStatusComponent } from '../agent-status/agent-status.component';
     MatCardModule,
     MatIconModule,
     MatButtonModule,
+    RouterModule,
     AgentBatteryLevelComponent,
     AgentStatusComponent,
   ],
