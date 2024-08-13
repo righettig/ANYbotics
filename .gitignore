@@ -4,3 +4,5 @@
 /anybotics-anymal-api/obj
 /anybotics-anymal-common/obj
 /anybotics-anymal-common/bin
+/anybotics-agent-runner/bin
+/anybotics-agent-runner/obj
