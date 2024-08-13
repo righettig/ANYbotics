@@ -1,0 +1,24 @@
+<mat-card class="agent-card">
+  <mat-card-header>
+    <mat-card-title>{{ agent.name }}</mat-card-title>
+    <mat-card-subtitle class="agent-id">
+      ID: <span>{{ agent.id }}</span>
+      <button
+        mat-icon-button
+        (click)="copyToClipboard(agent.id)"
+        aria-label="Copy ID"
+      >
+        <mat-icon>content_copy</mat-icon>
+      </button>
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <p>Battery Level: {{ agent.batteryLevel }}%</p>
+    <p>Status: {{ agent.status }}</p>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-button color="primary" (click)="onRecharge()">Recharge</button>
+    <button mat-button color="warn" (click)="onShutdown()">Shutdown</button>
+    <button mat-button color="accent" (click)="onWakeup()">Wakeup</button>
+  </mat-card-actions>
+</mat-card>

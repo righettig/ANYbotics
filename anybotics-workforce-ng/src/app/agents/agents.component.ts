@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { AgentDto, AgentService } from '../services/agent.service';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
+import { AgentService } from '../services/agent.service';
+import { AgentDto } from '../models/agent-dto.model';
 import { NgFor } from '@angular/common';
+import { AgentCardComponent } from "../agent-card/agent-card.component";
 
 @Component({
   selector: 'app-agents',
   standalone: true,
-  imports: [NgFor, MatCardModule, MatIconModule],
+  imports: [NgFor, AgentCardComponent],
   templateUrl: './agents.component.html',
   styleUrl: './agents.component.scss',
 })
@@ -20,28 +20,5 @@ export class AgentsComponent implements OnInit {
     this.agentService.agents$.subscribe((agents) => {
       this.agents = agents;
     });
-  }
-
-  rechargeAgent(id: string) {
-    console.log(`Recharge agent with ID: ${id}`);
-  }
-
-  shutdownAgent(id: string) {
-    console.log(`Shutdown agent with ID: ${id}`);
-  }
-
-  wakeupAgent(id: string) {
-    console.log(`Wakeup agent with ID: ${id}`);
-  }
-
-  copyToClipboard(id: string) {
-    navigator.clipboard
-      .writeText(id)
-      .then(() => {
-        console.log(`ID ${id} copied to clipboard`);
-      })
-      .catch((err) => {
-        console.error('Failed to copy: ', err);
-      });
   }
 }

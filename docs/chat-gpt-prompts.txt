@@ -50,8 +50,16 @@ I'd like to have more space between the cards and for the cards to be placed ins
 11) Show me how can I run multiple agents from a single command line prompt by passing a json file. The file contains the name of the agents. 
 Gimme 10 agents with randomised name please.
 
-12) Search
+12) I'd like to extend the app by allowing the Recharge, Shutdown, Wakeup actions to be executed via web. I want the fetch api to be used.
+The api url is https://localhost:7272. Please encapsulate all network calls into a dedicated service. 
 
-12) ANYmal details view
+TODO
+13) Search
 
-13) It should be possible to record the commands history. Use known framework
+14) ANYmal details view
+
+15) NgRx
+
+16) It should be possible to record the commands history. Use known framework
+
+17) Nx
