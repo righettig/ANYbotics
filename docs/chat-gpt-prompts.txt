@@ -53,9 +53,10 @@ Gimme 10 agents with randomised name please.
 12) I'd like to extend the app by allowing the Recharge, Shutdown, Wakeup actions to be executed via web. I want the fetch api to be used.
 The api url is https://localhost:7272. Please encapsulate all network calls into a dedicated service. 
 
-TODO
-13) Search
+13) I want to be able to perform a search by id or name. I want the component to be displayed on top of the agents components. I also want this component to be always visible no matter how many agent cards are displayed (i.e. if there are vertical scrollbars)
 
+TODO
+====
 14) ANYmal details view
 
 15) NgRx

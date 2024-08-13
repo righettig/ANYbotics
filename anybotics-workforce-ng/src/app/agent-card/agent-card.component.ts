@@ -3,11 +3,12 @@ import { AgentService } from '../services/agent.service';
 import { AgentDto } from '../models/agent-dto.model';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-agent-card',
   standalone: true,
-  imports: [MatCardModule, MatIconModule],
+  imports: [MatCardModule, MatIconModule, MatButtonModule],
   templateUrl: './agent-card.component.html',
   styleUrls: ['./agent-card.component.scss'],
 })

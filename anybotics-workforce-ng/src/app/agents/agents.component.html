@@ -1,3 +1,9 @@
+<div class="search-container">
+  <app-search (search)="onSearch($event)" (clear)="clearSearch()"></app-search>
+</div>
+
 <div class="agents-container">
-  <app-agent-card *ngFor="let agent of agents" [agent]="agent"></app-agent-card>
+  @for (agent of filteredAgents; track agent) {
+    <app-agent-card [agent]="agent"></app-agent-card>
+  }
 </div>

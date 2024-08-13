@@ -43,6 +43,10 @@
   color: black; /* Darken the button on hover */
 }
 
+mat-card-content {
+  padding-bottom: 16px;
+}
+
 /* Style for the action buttons section */
 mat-card-actions {
   display: flex;
