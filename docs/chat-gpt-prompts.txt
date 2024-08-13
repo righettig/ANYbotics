@@ -59,6 +59,8 @@ The api url is https://localhost:7272. Please encapsulate all network calls into
 
 TODO
 ====
+15) Introduce navbar, logo
+
 15) ANYmal details view, by clicking a card routed to a different component
 
 16) NgRx, convert shutdown, recharge, wake up actions
@@ -72,3 +74,5 @@ TODO
 20) UI notifications
 
 21) Vertical scrollbar to be only visible for the "agents" area
+
+22) Introduce separate component for sort options
