@@ -57,9 +57,9 @@ The api url is https://localhost:7272. Please encapsulate all network calls into
 
 TODO
 ====
-14) ANYmal details view
+14) ANYmal details view, by clicking a card routed to a different component
 
-15) NgRx
+15) NgRx, convert shutdown, recharge, wake up actions
 
 16) It should be possible to record the commands history. Use known framework
 

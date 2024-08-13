@@ -4,11 +4,19 @@ import { AgentDto } from '../models/agent-dto.model';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { AgentBatteryLevelComponent } from '../agent-battery-level/agent-battery-level.component';
+import { AgentStatusComponent } from '../agent-status/agent-status.component';
 
 @Component({
   selector: 'app-agent-card',
   standalone: true,
-  imports: [MatCardModule, MatIconModule, MatButtonModule],
+  imports: [
+    MatCardModule,
+    MatIconModule,
+    MatButtonModule,
+    AgentBatteryLevelComponent,
+    AgentStatusComponent,
+  ],
   templateUrl: './agent-card.component.html',
   styleUrls: ['./agent-card.component.scss'],
 })
