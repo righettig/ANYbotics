@@ -64,3 +64,7 @@ TODO
 16) It should be possible to record the commands history. Use known framework
 
 17) Nx
+
+18) UI notifications
+
+19) Unit testing, story book, e2e tests
