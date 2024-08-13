@@ -5,6 +5,7 @@ import { AgentCardComponent } from '../agent-card/agent-card.component';
 import { SearchComponent } from '../search/search.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { SortingComponent } from '../sorting/sorting.component';
 
 @Component({
   selector: 'app-agents',
@@ -12,6 +13,7 @@ import { MatSelectModule } from '@angular/material/select';
   imports: [
     AgentCardComponent,
     SearchComponent,
+    SortingComponent,
     MatFormFieldModule,
     MatSelectModule,
   ],
@@ -22,20 +24,20 @@ export class AgentsComponent implements OnInit {
   agents: AgentDto[] = [];
   filteredAgents: AgentDto[] = [];
   currentSearchTerm: string = '';
-  selectedSortOption: string = 'name-asc'; // Default sort option
+  sortOption: string = 'nameAsc';
 
   constructor(private agentService: AgentService) {}
 
   ngOnInit(): void {
     this.agentService.agents$.subscribe((agents) => {
       this.agents = agents;
-      this.applyFilter();
+      this.applyFilterAndSort();
     });
   }
 
   onSearch(searchTerm: string): void {
     this.currentSearchTerm = searchTerm;
-    this.applyFilter();
+    this.applyFilterAndSort();
   }
 
   clearSearch(): void {
@@ -44,15 +46,15 @@ export class AgentsComponent implements OnInit {
   }
 
   onSortChange(sortOption: string): void {
-    this.selectedSortOption = sortOption;
-    this.applyFilter();
+    this.sortOption = sortOption;
+    this.applyFilterAndSort();
   }
 
-  private applyFilter(): void {
-    if (!this.currentSearchTerm) {
-      this.filteredAgents = this.agents;
-    } else {
-      this.filteredAgents = this.agents.filter(
+  private applyFilterAndSort(): void {
+    let filtered = this.agents;
+
+    if (this.currentSearchTerm) {
+      filtered = filtered.filter(
         (agent) =>
           agent.id.includes(this.currentSearchTerm) ||
           agent.name
@@ -60,23 +62,24 @@ export class AgentsComponent implements OnInit {
             .includes(this.currentSearchTerm.toLowerCase())
       );
     }
-    this.sortAgents();
+
+    this.filteredAgents = this.sortAgents(filtered, this.sortOption);
   }
 
-  private sortAgents(): void {
-    switch (this.selectedSortOption) {
-      case 'name-asc':
-        this.filteredAgents.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      case 'name-desc':
-        this.filteredAgents.sort((a, b) => b.name.localeCompare(a.name));
-        break;
-      case 'battery-asc':
-        this.filteredAgents.sort((a, b) => a.batteryLevel - b.batteryLevel);
-        break;
-      case 'battery-desc':
-        this.filteredAgents.sort((a, b) => b.batteryLevel - a.batteryLevel);
-        break;
-    }
+  private sortAgents(agents: AgentDto[], sortOption: string): AgentDto[] {
+    return agents.sort((a, b) => {
+      switch (sortOption) {
+        case 'nameAsc':
+          return a.name.localeCompare(b.name);
+        case 'nameDesc':
+          return b.name.localeCompare(a.name);
+        case 'batteryAsc':
+          return a.batteryLevel - b.batteryLevel;
+        case 'batteryDesc':
+          return b.batteryLevel - a.batteryLevel;
+        default:
+          return 0;
+      }
+    });
   }
 }

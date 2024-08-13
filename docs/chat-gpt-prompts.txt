@@ -59,9 +59,18 @@ The api url is https://localhost:7272. Please encapsulate all network calls into
 
 TODO
 ====
-15) Introduce navbar, logo
-
 15) ANYmal details view, by clicking a card routed to a different component
+
+15) Introduce navbar, logo, convert "status enum" to string
+	app
+		app-navbar
+			app-logo | app-search (including search results counter) | app-sorting | app-login (??) 
+			
+		app-agents
+			
+16) when logged is I should be able to perform actions (recharge/shutdown/wakeup)
+
+-----
 
 16) NgRx, convert shutdown, recharge, wake up actions
 
@@ -75,4 +84,3 @@ TODO
 
 21) Vertical scrollbar to be only visible for the "agents" area
 
-22) Introduce separate component for sort options

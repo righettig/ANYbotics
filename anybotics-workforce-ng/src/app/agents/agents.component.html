@@ -5,17 +5,7 @@
     <p>{{ filteredAgents.length }} agent(s) found</p>
   </div>
 
-  <div>
-    <mat-form-field appearance="fill">
-      <mat-label>Sort by</mat-label>
-      <mat-select (selectionChange)="onSortChange($event.value)">
-        <mat-option value="name-asc">Name (A-Z)</mat-option>
-        <mat-option value="name-desc">Name (Z-A)</mat-option>
-        <mat-option value="battery-asc">Battery Level (Low to High)</mat-option>
-        <mat-option value="battery-desc">Battery Level (High to Low)</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
+  <app-sorting (sortChange)="onSortChange($event)"></app-sorting>
 
   <div class="agents-container">
     @for (agent of filteredAgents; track agent.id) {
