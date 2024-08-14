@@ -13,6 +13,10 @@ describe('SearchComponent', () => {
   let fixture: ComponentFixture<SearchComponent>;
   let searchServiceMock: jasmine.SpyObj<SearchService>;
 
+  const searchTerm = 'test search';
+  const searchButtonSelector = '#search-btn';
+  const clearButtonSelector = '#clear-search-btn';
+
   beforeEach(async () => {
     searchServiceMock = jasmine.createSpyObj('SearchService', ['updateSearchTerm', 'clearSearchTerm']);
 
@@ -30,49 +34,61 @@ describe('SearchComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should call searchService.updateSearchTerm with the search term on onSearch()', () => {
-    component.searchTerm = 'test search';
-    component.onSearch();
-    expect(searchServiceMock.updateSearchTerm).toHaveBeenCalledWith('test search');
+  describe('onSearch', () => {
+    it('should call searchService.updateSearchTerm with the search term', () => {
+      component.searchTerm = searchTerm;
+      component.onSearch();
+      expect(searchServiceMock.updateSearchTerm).toHaveBeenCalledWith(searchTerm);
+    });
+
+    it('should trigger onSearch() when the search button is clicked', () => {
+      spyOn(component, 'onSearch');
+      clickButton(searchButtonSelector);
+      expect(component.onSearch).toHaveBeenCalled();
+    });
   });
 
-  it('should clear the search term and call searchService.clearSearchTerm on clearSearch()', () => {
-    component.searchTerm = 'test search';
-    component.clearSearch();
-    expect(component.searchTerm).toBe('');
-    expect(searchServiceMock.clearSearchTerm).toHaveBeenCalled();
+  describe('clearSearch', () => {
+    beforeEach(() => {
+      component.searchTerm = searchTerm;
+      fixture.detectChanges();
+    });
+
+    it('should clear the search term and call searchService.clearSearchTerm', () => {
+      component.clearSearch();
+      expect(component.searchTerm).toBe('');
+      expect(searchServiceMock.clearSearchTerm).toHaveBeenCalled();
+    });
+
+    it('should trigger clearSearch() when the clear button is clicked', () => {
+      spyOn(component, 'clearSearch');
+      clickButton(clearButtonSelector);
+      expect(component.clearSearch).toHaveBeenCalled();
+    });
+
+    it('should not display the clear button if searchTerm is empty', () => {
+      component.searchTerm = '';
+      fixture.detectChanges();
+      expectButtonToBeAbsent(clearButtonSelector);
+    });
+
+    it('should display the clear button if searchTerm is not empty', () => {
+      expectButtonToBePresent(clearButtonSelector);
+    });
   });
 
-  it('should trigger onSearch() when the search button is clicked', () => {
-    spyOn(component, 'onSearch');
-    const searchButton: DebugElement = fixture.debugElement.query(By.css('#search-btn'));
-    searchButton.triggerEventHandler('click', null);
-    expect(component.onSearch).toHaveBeenCalled();
-  });
+  function clickButton(selector: string): void {
+    const button: DebugElement = fixture.debugElement.query(By.css(selector));
+    button.triggerEventHandler('click', null);
+  }
 
-  it('should trigger clearSearch() when the clear button is clicked', () => {
-    spyOn(component, 'clearSearch');
-    component.searchTerm = 'something'; // Set the searchTerm to make the clear button appear
-    fixture.detectChanges(); // Update the view
+  function expectButtonToBeAbsent(selector: string): void {
+    const button: DebugElement = fixture.debugElement.query(By.css(selector));
+    expect(button).toBeNull();
+  }
 
-    const clearButton: DebugElement = fixture.debugElement.query(By.css('#clear-search-btn'));
-    clearButton.triggerEventHandler('click', null);
-    expect(component.clearSearch).toHaveBeenCalled();
-  });
-
-  it('should not display the clear button if searchTerm is empty', () => {
-    component.searchTerm = '';
-    fixture.detectChanges();
-
-    const clearButton: DebugElement = fixture.debugElement.query(By.css('#clear-search-btn'));
-    expect(clearButton).toBeNull();
-  });
-
-  it('should display the clear button if searchTerm is not empty', () => {
-    component.searchTerm = 'not empty';
-    fixture.detectChanges();
-
-    const clearButton: DebugElement = fixture.debugElement.query(By.css('#clear-search-btn'));
-    expect(clearButton).not.toBeNull();
-  });
+  function expectButtonToBePresent(selector: string): void {
+    const button: DebugElement = fixture.debugElement.query(By.css(selector));
+    expect(button).not.toBeNull();
+  }
 });
