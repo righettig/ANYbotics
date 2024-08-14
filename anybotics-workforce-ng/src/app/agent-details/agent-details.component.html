@@ -15,17 +15,41 @@
     <mat-tab label="General Information">
       <mat-card>
         <mat-card-content>
-          <p>ID: {{ agent.id }}</p>
-          <app-agent-battery-level [batteryLevel]="agent.batteryLevel"></app-agent-battery-level>
-          <app-agent-status [status]="agent.status"></app-agent-status>
-          <p>Current Command: {{ agent.general.currentCommand }}</p>
-          <p>Model: {{ agent.general.model }}</p>
-          <p>Firmware Version: {{ agent.general.firmwareVersion }}</p>
-          <p>Firmware Last Updated: {{ agent.general.firmwareLastUpdated | date }}</p>
-          <p>Manual Mode: {{ agent.general.manualModeOn ? 'On' : 'Off' }}</p>
-          <p>Location: (x: {{ agent.general.location.x }}, y: {{ agent.general.location.y }}, z: {{ agent.general.location.z }})</p>
-          <p>Trekker Version: {{ agent.general.trekkerVersion }}</p>
-          <p>Trekker Last Updated: {{ agent.general.trekkerLastUpdated | date }}</p>
+          <mat-list>
+            <mat-list-item>
+              <span class="property-name">ID:</span> {{ agent.id }}
+            </mat-list-item>
+            <mat-list-item>
+              <span class="property-name">Battery Level:</span> {{ agent.batteryLevel }}%
+            </mat-list-item>
+            <mat-list-item>
+              <span class="property-name">Status:</span> {{ agent.status }}
+            </mat-list-item>
+            <mat-list-item>
+              <span class="property-name">Current Command:</span> {{ agent.general.currentCommand }}
+            </mat-list-item>
+            <mat-list-item>
+              <span class="property-name">Model:</span> {{ agent.general.model }}
+            </mat-list-item>
+            <mat-list-item>
+              <span class="property-name">Firmware Version:</span> {{ agent.general.firmwareVersion }}
+            </mat-list-item>
+            <mat-list-item>
+              <span class="property-name">Firmware Last Updated:</span> {{ agent.general.firmwareLastUpdated | date }}
+            </mat-list-item>
+            <mat-list-item>
+              <span class="property-name">Manual Mode:</span> {{ agent.general.manualModeOn ? 'On' : 'Off' }}
+            </mat-list-item>
+            <mat-list-item>
+              <span class="property-name">Location:</span> (x: {{ agent.general.location.x }}, y: {{ agent.general.location.y }}, z: {{ agent.general.location.z }})
+            </mat-list-item>
+            <mat-list-item>
+              <span class="property-name">Trekker Version:</span> {{ agent.general.trekkerVersion }}
+            </mat-list-item>
+            <mat-list-item>
+              <span class="property-name">Trekker Last Updated:</span> {{ agent.general.trekkerLastUpdated | date }}
+            </mat-list-item>
+          </mat-list>
         </mat-card-content>
       </mat-card>
     </mat-tab>
@@ -34,11 +58,11 @@
     <mat-tab label="Hardware Status">
       <mat-card>
         <mat-card-content>
-          <div class="hardware-status">
-            <p *ngFor="let item of hardwareItems">
-              {{ item.name }}: <span class="status" [ngClass]="item.status">{{ item.status }}</span>
-            </p>
-          </div>
+          <mat-list>
+            <mat-list-item *ngFor="let item of hardwareItems">
+              <span class="property-name">{{ item.name }}:</span> <span class="status" [ngClass]="item.status">{{ item.status }}</span>
+            </mat-list-item>
+          </mat-list>
         </mat-card-content>
       </mat-card>
     </mat-tab>

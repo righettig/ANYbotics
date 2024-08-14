@@ -11,6 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { agentDetailsStub } from '../test-stubs/agent-details-stub';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatListModule } from '@angular/material/list';
 
 @Component({
   selector: 'app-agent-details',
@@ -23,6 +24,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
     MatTabsModule,
     MatButtonModule,
     MatTableModule,
+    MatListModule,
     RouterModule,
     CommonModule,
     AgentBatteryLevelComponent,

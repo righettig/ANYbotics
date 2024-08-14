@@ -23,22 +23,35 @@
     }
   }
 
-  .hardware-status {
-    p {
-      margin: 5px 0;
+  .property-name {
+    font-weight: bold;
+    margin-right: 8px;
+  }
+   
+  .mat-list-item {
+    display: flex;
+    align-items: center;
+  }
+  
+  .mat-list-item span.property-name {
+    flex: 0 0 200px;
+  }
+  
+  .status {
+    &.Running {
+      color: green;
     }
+    &.Failed {
+      color: red;
+    }
+    &.Anomaly_detected {
+      color: orange;
+    }
+  }
 
-    .status {
-      &.Running {
-        color: green;
-      }
-      &.Failed {
-        color: red;
-      }
-      &.Anomaly_detected {
-        color: orange;
-      }
-    }
+  mat-list-item:not(:last-child) {
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 8px;
   }
 
   .mat-mdc-row:hover {
