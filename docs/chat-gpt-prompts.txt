@@ -117,6 +117,8 @@ Introduce some unit tests
 introduce more data to be visible from the agent details screen (introduce AgentFullDto).
 Add placeholder sections (tab?) for image, command history, status history 
 
+Add true login (Auth0 vs Firebase?). Two users (guest and myuser). UI for guest should be disabled.
+
 16) NgRx, convert shutdown, recharge, wake up actions
 
 --->
@@ -128,6 +130,8 @@ Add placeholder sections (tab?) for image, command history, status history
 19) Unit testing, story book, e2e tests
 
 20) UI notifications
+
+21) Protect endpoints based on user role
 
 BUGS
 	22) Cleanup signalR server side subscriptions
