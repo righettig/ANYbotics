@@ -1,11 +1,99 @@
-@if (agent) {
-<div class="agent-details">
-  <h2>{{ agent.name }} - Details</h2>
-  <p>ID: {{ agent.id }}</p>
-  <app-agent-battery-level [batteryLevel]="agent.batteryLevel"></app-agent-battery-level>
-  <app-agent-status [status]="agent.status"></app-agent-status>
-  <button mat-raised-button color="primary" [routerLink]="['/agents']">
-    Back to Agents
-  </button>
+<div *ngIf="agent" class="agent-details">
+  <div class="header">
+    <div>
+      <h2>{{ agent.name }} - Details</h2>
+    </div>
+    <div>
+      <button mat-raised-button color="primary" [routerLink]="['/agents']">
+        Back to Agents
+      </button>
+    </div>
+  </div>
+
+  <mat-tab-group animationDuration="0ms">
+    <!-- General Information Tab -->
+    <mat-tab label="General Information">
+      <mat-card>
+        <mat-card-content>
+          <p>ID: {{ agent.id }}</p>
+          <app-agent-battery-level [batteryLevel]="agent.batteryLevel"></app-agent-battery-level>
+          <app-agent-status [status]="agent.status"></app-agent-status>
+          <p>Current Command: {{ agent.general.currentCommand }}</p>
+          <p>Model: {{ agent.general.model }}</p>
+          <p>Firmware Version: {{ agent.general.firmwareVersion }}</p>
+          <p>Firmware Last Updated: {{ agent.general.firmwareLastUpdated | date }}</p>
+          <p>Manual Mode: {{ agent.general.manualModeOn ? 'On' : 'Off' }}</p>
+          <p>Location: (x: {{ agent.general.location.x }}, y: {{ agent.general.location.y }}, z: {{ agent.general.location.z }})</p>
+          <p>Trekker Version: {{ agent.general.trekkerVersion }}</p>
+          <p>Trekker Last Updated: {{ agent.general.trekkerLastUpdated | date }}</p>
+        </mat-card-content>
+      </mat-card>
+    </mat-tab>
+
+    <!-- Hardware Status Tab -->
+    <mat-tab label="Hardware Status">
+      <mat-card>
+        <mat-card-content>
+          <div class="hardware-status">
+            <p *ngFor="let item of hardwareItems">
+              {{ item.name }}: <span class="status" [ngClass]="item.status">{{ item.status }}</span>
+            </p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </mat-tab>
+
+    <!-- Recent Images Tab -->
+    <mat-tab label="Recent Images">
+      <mat-card>
+        <mat-card-content>
+          <div class="image-gallery">
+            <img *ngFor="let image of agent.recentImages" [src]="image" alt="Recent Image">
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </mat-tab>
+
+    <!-- Command History Tab -->
+    <mat-tab label="Command History">
+      <mat-card>
+        <mat-card-content>
+          <table mat-table [dataSource]="agent.commandHistory" class="mat-elevation-z8">
+            <!-- Command Column -->
+            <ng-container matColumnDef="command">
+              <th mat-header-cell *matHeaderCellDef> Command </th>
+              <td mat-cell *matCellDef="let command"> {{ command }} </td>
+            </ng-container>
+            
+            <tr mat-header-row *matHeaderRowDef="['command']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['command'];"></tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+    </mat-tab>
+
+    <!-- Status History Tab -->
+    <mat-tab label="Status History">
+      <mat-card>
+        <mat-card-content>
+          <table mat-table [dataSource]="statusHistoryDataSource" class="mat-elevation-z8">
+            <!-- Timestamp Column -->
+            <ng-container matColumnDef="timestamp">
+              <th mat-header-cell *matHeaderCellDef> Timestamp </th>
+              <td mat-cell *matCellDef="let status"> {{ status.timestamp | date }} </td>
+            </ng-container>
+
+            <!-- Status Column -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef> Status </th>
+              <td mat-cell *matCellDef="let status"> {{ status.status }} </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="['timestamp', 'status']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['timestamp', 'status'];"></tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+    </mat-tab>
+  </mat-tab-group>
 </div>
-}

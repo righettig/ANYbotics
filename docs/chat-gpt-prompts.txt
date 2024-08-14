@@ -113,27 +113,127 @@ I would like to show the strings as well as introducing a front-end type
 
 19) Introduce unit tests
 
+20) The agent details component current look like this: 
+
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, RouterModule } from '@angular/router';
+import { AgentService } from '../services/agent.service';
+import { AgentDto } from '../models/agent-dto.model';
+import { AgentBatteryLevelComponent } from '../agent-battery-level/agent-battery-level.component';
+import { AgentStatusComponent } from '../agent-status/agent-status.component';
+import { Subscription } from 'rxjs';
+
+@Component({
+  selector: 'app-agent-details',
+  standalone: true,
+  imports: [RouterModule, AgentBatteryLevelComponent, AgentStatusComponent],
+  templateUrl: './agent-details.component.html',
+  styleUrls: ['./agent-details.component.scss'],
+})
+export class AgentDetailsComponent implements OnInit, OnDestroy {
+  agent?: AgentDto;
+
+  private subscription!: Subscription;
+
+  constructor(
+    private route: ActivatedRoute,
+    private agentService: AgentService
+  ) {}
+
+  ngOnInit(): void {
+    const agentId = this.route.snapshot.paramMap.get('id');
+
+    // Start streaming real-time updates for the agent
+    this.agentService.startAgentStreaming(agentId!);
+
+    // Subscribe to real-time updates
+    this.subscription = this.agentService.agent$.subscribe((agent) => {
+      if (agent && agent.id === agentId) {
+        this.agent = agent;
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+
+    // Stop the connection when the component is destroyed
+    this.agentService.stopConnection();
+  }
+}
+
+With template: 
+	@if (agent) {
+	<div class="agent-details">
+	  <h2>{{ agent.name }} - Details</h2>
+	  <p>ID: {{ agent.id }}</p>
+	  <app-agent-battery-level [batteryLevel]="agent.batteryLevel"></app-agent-battery-level>
+	  <app-agent-status [status]="agent.status"></app-agent-status>
+	  <button mat-raised-button color="primary" [routerLink]="['/agents']">
+		Back to Agents
+	  </button>
+	</div>
+	}
+
+I want to add the following properties to the agent details view:
+
+General:
+- CurrentCommand
+- Model (ANYmal, ANYmal X)
+- FirmwareVersion
+- FirmwareLastUpdated
+- ManualModeOn
+- Location (x, y, z)
+- TrekkerVersion
+- TrekkerLastUpdated
+
+Hardware: (each property in this list can have Running, Failed, Anomaly_detected as possible values)
+  - Temperature sensor
+  - Pressure sensor
+  - Leg1Status, Leg2Status, Leg3Status, Leg4Status
+  - GPS
+  - Engine
+  - Battery
+  - Lidar scanner
+  - WI-FI
+  - 4G LTE
+  - CPU_1, CPU_2
+  - 6 depth cameras
+  - 2 optical tele-operation cameras (20x)
+  - Thermal camera (-40–550°C)
+  - Pan-tilt-unit // high-range motion of the payload (+/- 90° vertical, +/- 165° horizontal)
+  - Spotlight (maximal 3790lm supports visual inspections in the dark)
+  - Ultrasonic microphone // record acoustic measurements in audible and ultrasonic frequencies (0—384kHz)
+
+Considering I am also planning to add a way to retrieve the most recent acquired images, the list of executed commands, as well as the 
+history for each status change, what would be a good design (using Angular material) to achieve that?
+
+Please use a different Dto (AgentDetailsDto) to update the signalR model. 
+
+Let me also know if you need more info from me. 
+
 
 TODO
 ====
-Add more data to be visible from the agent details screen (introduce AgentFullDto).
-Add placeholder sections (tab?) for image, command history, status history 
+Angular signals
 
-Add true login (Auth0 vs Firebase?). Two users (guest and myuser). UI for guest should be disabled.
+21) Add true login (Auth0 vs Firebase?). Two users (guest and myuser). UI for guest should be disabled.
 
-16) NgRx, convert shutdown, recharge, wake up actions
+22) NgRx, convert shutdown, recharge, wake up actions
 
 --->
 
-17) It should be possible to record the commands history. Use known framework
+23) It should be possible to record the commands history. Use known framework
 
-18) Nx
+24) Nx
 
-19) Unit testing, story book, e2e tests
+25) Unit testing, story book, e2e tests
 
-20) UI notifications
+26) UI notifications
 
-21) Protect endpoints based on user role
+27) Protect endpoints based on user role
 
 BUGS
-	22) Cleanup signalR server side subscriptions
+	28) Cleanup signalR server side subscriptions

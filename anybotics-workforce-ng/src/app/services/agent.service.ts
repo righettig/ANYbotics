@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { AgentDto } from '../models/agent-dto.model';
+import { AgentDetailsDto } from '../models/agent-details-dto.model';
 
 import * as signalR from '@microsoft/signalr';
 
@@ -11,7 +12,7 @@ export class AgentService {
   private hubConnection: signalR.HubConnection;
 
   private agentsSubject = new BehaviorSubject<AgentDto[]>([]);
-  private agentSubject = new BehaviorSubject<AgentDto | null>(null);
+  private agentSubject = new BehaviorSubject<AgentDetailsDto | null>(null);
 
   private baseUrl = 'https://localhost:7272';
   private baseApiUrl = `${this.baseUrl}/Anymal`;
@@ -30,7 +31,7 @@ export class AgentService {
       this.agentsSubject.next(agents);
     });
 
-    this.hubConnection.on('ReceiveAgentData', (agent: AgentDto) => {
+    this.hubConnection.on('ReceiveAgentData', (agent: AgentDetailsDto) => {
       this.agentSubject.next(agent);
     });
   }
