@@ -6,10 +6,10 @@
     (keyup.enter)="onSearch()"
   />
 
-  <button mat-raised-button color="primary" (click)="onSearch()">Search</button>
+  <button mat-raised-button color="primary" id="search-btn" (click)="onSearch()">Search</button>
 
   @if (searchTerm) {
-  <button mat-raised-button color="primary" (click)="clearSearch()">
+  <button mat-raised-button color="primary" id="clear-search-btn" (click)="clearSearch()">
     Clear Search
   </button>
   }
