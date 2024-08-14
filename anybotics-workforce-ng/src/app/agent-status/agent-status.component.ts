@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, SimpleChanges } from '@angular/core';
+import { Status, getStatusString } from '../models/status.enum';
 
 @Component({
   selector: 'app-agent-status',
@@ -8,5 +9,12 @@ import { Component, Input } from '@angular/core';
   styleUrl: './agent-status.component.scss',
 })
 export class AgentStatusComponent {
-  @Input() status!: string;
+  @Input() status!: Status;
+  statusString!: string;
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['status']) {
+      this.statusString = getStatusString(this.status);
+    }
+  }
 }

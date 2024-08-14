@@ -1,0 +1,7 @@
+<div style="color: white">
+  @if (isLoggedIn) {
+  <p (click)="onLogout()">Logout</p>
+  } @else {
+  <p (click)="onLogin()">Login</p>
+  }
+</div>

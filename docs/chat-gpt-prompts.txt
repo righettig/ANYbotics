@@ -62,22 +62,64 @@ different route. I should then be presented with a more details view for the sel
 
 That is nice but the agent details screen does not show real time data. Also when routing from the browser url directly data is not shown as agentService.getAgentById cannot find data. Could you fix this while also ensuring live data is served?
 
+16) I have an Angular application with the Angular Material library already setup. I want to create a layout that consists of a navbar and a main area. The navbar should be called app-navbar and should contain as child components app-logo, app-search, app-sorting and app-user-profile.
+I do not need these components just the barebone design. In particular app-logo is used to display a logo and should stay on the left whereas
+app-user-profile is used to display the icon of a user that when clicked should redirect to a login screen. app-user-profile should stay on the right. app-search & app-sorting should be rendered at the center of the navbar should only be displayed when logged in.
+The main area will be used to contain the router-outlet and display child views. I do not need instructions on how to setup the angular application normal Angular Material. 
+
+Could you provide the login component to be displayed at the screen center. Move isLoggedIn to a service. When logging in isLoggedIn should be set to true. When logged in when clicking on the user profile component a menu should be displayed with Logout as the only item. When clicked should change IsLoggedIn back to false.
+
+17) I have the following component {PLACEHOLDER} that I display in the main content area irrespective to the logged in status. 
+I now want to update the component so that when I am logged in the action buttons should be visible (otherwise they should be invisible).
+
+
+18) I have this interface
+
+export interface AgentDto {
+  id: string;
+  name: string;
+  batteryLevel: number;
+  status: string;
+}
+
+which is used by this component
+
+import { Component, Input } from '@angular/core';
+
+@Component({
+  selector: 'app-agent-status',
+  standalone: true,
+  imports: [],
+  templateUrl: './agent-status.component.html',
+  styleUrl: './agent-status.component.scss',
+})
+export class AgentStatusComponent {
+  @Input() status!: string;
+}
+
+whose template is <p>Status: {{ status }}</p>
+
+The only allowed values are Unavailable, Active and Offline which correspond to the c# enum 
+
+  public enum Status {
+    Unavailable = 0,
+    Active = 1,
+    Offline = 2,
+  }
+
+Currently my app is displaying the numeric values. 
+
+I would like to show the strings as well as introducing a front-end type
+
 TODO
 ====
-Cleanup signalR server side subscriptions
-
-16) Introduce navbar, logo, convert "status enum" to string
-	app
-		app-navbar
-			app-logo | app-search (including search results counter) | app-sorting | app-login (??) 
-			
-		app-agents
-			
-17) when logged is I should be able to perform actions (recharge/shutdown/wakeup)
-
------
+Introduce some unit tests
+introduce more data to be visible from the agent details screen (introduce AgentFullDto).
+Add placeholder sections (tab?) for image, command history, status history 
 
 16) NgRx, convert shutdown, recharge, wake up actions
+
+--->
 
 17) It should be possible to record the commands history. Use known framework
 
@@ -87,5 +129,5 @@ Cleanup signalR server side subscriptions
 
 20) UI notifications
 
-21) Vertical scrollbar to be only visible for the "agents" area
-
+BUGS
+	22) Cleanup signalR server side subscriptions

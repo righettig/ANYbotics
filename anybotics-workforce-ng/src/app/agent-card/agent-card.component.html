@@ -16,10 +16,12 @@
     <app-agent-battery-level [batteryLevel]="agent.batteryLevel"></app-agent-battery-level>
     <app-agent-status [status]="agent.status"></app-agent-status>
   </mat-card-content>
-  <mat-card-actions>
-    <button mat-raised-button color="primary" [routerLink]="['/agents', agent.id]">Details</button>
-    <button mat-button color="primary" (click)="onRecharge()">Recharge</button>
-    <button mat-button color="warn" (click)="onShutdown()">Shutdown</button>
-    <button mat-button color="accent" (click)="onWakeup()">Wakeup</button>
-  </mat-card-actions>
+  @if (displayActions) {
+    <mat-card-actions>
+      <button mat-raised-button color="primary" [routerLink]="['/agents', agent.id]">Details</button>
+      <button mat-button color="primary" (click)="onRecharge()">Recharge</button>
+      <button mat-button color="warn" (click)="onShutdown()">Shutdown</button>
+      <button mat-button color="accent" (click)="onWakeup()">Wakeup</button>
+    </mat-card-actions>
+  }
 </mat-card>

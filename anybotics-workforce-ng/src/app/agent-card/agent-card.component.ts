@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { AgentService } from '../services/agent.service';
 import { AgentDto } from '../models/agent-dto.model';
 import { MatCardModule } from '@angular/material/card';
@@ -7,6 +7,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { AgentBatteryLevelComponent } from '../agent-battery-level/agent-battery-level.component';
 import { AgentStatusComponent } from '../agent-status/agent-status.component';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../services/auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-agent-card',
@@ -22,10 +24,29 @@ import { RouterModule } from '@angular/router';
   templateUrl: './agent-card.component.html',
   styleUrls: ['./agent-card.component.scss'],
 })
-export class AgentCardComponent {
+export class AgentCardComponent implements OnInit, OnDestroy {
   @Input() agent!: AgentDto;
 
-  constructor(private agentService: AgentService) {}
+  displayActions: boolean = false;
+
+  private subscription!: Subscription;
+
+  constructor(
+    private agentService: AgentService,
+    private authService: AuthService
+  ) {}
+
+  ngOnInit(): void {
+    this.subscription = this.authService.isLoggedIn.subscribe(
+      (status) => (this.displayActions = status)
+    );
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
 
   async onRecharge(): Promise<void> {
     try {

@@ -2,42 +2,40 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AgentService } from '../services/agent.service';
 import { AgentDto } from '../models/agent-dto.model';
 import { AgentCardComponent } from '../agent-card/agent-card.component';
-import { SearchComponent } from '../search/search.component';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { SortingComponent } from '../sorting/sorting.component';
-import { Subscription } from 'rxjs';
+import { combineLatest, Subscription } from 'rxjs';
+import { SearchService } from '../services/search.service';
+import { SortingService, SortOption } from '../services/sorting.service';
 
 @Component({
   selector: 'app-agents',
   standalone: true,
-  imports: [
-    AgentCardComponent,
-    SearchComponent,
-    SortingComponent,
-    MatFormFieldModule,
-    MatSelectModule,
-  ],
+  imports: [AgentCardComponent],
   templateUrl: './agents.component.html',
   styleUrls: ['./agents.component.scss'],
 })
 export class AgentsComponent implements OnInit, OnDestroy {
   agents: AgentDto[] = [];
   filteredAgents: AgentDto[] = [];
-  currentSearchTerm: string = '';
-  sortOption: string = 'nameAsc';
 
   private subscription!: Subscription;
 
-  constructor(private agentService: AgentService) {}
+  constructor(
+    private agentService: AgentService,
+    private searchService: SearchService,
+    private sortingService: SortingService
+  ) {}
 
   ngOnInit(): void {
     // Start streaming real-time updates for the agent
     this.agentService.startAgentsStreaming();
 
-    this.subscription = this.agentService.agents$.subscribe((agents) => {
+    this.subscription = combineLatest([
+      this.agentService.agents$,
+      this.searchService.searchTerm$,
+      this.sortingService.sortOption$,
+    ]).subscribe(([agents, searchTerm, sortOption]) => {
       this.agents = agents;
-      this.applyFilterAndSort();
+      this.applyFilterAndSort(searchTerm, sortOption);
     });
   }
 
@@ -50,38 +48,21 @@ export class AgentsComponent implements OnInit, OnDestroy {
     this.agentService.stopConnection();
   }
 
-  onSearch(searchTerm: string): void {
-    this.currentSearchTerm = searchTerm;
-    this.applyFilterAndSort();
-  }
-
-  clearSearch(): void {
-    this.currentSearchTerm = '';
-    this.filteredAgents = this.agents;
-  }
-
-  onSortChange(sortOption: string): void {
-    this.sortOption = sortOption;
-    this.applyFilterAndSort();
-  }
-
-  private applyFilterAndSort(): void {
+  private applyFilterAndSort(searchTerm: string, sortOption: SortOption): void {
     let filtered = this.agents;
 
-    if (this.currentSearchTerm) {
+    if (searchTerm) {
       filtered = filtered.filter(
         (agent) =>
-          agent.id.includes(this.currentSearchTerm) ||
-          agent.name
-            .toLowerCase()
-            .includes(this.currentSearchTerm.toLowerCase())
+          agent.id.includes(searchTerm) ||
+          agent.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
-    this.filteredAgents = this.sortAgents(filtered, this.sortOption);
+    this.filteredAgents = this.sortAgents(filtered, sortOption);
   }
 
-  private sortAgents(agents: AgentDto[], sortOption: string): AgentDto[] {
+  private sortAgents(agents: AgentDto[], sortOption: SortOption): AgentDto[] {
     return agents.sort((a, b) => {
       switch (sortOption) {
         case 'nameAsc':

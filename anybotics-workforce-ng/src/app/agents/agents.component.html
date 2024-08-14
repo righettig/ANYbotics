@@ -1,15 +1,11 @@
-<app-search (search)="onSearch($event)" (clear)="clearSearch()"></app-search>
-
 <div class="container">
   <div class="filter-info">
     <p>{{ filteredAgents.length }} agent(s) found</p>
   </div>
 
-  <app-sorting (sortChange)="onSortChange($event)"></app-sorting>
-
   <div class="agents-container">
     @for (agent of filteredAgents; track agent.id) {
-      <app-agent-card [agent]="agent"></app-agent-card>
+    <app-agent-card [agent]="agent"></app-agent-card>
     }
   </div>
 </div>

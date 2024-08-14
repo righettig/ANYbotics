@@ -1,5 +1,5 @@
-<mat-form-field class="sort-options">
-  <mat-select
+<mat-form-field class="sorting-dropdown" appearance="outline">
+  <mat-select class="sort-options"
     placeholder="Sort Agents"
     [(value)]="sortOption"
     (selectionChange)="onSortOptionChange($event.value)"

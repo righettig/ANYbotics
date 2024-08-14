@@ -1,21 +1,22 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
+import { SortingService, SortOption } from '../services/sorting.service';
 
 @Component({
   selector: 'app-sorting',
   standalone: true,
   imports: [MatSelectModule, MatOptionModule],
   templateUrl: './sorting.component.html',
-  styleUrl: './sorting.component.scss'
+  styleUrl: './sorting.component.scss',
 })
 export class SortingComponent {
-  @Output() sortChange = new EventEmitter<string>();
+  sortOption: SortOption = 'nameAsc';
 
-  sortOption: string = 'nameAsc';
+  constructor(private sortingService: SortingService) {}
 
-  onSortOptionChange(value: string): void {
+  onSortOptionChange(value: SortOption): void {
     this.sortOption = value;
-    this.sortChange.emit(value);
+    this.sortingService.updateSortOption(value);
   }
 }
