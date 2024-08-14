@@ -37,9 +37,9 @@ export class AgentCardComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.subscription = this.authService.isLoggedIn.subscribe(
-      (status) => (this.displayActions = status)
-    );
+    this.subscription = this.authService.currentUserRole.subscribe((role) => {
+      this.displayActions = role !== 'guest'; // TODO: add enum
+    });
   }
 
   ngOnDestroy(): void {

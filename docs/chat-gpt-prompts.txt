@@ -214,24 +214,79 @@ Please use a different Dto (AgentDetailsDto) to update the signalR model.
 
 Let me also know if you need more info from me. 
 
+21) Add true login (Auth0 vs Firebase?). Two users (guest and myuser). UI for guest should be disabled.
+	guest@anybotics.com    pass: qwerty123
+	giacomo@anybotics.com  pass: q1w2e3
+	
+	Show me how can I integrate an angular application using firebase. I already have this auth service: 
+		
+		import { Injectable } from '@angular/core';
+		import { BehaviorSubject } from 'rxjs';
+
+		@Injectable({
+		  providedIn: 'root',
+		})
+		export class AuthService {
+		  private loggedIn = new BehaviorSubject<boolean>(false);
+
+		  get isLoggedIn() {
+			return this.loggedIn.asObservable();
+		  }
+
+		  login() {
+			this.loggedIn.next(true);
+		  }
+
+		  logout() {
+			this.loggedIn.next(false);
+		  }
+		}
+
+	but I do not have a login component yet. I want to use standalone components only meaning I do NOT have app.module.ts (and I do not
+	want to create it).
+	
+22) I have an app using firebase to authenticate users. I have created 3 users: 
+	
+		giacomo@anybotics.com
+		guest@anybotics.com
+		admin@anybotics.com
+	
+	show me how can I setup the firestore instance (I do not have one) to attach "role". I want:
+		
+		giacomo@anybotics.com -> standard
+		guest@anybotics.com -> guest
+		admin@anybotics.com -> admin
+
+	guest should not be allowed to perform actions (replace isLoggedIn check on the agent-card)
+
 
 TODO
 ====
-Angular signals
+Improve login component visuals (logo), find small image for robots too. Add dropdown to quickly select users
+		giacomo@anybotics.com pass: q1w2e3
+		guest@anybotics.com pass: qwerty123
+		admin@anybotics.com pass: q1w2e3
 
-21) Add true login (Auth0 vs Firebase?). Two users (guest and myuser). UI for guest should be disabled.
+
+Agent details to use "real data" move stubbed full agent data to API
+
+23) It should be possible to record the commands history. Use known framework
+
+replace command history and status history in agent details with real data
 
 22) NgRx, convert shutdown, recharge, wake up actions
 
 --->
 
-23) It should be possible to record the commands history. Use known framework
+24) Nx, introduce "admin library"?
 
-24) Nx
-
-25) Unit testing, story book, e2e tests
+25) story book, e2e tests
 
 26) UI notifications
+
+Angular signals
+
+Download logs, images as bulk or single images, fullscreen images
 
 27) Protect endpoints based on user role
 
