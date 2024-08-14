@@ -17,32 +17,24 @@ describe('AgentBatteryLevelComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should display battery_alert icon when batteryLevel is less than 5', () => {
-    component.batteryLevel = 4;
-    fixture.detectChanges();
-    const icon = fixture.debugElement.query(By.css('mat-icon')).nativeElement;
-    expect(icon.textContent).toContain('battery_alert');
-  });
+  const testCases = [
+    { level: 4, expectedIcon: 'battery_alert' },
+    { level: 5, expectedIcon: 'battery_2_bar' },
+    { level: 7, expectedIcon: 'battery_2_bar' },
+    { level: 10, expectedIcon: 'battery_2_bar' },
+    { level: 20, expectedIcon: 'battery_3_bar' },
+    { level: 25, expectedIcon: 'battery_3_bar' },
+    { level: 30, expectedIcon: 'battery_4_bar' },
+    { level: 50, expectedIcon: 'battery_4_bar' },
+  ];
 
-  it('should display battery_2_bar icon when batteryLevel is between 5 and 10', () => {
-    component.batteryLevel = 7;
-    fixture.detectChanges();
-    const icon = fixture.debugElement.query(By.css('mat-icon')).nativeElement;
-    expect(icon.textContent).toContain('battery_2_bar');
-  });
-
-  it('should display battery_3_bar icon when batteryLevel is between 11 and 25', () => {
-    component.batteryLevel = 20;
-    fixture.detectChanges();
-    const icon = fixture.debugElement.query(By.css('mat-icon')).nativeElement;
-    expect(icon.textContent).toContain('battery_3_bar');
-  });
-
-  it('should display battery_4_bar icon when batteryLevel is between 26 and 50', () => {
-    component.batteryLevel = 30;
-    fixture.detectChanges();
-    const icon = fixture.debugElement.query(By.css('mat-icon')).nativeElement;
-    expect(icon.textContent).toContain('battery_4_bar');
+  testCases.forEach(({ level, expectedIcon }) => {
+    it(`should display ${expectedIcon} icon when batteryLevel is ${level}`, () => {
+      component.batteryLevel = level;
+      fixture.detectChanges();
+      const icon = getMatIcon();
+      expect(icon.textContent).toContain(expectedIcon);
+    });
   });
 
   it('should not display any icon when batteryLevel is above 50', () => {
@@ -52,31 +44,7 @@ describe('AgentBatteryLevelComponent', () => {
     expect(icons.length).toBe(0);
   });
 
-  it('should handle edge case where batteryLevel is exactly 5', () => {
-    component.batteryLevel = 5;
-    fixture.detectChanges();
-    const icon = fixture.debugElement.query(By.css('mat-icon')).nativeElement;
-    expect(icon.textContent).toContain('battery_2_bar');
-  });
-
-  it('should handle edge case where batteryLevel is exactly 10', () => {
-    component.batteryLevel = 10;
-    fixture.detectChanges();
-    const icon = fixture.debugElement.query(By.css('mat-icon')).nativeElement;
-    expect(icon.textContent).toContain('battery_2_bar');
-  });
-
-  it('should handle edge case where batteryLevel is exactly 25', () => {
-    component.batteryLevel = 25;
-    fixture.detectChanges();
-    const icon = fixture.debugElement.query(By.css('mat-icon')).nativeElement;
-    expect(icon.textContent).toContain('battery_3_bar');
-  });
-
-  it('should handle edge case where batteryLevel is exactly 50', () => {
-    component.batteryLevel = 50;
-    fixture.detectChanges();
-    const icon = fixture.debugElement.query(By.css('mat-icon')).nativeElement;
-    expect(icon.textContent).toContain('battery_4_bar');
-  });
+  function getMatIcon(): HTMLElement {
+    return fixture.debugElement.query(By.css('mat-icon')).nativeElement;
+  }
 });
