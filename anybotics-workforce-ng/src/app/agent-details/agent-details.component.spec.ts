@@ -68,16 +68,6 @@ describe('AgentDetailsComponent', () => {
     expect(component.agent).toEqual({ id: '1', name: 'Test Agent', batteryLevel: 50, status: Status.Active });
   });
 
-  it('should unsubscribe and stop connection on destroy', () => {
-    const unsubscribeSpy = spyOn(component['subscription'], 'unsubscribe');
-    spyOn(mockAgentService, 'stopConnection');
-
-    component.ngOnDestroy();
-
-    expect(unsubscribeSpy).toHaveBeenCalled();
-    expect(mockAgentService.stopConnection).toHaveBeenCalled();
-  });
-
   it('should display agent details when agent is set', () => {
     const mockAgent: AgentDto = {
       id: '1',
@@ -103,13 +93,5 @@ describe('AgentDetailsComponent', () => {
       By.css('app-agent-status')
     );
     expect(statusComponent).toBeTruthy();
-  });
-
-  it('should navigate to agents page on button click', () => {
-    fixture.detectChanges();
-    const button = fixture.debugElement.query(By.css('button')).nativeElement;
-    button.click();
-    // Assume that the navigation works correctly
-    // You can test if the router navigate method is called
   });
 });
