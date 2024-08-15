@@ -2,7 +2,7 @@
 
   <form (ngSubmit)="login()">
     <mat-form-field appearance="outline">
-      <mat-label>Select me</mat-label>
+      <mat-label>Select predefined user</mat-label>
       <mat-select (valueChange)="onUserSelect($event)">
         @for (user of users; track user.email) {
           <mat-option [value]="user">{{user.email}}</mat-option>
