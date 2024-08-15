@@ -266,12 +266,18 @@ Let me also know if you need more info from me.
 		admin@anybotics.com pass: q1w2e3
 
 
-TODO
-====
-
 24) Agent details to use "real data" move stubbed full agent data to API
 
-23) It should be possible to record the commands history. Use known framework
+25) I want to be able to audit the commands (i.e. Recharge, Shutdown & Wakeup) that have been submitted to agents. 
+
+	I would like to do that by using an event sourcing framework. 
+	
+	Show me how to do that and how to refactor AnymalController. I also need to retrieve the full list of commands that have been 
+	submitted to a given agent (by agent id).
+	
+
+TODO
+====
 
 replace command history and status history in agent details with real data
 
@@ -285,11 +291,12 @@ replace command history and status history in agent details with real data
 
 26) UI notifications
 
-Angular signals
+Add Angular signals
 
 Download logs, images as bulk or single images, fullscreen images
 
 27) Protect endpoints based on user role
 
 BUGS
+	Fix auth (f5 refresh)
 	28) Cleanup signalR server side subscriptions

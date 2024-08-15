@@ -8,7 +8,6 @@ import { Subscription } from 'rxjs';
 import { CommonModule, DatePipe, NgFor, NgIf } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-import { agentDetailsStub } from '../test-stubs/agent-details-stub';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatListModule } from '@angular/material/list';
@@ -54,8 +53,7 @@ export class AgentDetailsComponent implements OnInit, OnDestroy {
     // Subscribe to real-time updates
     this.subscription = this.agentService.agent$.subscribe((agent) => {
       if (agent && agent.id === agentId) {
-        //this.agent = agent;
-        this.agent = agentDetailsStub;
+        this.agent = agent;
         this.hardwareItems = this.createHardwareItems(this.agent.hardware);
         this.statusHistoryDataSource = new MatTableDataSource(this.agent.statusHistory);
       }
