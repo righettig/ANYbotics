@@ -275,28 +275,43 @@ Let me also know if you need more info from me.
 	Show me how to do that and how to refactor AnymalController. I also need to retrieve the full list of commands that have been 
 	submitted to a given agent (by agent id).
 	
+	I would like to have the following architecture:
+	
+	The AnymalController should create the event and put it in an in-memory queue
+	A background process (EventExecutor) picks up events one-by one and based on the event type it should delegate the execution of events to an event processor.
+	An event processor knows about the AnymalService and the given event.
+	
+	Finally extend the controller to retrieve all events by agent id by reading the in-memory queue.
+	
+26) Protect endpoints based on user role
+	(I had to tweak the permissions associated to firebase-adminsdk-7igq5@anybotics-c5ce9.iam.gserviceaccount.com)
+
+
+>> Refactor Program.cs
+
 
 TODO
 ====
 
-replace command history and status history in agent details with real data
+27) NgRx, convert shutdown, recharge, wake up actions
 
-22) NgRx, convert shutdown, recharge, wake up actions
+28) Nx, introduce "admin library"?
 
---->
+29) story book, e2e tests
 
-24) Nx, introduce "admin library"?
+30) UI notifications
 
-25) story book, e2e tests
+31) Add Angular signals
 
-26) UI notifications
+32) Download logs, images as bulk or single images, fullscreen images
 
-Add Angular signals
+33) Babylon.js (manual drive mode)
 
-Download logs, images as bulk or single images, fullscreen images
+34) Introduce more commands
 
-27) Protect endpoints based on user role
+35) [Authorize] to protect controllers
 
 BUGS
 	Fix auth (f5 refresh)
 	28) Cleanup signalR server side subscriptions
+	

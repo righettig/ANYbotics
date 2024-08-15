@@ -1,9 +1,12 @@
-﻿using anybotics_anymal_api.Models;
+﻿using anybotics_anymal_api.CustomAttributes;
+using anybotics_anymal_api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using AnymalService = AnymalApi.Services.AnymalService;
 
 namespace AnymalApi.Controllers;
 
+//[Authorize] // TODO: this requires more setup!
 [ApiController]
 [Route("[controller]")]
 public class AnymalController : ControllerBase
@@ -16,6 +19,7 @@ public class AnymalController : ControllerBase
     }
 
     // GET: api/anymal
+    [Authorize]
     [HttpGet]
     public ActionResult<IEnumerable<AgentDto>> GetAllAgents()
     {
@@ -56,6 +60,7 @@ public class AnymalController : ControllerBase
 
     // POST: api/anymal/shutdown
     [HttpPost("shutdown")]
+    [Deny("guest")]
     public async Task<IActionResult> ShutdownAgent([FromBody] string id)
     {
         if (string.IsNullOrEmpty(id))
@@ -70,6 +75,7 @@ public class AnymalController : ControllerBase
 
     // POST: api/anymal/wakeup
     [HttpPost("wakeup")]
+    [Deny("guest")]
     public async Task<IActionResult> WakeupAgent([FromBody] string id)
     {
         if (string.IsNullOrEmpty(id))

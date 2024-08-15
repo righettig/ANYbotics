@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { AgentDto } from '../models/agent-dto.model';
 import { AgentDetailsDto } from '../models/agent-details-dto.model';
+import { AuthService } from './auth.service';
 
 import * as signalR from '@microsoft/signalr';
 
@@ -20,7 +21,7 @@ export class AgentService {
   agents$ = this.agentsSubject.asObservable();
   agent$ = this.agentSubject.asObservable();
 
-  constructor() {
+  constructor(private authService: AuthService) {
     this.hubConnection = new signalR.HubConnectionBuilder()
       .withUrl(`${this.baseUrl}/agentsHub`, { withCredentials: false })
       .withAutomaticReconnect()
@@ -110,6 +111,7 @@ export class AgentService {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': this.authService.accessToken!
         },
         body: JSON.stringify(id),
       });

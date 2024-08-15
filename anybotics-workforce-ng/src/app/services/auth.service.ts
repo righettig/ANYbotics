@@ -18,13 +18,17 @@ export class AuthService {
       if (user) {
         this.loggedIn.next(true);
         const role = await this.fetchUserRole(user.email!); // Fetch and store the user role
+        this.accessToken = await user.getIdToken();
         this.userRole.next(role);
       } else {
+        this.accessToken = undefined;
         this.loggedIn.next(false);
         this.userRole.next(null); // Clear the role when the user logs out
       }
     });
   }
+
+  accessToken: string | undefined;
 
   get isLoggedIn() {
     return this.loggedIn.asObservable();
