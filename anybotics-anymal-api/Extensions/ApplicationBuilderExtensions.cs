@@ -1,0 +1,33 @@
+﻿using anybotics_anymal_api.Hubs;
+using anybotics_anymal_api.Middlewares;
+using AnymalApi.Services;
+
+public static class ApplicationBuilderExtensions
+{
+    public static IApplicationBuilder UseCustomMiddleware(this WebApplication app)
+    {
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+        else
+        {
+            app.UseExceptionHandler("/Error");
+            app.UseHsts();
+        }
+
+        app.UseMiddleware<FirebaseUserMiddleware>();
+        app.UseHttpsRedirection();
+        app.UseAuthentication();
+        app.UseAuthorization();
+        app.UseCors("AllowAngularApp");
+
+        // Endpoint mappings
+        app.MapGrpcService<AnymalService>();
+        app.MapHub<AgentsHub>("/agentsHub").RequireCors("AllowAngularApp");
+        app.MapControllers();
+
+        return app;
+    }
+}
