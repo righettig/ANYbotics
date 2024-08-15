@@ -260,15 +260,16 @@ Let me also know if you need more info from me.
 	guest should not be allowed to perform actions (replace isLoggedIn check on the agent-card)
 
 
-TODO
-====
-Improve login component visuals (logo), find small image for robots too. Add dropdown to quickly select users
+23) Improve login component visuals (logo), find small image for robots too. Add dropdown to quickly select users
 		giacomo@anybotics.com pass: q1w2e3
 		guest@anybotics.com pass: qwerty123
 		admin@anybotics.com pass: q1w2e3
 
 
-Agent details to use "real data" move stubbed full agent data to API
+TODO
+====
+
+24) Agent details to use "real data" move stubbed full agent data to API
 
 23) It should be possible to record the commands history. Use known framework
 
