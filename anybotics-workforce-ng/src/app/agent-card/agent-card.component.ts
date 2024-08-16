@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { AgentBatteryLevelComponent } from '../agent-battery-level/agent-battery-level.component';
 import { AgentStatusComponent } from '../agent-status/agent-status.component';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { Subscription } from 'rxjs';
 
@@ -33,7 +33,8 @@ export class AgentCardComponent implements OnInit, OnDestroy {
 
   constructor(
     private agentService: AgentService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -73,6 +74,10 @@ export class AgentCardComponent implements OnInit, OnDestroy {
     } catch (error) {
       console.error(`Failed to wake up agent ${this.agent.name}:`, error);
     }
+  }
+
+  onAllCommands() {
+    this.router.navigate(['/commands', this.agent.id]);
   }
 
   copyToClipboard(id: string) {

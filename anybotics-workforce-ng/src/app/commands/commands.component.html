@@ -1,0 +1,75 @@
+<h2>Peform commands {{ agentId }}</h2>
+
+<!-- TODO: add progress bar / spinner while command is being executed -->
+
+<!-- TODO: this UI should be auto-generated from command description (coming from back-end) -->
+<h3>General</h3>
+<mat-list>
+  <mat-list-item>
+    <button mat-button color="primary" (click)="recharge()">Recharge</button>
+  </mat-list-item>
+  <mat-list-item>
+    <button mat-button color="primary" (click)="shutdown()">Shutdown</button>
+  </mat-list-item>
+  <mat-list-item>
+    <button mat-button color="primary" (click)="wakeup()">Wakeup</button>
+  </mat-list-item>
+</mat-list>
+
+<h3>Drive</h3>
+<mat-list>
+  <mat-list-item>
+    <button mat-button color="primary" (click)="setManualMode()">
+      SetManualMode
+    </button>
+  </mat-list-item>
+  <mat-list-item>
+    <button mat-button color="primary" (click)="left()">Left</button>
+  </mat-list-item>
+  <mat-list-item>
+    <button mat-button color="primary" (click)="right()">Right</button>
+  </mat-list-item>
+  <mat-list-item>
+    <button mat-button color="primary" (click)="forward()">
+      Forward
+    </button>
+  </mat-list-item>
+  <mat-list-item>
+    <button mat-button color="primary" (click)="backward()">
+      Backwad
+    </button>
+  </mat-list-item>
+</mat-list>
+
+<h3>Inspections</h3>
+<mat-list>
+  <mat-list-item>
+    <button mat-button color="primary" (click)="thermalInspection()">
+      ThermalInspection
+    </button>
+  </mat-list-item>
+  <mat-list-item>
+    <button mat-button color="primary" (click)="combustibleInspection()">
+      CombustibleInspection
+    </button>
+  </mat-list-item>
+  <mat-list-item>
+    <button mat-button color="primary" (click)="gasInspection()">
+      GasInspection
+    </button>
+  </mat-list-item>
+  <mat-list-item>
+    <button mat-button color="primary" (click)="acousticMeasure()">
+      AcousticMeasure
+    </button>
+  </mat-list-item>
+  <mat-list-item></mat-list-item>
+</mat-list>
+
+<mat-divider></mat-divider>
+
+<div style="padding-top: 12px">
+  <button mat-raised-button color="primary" [routerLink]="['/agents']">
+    Back to Agents
+  </button>
+</div>
