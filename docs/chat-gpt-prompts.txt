@@ -296,8 +296,15 @@ Let me also know if you need more info from me.
 				
 TODO
 ====
-28) Introduce more commands | allow additional commands to be executed from details view
+29) Introduce more commands | allow additional commands to be executed from details view
+	- `thermal inspection`
+	- `combustible inspection`
+	- `gas inspection`
+	- `acoustic measure`
 
+30)	
+	- `move` (left, right, forward, backward)
+	
 27) NgRx, convert shutdown, recharge, wake up actions
 
 28) Nx, introduce "admin library"?

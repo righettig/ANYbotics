@@ -45,6 +45,31 @@ public class AnymalService : AnymalGrpc.AnymalService.AnymalServiceBase
                                             ServerCallContext context)
         => StreamEvents(request.Id, client => client.WakeupStream = responseStream, context);
 
+    public override Task StreamSetManualModeEvents(SetManualModeEvent request,
+                                                   IServerStreamWriter<SetManualModeEvent> responseStream,
+                                                   ServerCallContext context)
+        => StreamEvents(request.Id, client => client.SetManualModeStream = responseStream, context);
+
+    public override Task StreamThermalInspectionEvents(ThermalInspectionEvent request,
+                                                       IServerStreamWriter<ThermalInspectionEvent> responseStream,
+                                                       ServerCallContext context)
+        => StreamEvents(request.Id, client => client.ThermalInspectionStream = responseStream, context);
+
+    public override Task StreamCombustibleInspectionEvents(CombustibleInspectionEvent request,
+                                                           IServerStreamWriter<CombustibleInspectionEvent> responseStream,
+                                                           ServerCallContext context)
+        => StreamEvents(request.Id, client => client.CombustibleInspectionStream = responseStream, context);
+
+    public override Task StreamGasInspectionEvents(GasInspectionEvent request,
+                                                   IServerStreamWriter<GasInspectionEvent> responseStream,
+                                                   ServerCallContext context)
+        => StreamEvents(request.Id, client => client.GasInspectionStream = responseStream, context);
+
+    public override Task StreamAcousticMeasureEvents(AcousticMeasureEvent request,
+                                                     IServerStreamWriter<AcousticMeasureEvent> responseStream,
+                                                     ServerCallContext context)
+        => StreamEvents(request.Id, client => client.AcousticMeasureStream = responseStream, context);
+
     public Task<UpdateResponse> RechargeBatteryAsync(string id)
         => PerformAgentActionAsync(id, async agentClient =>
         {
@@ -91,6 +116,73 @@ public class AnymalService : AnymalGrpc.AnymalService.AnymalServiceBase
             agentClient.Agent.Status = AnymalGrpc.Status.Active;
         },
         $"Waking up agent {id}.", "Agent not found.");
+
+    public Task<UpdateResponse> SetManualModeAsync(string id, bool manualMode)
+        => PerformAgentActionAsync(id, async agentClient =>
+        {
+            if (agentClient.Agent.Status == AnymalGrpc.Status.Unavailable)
+            {
+                throw new InvalidOperationException("Agent is Unavailable. Set manual mode requests are ignored.");
+            }
+
+            var @event = new SetManualModeEvent { Id = id, ManualMode = manualMode };
+            await agentClient.SetManualModeStream?.WriteAsync(@event);
+
+            agentClient.Agent.ManualMode = manualMode;
+        },
+        $"Setting up manual mode for agent {id} with value {manualMode}", "Agent not found.");
+
+    public Task<UpdateResponse> ThermalInspectionAsync(string id)
+        => PerformAgentActionAsync(id, async agentClient =>
+        {
+            if (agentClient.Agent.Status == AnymalGrpc.Status.Offline)
+            {
+                throw new InvalidOperationException("Agent is Offline. ThermalInspection requests are ignored.");
+            }
+
+            var @event = new ThermalInspectionEvent { Id = id };
+            await agentClient.ThermalInspectionStream?.WriteAsync(@event);
+        },
+        $"Performing thermal inspection agent {id}.", "Agent not found.");
+
+    public Task<UpdateResponse> CombustibleInspectionAsync(string id)
+        => PerformAgentActionAsync(id, async agentClient =>
+        {
+            if (agentClient.Agent.Status == AnymalGrpc.Status.Offline)
+            {
+                throw new InvalidOperationException("Agent is Offline. CombustibleInspection requests are ignored.");
+            }
+
+            var @event = new CombustibleInspectionEvent { Id = id };
+            await agentClient.CombustibleInspectionStream?.WriteAsync(@event);
+        },
+        $"Performing combustible inspection agent {id}.", "Agent not found.");
+
+    public Task<UpdateResponse> GasInspectionAsync(string id)
+        => PerformAgentActionAsync(id, async agentClient =>
+        {
+            if (agentClient.Agent.Status == AnymalGrpc.Status.Offline)
+            {
+                throw new InvalidOperationException("Agent is Offline. GasInspection requests are ignored.");
+            }
+
+            var @event = new GasInspectionEvent { Id = id };
+            await agentClient.GasInspectionStream?.WriteAsync(@event);
+        },
+        $"Performing gas inspection agent {id}.", "Agent not found.");
+
+    public Task<UpdateResponse> AcousticMeasureAsync(string id)
+        => PerformAgentActionAsync(id, async agentClient =>
+        {
+            if (agentClient.Agent.Status == AnymalGrpc.Status.Offline)
+            {
+                throw new InvalidOperationException("Agent is Offline. AcousticMeasure requests are ignored.");
+            }
+
+            var @event = new AcousticMeasureEvent { Id = id };
+            await agentClient.AcousticMeasureStream?.WriteAsync(@event);
+        },
+        $"Performing acoustic measure agent {id}.", "Agent not found.");
 
     public IEnumerable<Agent> GetAllAgents() => _agentClients.Values.Select(ac => ac.Agent);
 

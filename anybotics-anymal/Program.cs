@@ -30,6 +30,11 @@ class Program
             _ = MonitorBatteryRechargeEventsAsync(client, agent);
             _ = MonitorShutdownEventsAsync(client, agent);
             _ = MonitorWakeupEventsAsync(client, agent);
+            _ = MonitorSetManualModeEventsAsync(client, agent);
+            _ = MonitorThermalInspectionEventsAsync(client, agent);
+            _ = MonitorCombustibleInspectionEventsAsync(client, agent);
+            _ = MonitorGasInspectionEventsAsync(client, agent);
+            _ = MonitorAcousticMeasureEventsAsync(client, agent);
 
             // Start battery decrease loop
             await BatteryDecreaseLoopAsync(client, agent);
@@ -92,6 +97,72 @@ class Program
             {
                 agent.Status = AnymalGrpc.Status.Active;
                 Console.WriteLine($"Waking up {agent.Name} (ID: {agent.Id})");
+            }
+        }
+    }
+
+    static async Task MonitorSetManualModeEventsAsync(AnymalService.AnymalServiceClient client, Agent agent)
+    {
+        using var call = client.StreamSetManualModeEvents(new SetManualModeEvent { Id = agent.Id });
+
+        await foreach (var response in call.ResponseStream.ReadAllAsync())
+        {
+            if (response.Id == agent.Id && agent.Status == AnymalGrpc.Status.Active)
+            {
+                agent.ManualMode = response.ManualMode;
+                Console.WriteLine($"Setting up manual mode for {agent.Name} (ID: {agent.Id}) with value {response.ManualMode}");
+            }
+        }
+    }
+
+    static async Task MonitorThermalInspectionEventsAsync(AnymalService.AnymalServiceClient client, Agent agent)
+    {
+        using var call = client.StreamThermalInspectionEvents(new ThermalInspectionEvent { Id = agent.Id });
+
+        await foreach (var response in call.ResponseStream.ReadAllAsync())
+        {
+            if (response.Id == agent.Id && agent.Status == AnymalGrpc.Status.Active && agent.BatteryLevel > 0)
+            {
+                Console.WriteLine($"Performing thermal inspection {agent.Name} (ID: {agent.Id})");
+            }
+        }
+    }
+
+    static async Task MonitorCombustibleInspectionEventsAsync(AnymalService.AnymalServiceClient client, Agent agent)
+    {
+        using var call = client.StreamCombustibleInspectionEvents(new CombustibleInspectionEvent { Id = agent.Id });
+
+        await foreach (var response in call.ResponseStream.ReadAllAsync())
+        {
+            if (response.Id == agent.Id && agent.Status == AnymalGrpc.Status.Active && agent.BatteryLevel > 0)
+            {
+                Console.WriteLine($"Performing combustible inspection {agent.Name} (ID: {agent.Id})");
+            }
+        }
+    }
+
+    static async Task MonitorGasInspectionEventsAsync(AnymalService.AnymalServiceClient client, Agent agent)
+    {
+        using var call = client.StreamGasInspectionEvents(new GasInspectionEvent { Id = agent.Id });
+
+        await foreach (var response in call.ResponseStream.ReadAllAsync())
+        {
+            if (response.Id == agent.Id && agent.Status == AnymalGrpc.Status.Active && agent.BatteryLevel > 0)
+            {
+                Console.WriteLine($"Performing gas inspection {agent.Name} (ID: {agent.Id})");
+            }
+        }
+    }
+
+    static async Task MonitorAcousticMeasureEventsAsync(AnymalService.AnymalServiceClient client, Agent agent)
+    {
+        using var call = client.StreamAcousticMeasureEvents(new AcousticMeasureEvent { Id = agent.Id });
+
+        await foreach (var response in call.ResponseStream.ReadAllAsync())
+        {
+            if (response.Id == agent.Id && agent.Status == AnymalGrpc.Status.Active && agent.BatteryLevel > 0)
+            {
+                Console.WriteLine($"Performing acoustic measure {agent.Name} (ID: {agent.Id})");
             }
         }
     }

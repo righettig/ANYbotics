@@ -28,6 +28,11 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ICommandHandler<RechargeBatteryCommand>, RechargeBatteryCommandHandler>();
         services.AddSingleton<ICommandHandler<ShutdownCommand>, ShutdownCommandHandler>();
         services.AddSingleton<ICommandHandler<WakeUpCommand>, WakeupCommandHandler>();
+        services.AddSingleton<ICommandHandler<SetManualModeCommand>, SetManualModeCommandHandler>();
+        services.AddSingleton<ICommandHandler<ThermalInspectionCommand>, ThermalInspectionCommandHandler>();
+        services.AddSingleton<ICommandHandler<CombustibleInspectionCommand>, CombustibleInspectionCommandHandler>();
+        services.AddSingleton<ICommandHandler<GasInspectionCommand>, GasInspectionCommandHandler>();
+        services.AddSingleton<ICommandHandler<AcousticMeasureCommand>, AcousticMeasureCommandHandler>();
 
         // Initialize Firebase Admin SDK
         FirebaseApp.Create(new AppOptions

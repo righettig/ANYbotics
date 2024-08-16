@@ -8,14 +8,15 @@ service AnymalService {
   rpc UpdateBattery (BatteryUpdate) returns (UpdateResponse);
   rpc UpdateStatus (StatusUpdate) returns (UpdateResponse);
 
-  // Server-side streaming RPC for the API to notify ANYmal(s) about "recharge battery" events
+  // Server-side streaming RPCs for the API to notify ANYmal(s) about events
   rpc StreamRechargeBatteryEvents(RechargeBatteryEvent) returns (stream RechargeBatteryEvent);
-
-  // Server-side streaming RPC for the API to notify ANYmal(s) about "shutdown" events
   rpc StreamShutdownEvents(ShutdownEvent) returns (stream ShutdownEvent);
-
-  // Server-side streaming RPC for the API to notify ANYmal(s) about "wakeup" events
   rpc StreamWakeupEvents(WakeupEvent) returns (stream WakeupEvent);
+  rpc StreamSetManualModeEvents(SetManualModeEvent) returns (stream SetManualModeEvent);
+  rpc StreamThermalInspectionEvents(ThermalInspectionEvent) returns (stream ThermalInspectionEvent);
+  rpc StreamCombustibleInspectionEvents(CombustibleInspectionEvent) returns (stream CombustibleInspectionEvent);
+  rpc StreamGasInspectionEvents(GasInspectionEvent) returns (stream GasInspectionEvent);
+  rpc StreamAcousticMeasureEvents(AcousticMeasureEvent) returns (stream AcousticMeasureEvent);
 }
 
 message Agent {
@@ -23,6 +24,7 @@ message Agent {
   string name = 2;
   int32 batteryLevel = 3;
   Status status = 4;
+  bool manualMode = 5;
 }
 
 message BatteryUpdate {
@@ -60,5 +62,26 @@ message ShutdownEvent {
 }
 
 message WakeupEvent {
+  string id = 1;
+}
+
+message SetManualModeEvent {
+  string id = 1;
+  bool manualMode = 2;
+}
+
+message ThermalInspectionEvent {
+  string id = 1;
+}
+
+message CombustibleInspectionEvent {
+  string id = 1;
+}
+
+message GasInspectionEvent {
+  string id = 1;
+}
+
+message AcousticMeasureEvent {
   string id = 1;
 }

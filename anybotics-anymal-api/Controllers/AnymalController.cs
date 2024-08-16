@@ -7,6 +7,12 @@ using AnymalService = anybotics_anymal_api.Services.AnymalService;
 
 namespace anybotics_anymal_api.Controllers;
 
+public class SetManualModeRequest 
+{
+    public string Id { get; set; }
+    public bool ManualMode { get; set; }
+}
+
 //[Authorize] // TODO: this requires more setup!
 [ApiController]
 [Route("[controller]")]
@@ -82,6 +88,81 @@ public class AnymalController(ICommandBus commandBus,
         }
 
         var result = await commandBus.SendAsync(new RechargeBatteryCommand(id, UserUid));
+
+        return Ok(result);
+    }
+
+    // POST: api/anymal/setmanualmode
+    [HttpPost("setmanualmode")]
+    [Deny("guest")]
+    public async Task<IActionResult> SetManualMode([FromBody] SetManualModeRequest request)
+    {
+        if (string.IsNullOrEmpty(request.Id))
+        {
+            return BadRequest("Invalid id.");
+        }
+
+        var result = await commandBus.SendAsync(new SetManualModeCommand(request.Id, UserUid, request.ManualMode));
+
+        return Ok(result);
+    }
+
+    // POST: api/anymal/thermalInspection
+    [HttpPost("thermalInspection")]
+    [Deny("guest")]
+    public async Task<IActionResult> ThermalInspection([FromBody] string id)
+    {
+        if (string.IsNullOrEmpty(id))
+        {
+            return BadRequest("Invalid id.");
+        }
+
+        var result = await commandBus.SendAsync(new ThermalInspectionCommand(id, UserUid));
+
+        return Ok(result);
+    }
+
+    // POST: api/anymal/combustibleInspection
+    [HttpPost("combustibleInspection")]
+    [Deny("guest")]
+    public async Task<IActionResult> CombustibleInspection([FromBody] string id)
+    {
+        if (string.IsNullOrEmpty(id))
+        {
+            return BadRequest("Invalid id.");
+        }
+
+        var result = await commandBus.SendAsync(new CombustibleInspectionCommand(id, UserUid));
+
+        return Ok(result);
+    }
+
+    // POST: api/anymal/gasInspection
+    [HttpPost("gasInspection")]
+    [Deny("guest")]
+    public async Task<IActionResult> GasInspection([FromBody] string id)
+    {
+        if (string.IsNullOrEmpty(id))
+        {
+            return BadRequest("Invalid id.");
+        }
+
+        var result = await commandBus.SendAsync(new GasInspectionCommand(id, UserUid));
+
+        return Ok(result);
+    }
+
+    // POST: api/anymal/acousticMeasure
+    [HttpPost("acousticMeasure")]
+    [Deny("guest")]
+    public async Task<IActionResult> AcousticMeasure([FromBody] string id)
+    {
+        if (string.IsNullOrEmpty(id))
+        {
+            return BadRequest("Invalid id.");
+        }
+
+        var result = await commandBus.SendAsync(new AcousticMeasureCommand(id, UserUid));
 
         return Ok(result);
     }

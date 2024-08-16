@@ -105,6 +105,51 @@ export class AgentService {
     await this.performAction(url, id);
   }
 
+  async thermalInspection(id: string): Promise<void> {
+    const url = `${this.baseApiUrl}/thermalInspection`;
+    await this.performAction(url, id);
+  }
+
+  async combustibleInspection(id: string): Promise<void> {
+    const url = `${this.baseApiUrl}/combustibleInspection`;
+    await this.performAction(url, id);
+  }
+
+  async gasInspection(id: string): Promise<void> {
+    const url = `${this.baseApiUrl}/gasInspection`;
+    await this.performAction(url, id);
+  }
+
+  async acousticMeasure(id: string): Promise<void> {
+    const url = `${this.baseApiUrl}/acousticMeasure`;
+    await this.performAction(url, id);
+  }
+
+  async setManualMode(id: string, manualMode: boolean): Promise<void> {
+    const url = `${this.baseApiUrl}/setmanualmode`;
+    
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': this.authService.accessToken!
+        },
+        body: JSON.stringify({
+          id, 
+          manualMode
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Error performing action:', error);
+      throw error;
+    }
+  }
+
   private async performAction(url: string, id: string): Promise<void> {
     try {
       const response = await fetch(url, {

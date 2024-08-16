@@ -45,7 +45,12 @@ public class AgentsHub : Hub
         {
             var agent = _anymalService.GetAgentById(id);
 
-            var agentDto = GetAgentDetailsStub(agent.Id, agent.Name, agent.BatteryLevel, agent.Status);
+            var agentDto = GetAgentDetailsStub(agent.Id,
+                                               agent.Name,
+                                               agent.BatteryLevel,
+                                               agent.ManualMode,
+                                               agent.Status);
+
             var commandDtos = await _commandRepository.GetCommandsByAgentIdAsync(id);
 
             // Fetch emails and build the command history
@@ -79,7 +84,7 @@ public class AgentsHub : Hub
         }
     }
 
-    private AgentDetailsDto GetAgentDetailsStub(string id, string name, int batteryLevel, AnymalGrpc.Status status)
+    private AgentDetailsDto GetAgentDetailsStub(string id, string name, int batteryLevel, bool manualMode, AnymalGrpc.Status status)
     {
         return new AgentDetailsDto
         {
@@ -93,7 +98,7 @@ public class AgentsHub : Hub
                 Model = "ANYmal X",
                 FirmwareVersion = "1.2.3",
                 FirmwareLastUpdated = new DateTime(2024, 7, 15, 12, 0, 0, DateTimeKind.Utc),
-                ManualModeOn = false,
+                ManualModeOn = manualMode,
                 Location = new Location
                 {
                     X = 123.45,
