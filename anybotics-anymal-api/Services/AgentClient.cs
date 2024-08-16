@@ -1,7 +1,7 @@
 ﻿using AnymalGrpc;
 using Grpc.Core;
 
-namespace AnymalApi.Services;
+namespace anybotics_anymal_api.Services;
 
 public class AgentClient
 {

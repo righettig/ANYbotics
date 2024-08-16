@@ -35,7 +35,9 @@ import { MatListModule } from '@angular/material/list';
 export class AgentDetailsComponent implements OnInit, OnDestroy {
   agent?: AgentDetailsDto;
   hardwareItems: { name: string; status: string }[] = [];
+  
   statusHistoryDataSource!: MatTableDataSource<{ timestamp: Date; status: string }>;
+  commandHistoryDataSource!: MatTableDataSource<{ initiatedBy: string, timestamp: Date, description: string }>;
   
   private subscription!: Subscription;
 
@@ -56,6 +58,7 @@ export class AgentDetailsComponent implements OnInit, OnDestroy {
         this.agent = agent;
         this.hardwareItems = this.createHardwareItems(this.agent.hardware);
         this.statusHistoryDataSource = new MatTableDataSource(this.agent.statusHistory);
+        this.commandHistoryDataSource = new MatTableDataSource(this.agent.commandHistory);
       }
     });
   }

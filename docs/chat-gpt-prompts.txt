@@ -273,7 +273,6 @@ Let me also know if you need more info from me.
 
 26) Refactor Program.cs
 
->>>
 27) I want to be able to audit the commands (i.e. Recharge, Shutdown & Wakeup) that have been submitted to agents. 
 
 	I would like to do that by using a command bus.
@@ -281,13 +280,23 @@ Let me also know if you need more info from me.
 	Show me how to do that and how to refactor AnymalController. I also need to retrieve the full list of commands that have been 
 	submitted to a given agent (by agent id).
 
-	(update agent details screen to show all commands)
+28) update agent details screen to show all commands
+		Please read the following code and let me know once you are ready by saying "OK".
+		
+			Back-end: {CODE}
+			Front-end {CODE}
 
-28) Introduce more commands | allow additional commands to be executed from details view
-
-
+		The code I showed you is part of a solution consisting of a front-end writting in Angular and a c# back-end API using ASP.Net Core.
+		The front-end app subscribes to a signalR hub (AgentsHub) to get real time data describing an agent (StreamAgentData). 
+		The data is represented using the AgentDetailsDto class. 
+		I now want to integrate a new http endpoint that I have added to the AnymalController called GetCommands. 
+		The returned data should be added to the CommandHistory array in the dto.
+		I also want to update the front-end dto model and make sure the corresponding table shows the additional data that is now available by means
+		of new columns added to the UI table.
+				
 TODO
 ====
+28) Introduce more commands | allow additional commands to be executed from details view
 
 27) NgRx, convert shutdown, recharge, wake up actions
 

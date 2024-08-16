@@ -11,7 +11,7 @@ public class AgentDetailsDto
     public required GeneralInfo General { get; set; }
     public required HardwareInfo Hardware { get; set; }
     public required List<string> RecentImages { get; set; }
-    public required List<string> CommandHistory { get; set; }
+    public required List<CommandHistoryItem> CommandHistory { get; set; }
     public required List<StatusHistoryItem> StatusHistory { get; set; }
 }
 
@@ -56,6 +56,13 @@ public class HardwareInfo
     public required string PanTiltUnit { get; set; }
     public required string Spotlight { get; set; }
     public required string UltrasonicMicrophone { get; set; }
+}
+
+public class CommandHistoryItem
+{
+    public string InitiatedBy { get; set; }
+    public DateTime Timestamp { get; set; }
+    public string Description { get; set; }
 }
 
 public class StatusHistoryItem

@@ -1,5 +1,7 @@
-﻿using anybotics_anymal_api.Models;
-using AnymalApi.Services;
+﻿using anybotics_anymal_api.Commands;
+using anybotics_anymal_api.Helpers;
+using anybotics_anymal_api.Models;
+using anybotics_anymal_api.Services;
 using Microsoft.AspNetCore.SignalR;
 
 namespace anybotics_anymal_api.Hubs;
@@ -7,10 +9,12 @@ namespace anybotics_anymal_api.Hubs;
 public class AgentsHub : Hub
 {
     private readonly AnymalService _anymalService;
+    private readonly ICommandRepository _commandRepository;
 
-    public AgentsHub(AnymalService anymalService)
+    public AgentsHub(AnymalService anymalService, ICommandRepository commandRepository)
     {
         _anymalService = anymalService;
+        _commandRepository = commandRepository;
     }
 
     public async Task StreamAgentsData()
@@ -35,11 +39,38 @@ public class AgentsHub : Hub
 
     public async Task StreamAgentData(string id)
     {
+        var userEmailsCache = new Dictionary<string, string>();
+
         while (true)
         {
             var agent = _anymalService.GetAgentById(id);
 
             var agentDto = GetAgentDetailsStub(agent.Id, agent.Name, agent.BatteryLevel, agent.Status);
+            var commandDtos = await _commandRepository.GetCommandsByAgentIdAsync(id);
+
+            // Fetch emails and build the command history
+            var commandHistoryTasks = commandDtos.Select(async c =>
+            {
+                // Try to get the email from the cache
+                if (!userEmailsCache.TryGetValue(c.InitiatedBy, out var userEmail))
+                {
+                    // Fetch email if not found in cache
+                    userEmail = await FirebaseUserHelper.GetUserEmailAsync(c.InitiatedBy);
+                    userEmailsCache[c.InitiatedBy] = userEmail;
+                }
+
+                // Return a new CommandHistoryItem
+                return new CommandHistoryItem
+                {
+                    InitiatedBy = userEmail,
+                    Timestamp = c.Timestamp,
+                    Description = c.ToString(),
+                };
+            });
+
+            // Await all tasks to complete and order them
+            var commandHistory = await Task.WhenAll(commandHistoryTasks);
+            agentDto.CommandHistory = commandHistory.OrderByDescending(x => x.Timestamp).ToList();
 
             await Clients.All.SendAsync("ReceiveAgentData", agentDto);
 
@@ -88,42 +119,36 @@ public class AgentsHub : Hub
                 Lte = "Running",
                 Cpu1 = "Running",
                 Cpu2 = "Running",
-                DepthCameras = new List<string>
-                {
+                DepthCameras =
+                [
                     "Running",
                     "Running",
                     "Failed",
                     "Running",
                     "Running",
                     "Running"
-                },
-                OpticalCameras = new List<string>
-                {
+                ],
+                OpticalCameras =
+                [
                     "Running",
                     "Anomaly_detected"
-                },
+                ],
                 ThermalCamera = "Running",
                 PanTiltUnit = "Failed",
                 Spotlight = "Running",
                 UltrasonicMicrophone = "Running"
             },
-            RecentImages = new List<string>
-            {
+            RecentImages =
+            [
                 "https://placehold.co/400?text=Room\\n1",
                 "https://placehold.co/400?text=Room\\n2",
                 "https://placehold.co/400?text=Room\\n3",
                 "https://placehold.co/400?text=Room\\n4",
                 "https://placehold.co/400?text=Room\\n5"
-            },
-            CommandHistory = new List<string>
-            {
-                "Initialized system",
-                "Started navigation",
-                "Executed pathfinding",
-                "Battery check completed"
-            },
-            StatusHistory = new List<StatusHistoryItem>
-            {
+            ],
+            CommandHistory = [],
+            StatusHistory =
+            [
                 new StatusHistoryItem
                 {
                     Timestamp = new DateTime(2024, 8, 10, 8, 0, 0, DateTimeKind.Utc),
@@ -144,7 +169,7 @@ public class AgentsHub : Hub
                     Timestamp = new DateTime(2024, 8, 13, 11, 50, 0, DateTimeKind.Utc),
                     Status = AnymalGrpc.Status.Active
                 }
-            }
+            ]
         };
     }
 }

@@ -2,7 +2,7 @@
 using Grpc.Core;
 using System.Collections.Concurrent;
 
-namespace AnymalApi.Services;
+namespace anybotics_anymal_api.Services;
 
 public class AnymalService : AnymalGrpc.AnymalService.AnymalServiceBase
 {

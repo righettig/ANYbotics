@@ -1,7 +1,7 @@
 ﻿using anybotics_anymal_api.Commands;
 using anybotics_anymal_api.Commands.CommandHandlers;
 using anybotics_anymal_api.Filters;
-using AnymalApi.Services;
+using anybotics_anymal_api.Services;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication;

@@ -82,15 +82,29 @@
     <mat-tab label="Command History">
       <mat-card>
         <mat-card-content>
-          <table mat-table [dataSource]="agent.commandHistory" class="mat-elevation-z8">
-            <!-- Command Column -->
-            <ng-container matColumnDef="command">
-              <th mat-header-cell *matHeaderCellDef> Command </th>
-              <td mat-cell *matCellDef="let command"> {{ command }} </td>
+          <table mat-table [dataSource]="commandHistoryDataSource" class="mat-elevation-z8">
+            <!-- Initiated By Column -->
+            <ng-container matColumnDef="initiatedBy">
+              <th mat-header-cell *matHeaderCellDef> Initiated By </th>
+              <td mat-cell *matCellDef="let command"> {{ command.initiatedBy }} </td>
+            </ng-container>
+
+            <!-- Timestamp Column -->
+            <ng-container matColumnDef="timestamp">
+              <th mat-header-cell *matHeaderCellDef> Timestamp </th>
+              <td mat-cell *matCellDef="let command"> 
+                {{ command.timestamp | date: 'yyyy-MM-dd HH:mm:ss.SSS' }}
+              </td>
+            </ng-container>
+
+            <!-- Description Column -->
+            <ng-container matColumnDef="description">
+              <th mat-header-cell *matHeaderCellDef> Command Description </th>
+              <td mat-cell *matCellDef="let command"> {{ command.description }} </td>
             </ng-container>
             
-            <tr mat-header-row *matHeaderRowDef="['command']"></tr>
-            <tr mat-row *matRowDef="let row; columns: ['command'];"></tr>
+            <tr mat-header-row *matHeaderRowDef="['initiatedBy', 'timestamp', 'description']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['initiatedBy', 'timestamp', 'description'];"></tr>
           </table>
         </mat-card-content>
       </mat-card>

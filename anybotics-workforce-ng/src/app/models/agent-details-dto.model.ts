@@ -2,6 +2,12 @@ import { Status } from './status.enum';
 
 export type HardwareStatus = 'Running' | 'Failed' | 'Anomaly_detected';
 
+export interface CommandHistoryItem {
+  initiatedBy: string;
+  timestamp: Date;
+  description: string;
+}
+
 export interface AgentDetailsDto {
   id: string;
   name: string;
@@ -43,6 +49,6 @@ export interface AgentDetailsDto {
   };
 
   recentImages: string[]; // URLs or IDs of recent images
-  commandHistory: string[]; // List of executed commands
+  commandHistory: CommandHistoryItem[]; // List of executed commands
   statusHistory: { timestamp: Date; status: string }[]; // History of status changes
 }

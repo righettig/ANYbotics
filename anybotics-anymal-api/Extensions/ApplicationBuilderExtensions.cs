@@ -1,6 +1,6 @@
 ﻿using anybotics_anymal_api.Hubs;
 using anybotics_anymal_api.Middlewares;
-using AnymalApi.Services;
+using anybotics_anymal_api.Services;
 
 namespace anybotics_anymal_api.Extensions;
 

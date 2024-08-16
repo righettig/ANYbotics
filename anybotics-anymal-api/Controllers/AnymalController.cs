@@ -3,9 +3,9 @@ using anybotics_anymal_api.CustomAttributes;
 using anybotics_anymal_api.Models;
 using AnymalGrpc;
 using Microsoft.AspNetCore.Mvc;
-using AnymalService = AnymalApi.Services.AnymalService;
+using AnymalService = anybotics_anymal_api.Services.AnymalService;
 
-namespace AnymalApi.Controllers;
+namespace anybotics_anymal_api.Controllers;
 
 //[Authorize] // TODO: this requires more setup!
 [ApiController]
@@ -90,13 +90,14 @@ public class AnymalController(ICommandBus commandBus,
     public async Task<IActionResult> GetCommands(string agentId)
     {
         var commandDtos = (await commandRepository.GetCommandsByAgentIdAsync(agentId))
-            .Select(x => new 
+            .Select(x => new
             {
                 x.AgentId,
                 x.InitiatedBy,
                 x.Timestamp,
                 Description = x.ToString(),
-            });
+            })
+            .OrderByDescending(x => x.Timestamp);
 
         return Ok(commandDtos);
     }

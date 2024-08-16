@@ -12,8 +12,13 @@ public class FirebaseUserHelper
         }
         catch (Exception ex)
         {
-            // Handle errors
             throw new Exception("Failed to retrieve user record from Firebase.", ex);
         }
+    }
+
+    public static async Task<string> GetUserEmailAsync(string uid)
+    {
+        var userRecord = await GetUserRecordAsync(uid);
+        return userRecord.Email;
     }
 }

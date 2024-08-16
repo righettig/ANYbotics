@@ -1,5 +1,5 @@
 ﻿using AnymalGrpc;
-using AnymalService = AnymalApi.Services.AnymalService;
+using AnymalService = anybotics_anymal_api.Services.AnymalService;
 
 namespace anybotics_anymal_api.Commands.CommandHandlers;
 
