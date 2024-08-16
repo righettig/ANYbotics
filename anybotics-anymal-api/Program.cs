@@ -1,3 +1,5 @@
+using anybotics_anymal_api.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

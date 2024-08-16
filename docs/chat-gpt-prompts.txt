@@ -268,26 +268,22 @@ Let me also know if you need more info from me.
 
 24) Agent details to use "real data" move stubbed full agent data to API
 
-25) I want to be able to audit the commands (i.e. Recharge, Shutdown & Wakeup) that have been submitted to agents. 
+25) Protect endpoints based on user role
+	(I had to tweak the permissions associated to firebase-adminsdk-7igq5@anybotics-c5ce9.iam.gserviceaccount.com)
 
-	I would like to do that by using an event sourcing framework. 
+26) Refactor Program.cs
+
+>>>
+27) I want to be able to audit the commands (i.e. Recharge, Shutdown & Wakeup) that have been submitted to agents. 
+
+	I would like to do that by using a command bus.
 	
 	Show me how to do that and how to refactor AnymalController. I also need to retrieve the full list of commands that have been 
 	submitted to a given agent (by agent id).
-	
-	I would like to have the following architecture:
-	
-	The AnymalController should create the event and put it in an in-memory queue
-	A background process (EventExecutor) picks up events one-by one and based on the event type it should delegate the execution of events to an event processor.
-	An event processor knows about the AnymalService and the given event.
-	
-	Finally extend the controller to retrieve all events by agent id by reading the in-memory queue.
-	
-26) Protect endpoints based on user role
-	(I had to tweak the permissions associated to firebase-adminsdk-7igq5@anybotics-c5ce9.iam.gserviceaccount.com)
 
+	(update agent details screen to show all commands)
 
->> Refactor Program.cs
+28) Introduce more commands | allow additional commands to be executed from details view
 
 
 TODO
@@ -306,10 +302,26 @@ TODO
 32) Download logs, images as bulk or single images, fullscreen images
 
 33) Babylon.js (manual drive mode)
-
-34) Introduce more commands
+		render robot in 2d/3d world and then show the agent in the details view
+			with "manual mode on" -> you can drive the agent
+			
+		I have an agent class which contains a location (x,y). I want to render agents using babylon.js
+		Generate an isometric 2d map which consists of a grid. In this map there are rooms and obstacles.
+		I want to be able to embed the world in an angular application 
+		
 
 35) [Authorize] to protect controllers
+
+36) Simulate events in anymal 
+
+- Every “x” amount of time the agent detects equipment failures, then performs maintenance.
+- Every “y” amount of time the agent identifies a thermal anomaly (room, equipment_id).
+- Every “z” amount of time the agent identifies an acoustic anomaly (room, equipment_id).
+- Every “k” amount of time the agent identifies gas/combustible (room, equipment_id).
+
+37) Fleet (group agents)
+
+38) Mission (collection of commands)
 
 BUGS
 	Fix auth (f5 refresh)

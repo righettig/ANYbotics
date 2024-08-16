@@ -2,6 +2,8 @@
 using anybotics_anymal_api.Middlewares;
 using AnymalApi.Services;
 
+namespace anybotics_anymal_api.Extensions;
+
 public static class ApplicationBuilderExtensions
 {
     public static IApplicationBuilder UseCustomMiddleware(this WebApplication app)

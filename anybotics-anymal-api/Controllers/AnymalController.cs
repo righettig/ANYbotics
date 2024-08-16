@@ -1,6 +1,7 @@
-﻿using anybotics_anymal_api.CustomAttributes;
+﻿using anybotics_anymal_api.Commands;
+using anybotics_anymal_api.CustomAttributes;
 using anybotics_anymal_api.Models;
-using Microsoft.AspNetCore.Authorization;
+using AnymalGrpc;
 using Microsoft.AspNetCore.Mvc;
 using AnymalService = AnymalApi.Services.AnymalService;
 
@@ -9,51 +10,33 @@ namespace AnymalApi.Controllers;
 //[Authorize] // TODO: this requires more setup!
 [ApiController]
 [Route("[controller]")]
-public class AnymalController : ControllerBase
+public class AnymalController(ICommandBus commandBus,
+                              ICommandRepository commandRepository,
+                              AnymalService anymalService) : ControllerBase
 {
-    private readonly AnymalService _anymalService;
-
-    public AnymalController(AnymalService anymalService)
-    {
-        _anymalService = anymalService;
-    }
-
     // GET: api/anymal
-    [Authorize]
     [HttpGet]
     public ActionResult<IEnumerable<AgentDto>> GetAllAgents()
     {
-        var agents = _anymalService.GetAllAgents()
-            .Select(agent => new AgentDto
-            {
-                Id = agent.Id,
-                Name = agent.Name,
-                BatteryLevel = agent.BatteryLevel,
-                Status = agent.Status
-            })
+        var agentDtos = anymalService.GetAllAgents()
+            .Select(MapToDto)
             .ToList();
 
-        return Ok(agents);
+        return Ok(agentDtos);
     }
 
     // GET: api/anymal/{id}
     [HttpGet("{id}")]
     public ActionResult<AgentDto> GetAgentById(string id)
     {
-        var agent = _anymalService.GetAgentById(id);
+        var agent = anymalService.GetAgentById(id);
 
         if (agent == null)
         {
             return NotFound();
         }
 
-        var agentDto = new AgentDto
-        {
-            Id = agent.Id,
-            Name = agent.Name,
-            BatteryLevel = agent.BatteryLevel,
-            Status = agent.Status
-        };
+        var agentDto = MapToDto(agent);
 
         return Ok(agentDto);
     }
@@ -68,9 +51,9 @@ public class AnymalController : ControllerBase
             return BadRequest("Invalid id.");
         }
 
-        var response = await _anymalService.ShutdownAsync(id);
+        var result = await commandBus.SendAsync(new ShutdownCommand(id, UserUid));
 
-        return Ok(response);
+        return Ok(result);
     }
 
     // POST: api/anymal/wakeup
@@ -83,13 +66,14 @@ public class AnymalController : ControllerBase
             return BadRequest("Invalid id.");
         }
 
-        var response = await _anymalService.WakeupAsync(id);
+        var result = await commandBus.SendAsync(new WakeUpCommand(id, UserUid));
 
-        return Ok(response);
+        return Ok(result);
     }
 
     // POST: api/anymal/recharge
     [HttpPost("recharge")]
+    [Deny("guest")]
     public async Task<IActionResult> RechargeAgentBattery([FromBody] string id)
     {
         if (string.IsNullOrEmpty(id))
@@ -97,8 +81,36 @@ public class AnymalController : ControllerBase
             return BadRequest("Invalid id.");
         }
 
-        var response = await _anymalService.RechargeBatteryAsync(id);
+        var result = await commandBus.SendAsync(new RechargeBatteryCommand(id, UserUid));
 
-        return Ok(response);
+        return Ok(result);
     }
+
+    [HttpGet("{agentId}/commands")]
+    public async Task<IActionResult> GetCommands(string agentId)
+    {
+        var commandDtos = (await commandRepository.GetCommandsByAgentIdAsync(agentId))
+            .Select(x => new 
+            {
+                x.AgentId,
+                x.InitiatedBy,
+                x.Timestamp,
+                Description = x.ToString(),
+            });
+
+        return Ok(commandDtos);
+    }
+
+    private AgentDto MapToDto(Agent agent)
+    {
+        return new AgentDto
+        {
+            Id = agent.Id,
+            Name = agent.Name,
+            BatteryLevel = agent.BatteryLevel,
+            Status = agent.Status
+        };
+    }
+
+    private string? UserUid => HttpContext.Items["UserUid"] as string;
 }

@@ -1,8 +1,13 @@
-﻿using anybotics_anymal_api.Filters;
+﻿using anybotics_anymal_api.Commands;
+using anybotics_anymal_api.Commands.CommandHandlers;
+using anybotics_anymal_api.Filters;
 using AnymalApi.Services;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication;
+
+namespace anybotics_anymal_api.Extensions;
+
 
 // Extension methods to organize service registration and middleware configuration
 public static class ServiceCollectionExtensions
@@ -15,7 +20,14 @@ public static class ServiceCollectionExtensions
         services.AddSignalR();
         services.AddControllersWithAuthorization();
         services.AddSwagger();
+
+        services.AddSingleton<ICommandBus, CommandBus>();
+        services.AddSingleton<ICommandRepository, InMemoryCommandRepository>();
         services.AddSingleton<AnymalService>();
+
+        services.AddSingleton<ICommandHandler<RechargeBatteryCommand>, RechargeBatteryCommandHandler>();
+        services.AddSingleton<ICommandHandler<ShutdownCommand>, ShutdownCommandHandler>();
+        services.AddSingleton<ICommandHandler<WakeUpCommand>, WakeupCommandHandler>();
 
         // Initialize Firebase Admin SDK
         FirebaseApp.Create(new AppOptions
