@@ -2,7 +2,7 @@
 
 namespace anybotics_anymal.CommandProcessors;
 
-public class AcousticMeasureCommandProcessor() : BaseCommandProcessor("Shutdown")
+public class AcousticMeasureCommandProcessor() : BaseCommandProcessor("AcousticMeasure")
 {
     public override void PerformCommand(Agent agent, Command response)
     {

@@ -16,14 +16,23 @@ public static class CommandProcessorDiscovery
         var commandProcessorTypes = assembly.GetTypes()
             .Where(type => typeof(ICommandProcessor).IsAssignableFrom(type) && !type.IsAbstract);
 
-        foreach (var type in commandProcessorTypes)
+        try
         {
-            // Create an instance of the command processor
-            var processor = (ICommandProcessor)Activator.CreateInstance(type);
+            foreach (var type in commandProcessorTypes)
+            {
+                // Create an instance of the command processor
+                var processor = (ICommandProcessor)Activator.CreateInstance(type);
 
-            // Add to the dictionary with the CommandId as the key
-            processors.Add(processor.CommandId, processor);
+                // Add to the dictionary with the CommandId as the key
+                processors.Add(processor.CommandId, processor);
+            }
         }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error registering command processor: " + e);
+            throw;
+        }
+
 
         return processors;
     }
