@@ -5,6 +5,7 @@ using anybotics_anymal_api.Services;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication;
+using System.Reflection;
 
 namespace anybotics_anymal_api.Extensions;
 
@@ -25,14 +26,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ICommandRepository, InMemoryCommandRepository>();
         services.AddSingleton<AnymalService>();
 
-        services.AddSingleton<ICommandHandler<RechargeBatteryCommand>, RechargeBatteryCommandHandler>();
-        services.AddSingleton<ICommandHandler<ShutdownCommand>, ShutdownCommandHandler>();
-        services.AddSingleton<ICommandHandler<WakeUpCommand>, WakeupCommandHandler>();
-        services.AddSingleton<ICommandHandler<SetManualModeCommand>, SetManualModeCommandHandler>();
-        services.AddSingleton<ICommandHandler<ThermalInspectionCommand>, ThermalInspectionCommandHandler>();
-        services.AddSingleton<ICommandHandler<CombustibleInspectionCommand>, CombustibleInspectionCommandHandler>();
-        services.AddSingleton<ICommandHandler<GasInspectionCommand>, GasInspectionCommandHandler>();
-        services.AddSingleton<ICommandHandler<AcousticMeasureCommand>, AcousticMeasureCommandHandler>();
+        services.AddCommandHandlers(Assembly.GetExecutingAssembly());
 
         // Initialize Firebase Admin SDK
         FirebaseApp.Create(new AppOptions
@@ -87,5 +81,21 @@ public static class ServiceCollectionExtensions
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
         return services;
+    }
+
+    private static void AddCommandHandlers(this IServiceCollection services, Assembly assembly)
+    {
+        // Find all types that implement ICommandHandler<T>
+        var commandHandlerTypes = assembly.GetTypes()
+            .Where(t => !t.IsAbstract && !t.IsInterface)
+            .SelectMany(t => t.GetInterfaces(), (t, i) => new { t, i })
+            .Where(ti => ti.i.IsGenericType && ti.i.GetGenericTypeDefinition() == typeof(ICommandHandler<>))
+            .ToList();
+
+        // Register each of these types as a singleton
+        foreach (var handlerType in commandHandlerTypes)
+        {
+            services.AddSingleton(handlerType.i, handlerType.t);
+        }
     }
 }

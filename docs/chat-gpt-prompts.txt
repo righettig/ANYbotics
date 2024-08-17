@@ -309,10 +309,41 @@ Let me also know if you need more info from me.
 
 	also introduced command processor in anymal agent
 
+33) Code generators
+	OK ServiceCollectionExtensions.cs, use reflection here
+		services.AddSingleton<ICommandHandler<RechargeBatteryCommand>, RechargeBatteryCommandHandler>();
+        services.AddSingleton<ICommandHandler<ShutdownCommand>, ShutdownCommandHandler>();
+        services.AddSingleton<ICommandHandler<WakeUpCommand>, WakeupCommandHandler>();
+        services.AddSingleton<ICommandHandler<SetManualModeCommand>, SetManualModeCommandHandler>();
+        services.AddSingleton<ICommandHandler<ThermalInspectionCommand>, ThermalInspectionCommandHandler>();
+        services.AddSingleton<ICommandHandler<CombustibleInspectionCommand>, CombustibleInspectionCommandHandler>();
+        services.AddSingleton<ICommandHandler<GasInspectionCommand>, GasInspectionCommandHandler>();
+        services.AddSingleton<ICommandHandler<AcousticMeasureCommand>, AcousticMeasureCommandHandler>();
+		
+	AnymalController.cs, separate the endpoint to be in Controllers\Endpoints\Commands and use reflection to mount the endpoints
+		
+	AnymalService.cs
+		each one of these should be put into a separate class, use partial class?
+		    public Task<UpdateResponse> WakeupAsync(string id)
+				=> PerformAgentActionAsync(id, async agentClient =>
+				{
+					if (agentClient.Agent.Status == AnymalGrpc.Status.Unavailable ||
+						agentClient.Agent.Status == AnymalGrpc.Status.Active)
+					{
+						throw new InvalidOperationException("Agent is either already Active or Unavailable. Wake up requests are ignored.");
+					}
+
+					var @event = new Command { Id = id, CommandId = "Wakeup" };
+					await agentClient.CommandStream?.WriteAsync(@event);
+
+					agentClient.Agent.Status = AnymalGrpc.Status.Active;
+				},
+				$"Waking up agent {id}.", "Agent not found.");
+	
+	agent.service.ts
+
 TODO
 ====
-
-33) Code generatora
 
 30) Add UI for SetManualMode On/Off
 

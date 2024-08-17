@@ -7,14 +7,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "anybotics-anymal", "anyboti
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "anybotics-anymal-api", "anybotics-anymal-api\anybotics-anymal-api.csproj", "{BE69C7A3-0D72-425A-BAB1-432E2889E40D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "anybotics-anymal-common", "anybotics-anymal-common\anybotics-anymal-common.csproj", "{6D7971E6-6CFB-473F-8C41-6F62D61B78B1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "anybotics-anymal-common", "anybotics-anymal-common\anybotics-anymal-common.csproj", "{6D7971E6-6CFB-473F-8C41-6F62D61B78B1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{41F67B93-1983-4FCD-8A33-CBAB760F5839}"
 	ProjectSection(SolutionItems) = preProject
+		add_command.js = add_command.js
 		agents.json = agents.json
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "anybotics-agent-runner", "anybotics-agent-runner\anybotics-agent-runner.csproj", "{372FBB22-8E6B-4485-ADCF-DE02FF6404DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "anybotics-agent-runner", "anybotics-agent-runner\anybotics-agent-runner.csproj", "{372FBB22-8E6B-4485-ADCF-DE02FF6404DB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
