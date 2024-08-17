@@ -150,6 +150,26 @@ export class AgentService {
     }
   }
 
+  async moveLeft(id: string): Promise<void> {
+    const url = `${this.baseApiUrl}/moveLeft`;
+    await this.performAction(url, id);
+  }
+
+  async moveRight(id: string): Promise<void> {
+    const url = `${this.baseApiUrl}/moveRight`;
+    await this.performAction(url, id);
+  }
+
+  async moveForward(id: string): Promise<void> {
+    const url = `${this.baseApiUrl}/moveForward`;
+    await this.performAction(url, id);
+  }
+
+  async moveBackward(id: string): Promise<void> {
+    const url = `${this.baseApiUrl}/moveBackward`;
+    await this.performAction(url, id);
+  }
+
   private async performAction(url: string, id: string): Promise<void> {
     try {
       const response = await fetch(url, {

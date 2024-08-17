@@ -375,14 +375,18 @@ Let me also know if you need more info from me.
 					$"Performing {{COMMAND_NAME}} agent {id}.", "Agent not found.");
 			}
 
-	TODO: agent.service.ts
+	OK agent.service.ts
+	
+34)	Introduce `move` (left, right, forward, backward) commands. They should update the agent location
+
+35) Update generator script: --skip-proto to avoid adding message to proto file
 
 TODO
 ====
 
 30) Add UI for SetManualMode On/Off
 
-31)	Introduce `move` (left, right, forward, backward) commands. They should update the agent location
+
 
 36) Simulate events in anymal 
 

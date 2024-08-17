@@ -20,6 +20,7 @@ message Agent {
   int32 batteryLevel = 3;
   Status status = 4;
   bool manualMode = 5;
+  Location location = 6;
 }
 
 message BatteryUpdate {
@@ -36,6 +37,12 @@ enum Status {
   Unavailable = 0;
   Active = 1;
   Offline = 2;
+}
+
+message Location {
+  int32 X = 1;
+  int32 Y = 2;
+  int32 Z = 3;
 }
 
 message RegistrationResponse {

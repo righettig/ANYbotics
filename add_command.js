@@ -2,7 +2,10 @@ const fs = require('fs');
 const path = require('path');
 
 // Get the command name from the command line arguments
-const COMMAND_NAME = process.argv[2];
+const args = process.argv.slice(2);
+const COMMAND_NAME = args.find(arg => !arg.startsWith('--'));
+const SKIP_PROTO = args.includes('--skip-proto');
+
 if (!COMMAND_NAME) {
     console.error("Please provide a command name as an argument.");
     process.exit(1);
@@ -108,7 +111,7 @@ public partial class AnymalService
     public Task<UpdateResponse> ${COMMAND_NAME}Async(string id)
         => PerformAgentActionAsync(id, async agentClient =>
         {
-            if (agentClient.Agent.Status == AnymalGrpc.Status.Offline)
+            if (agentClient.Agent.Status == Status.Offline)
             {
                 throw new InvalidOperationException("Agent is Offline. ${COMMAND_NAME} requests are ignored.");
             }
@@ -181,11 +184,11 @@ function updateAgentServiceFile() {
     console.log(`Agent service updated with ${COMMAND_NAME_CAMEL_CASE} method.`);
 }
 
-
-
 // Main function
 function main() {
-    addProtoMessage();
+    if (!SKIP_PROTO) {
+        addProtoMessage();
+    }
     createCommandFile();
     createCommandHandlerFile();
     createControllerFile();
