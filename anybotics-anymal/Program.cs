@@ -1,25 +1,10 @@
-﻿using anybotics_anymal.CommandProcessors;
+﻿using anybotics_anymal;
 using AnymalGrpc;
 using Grpc.Core;
 using Grpc.Net.Client;
 
 class Program
 {
-    static Dictionary<string, ICommandProcessor> CreateCommandProcessors()
-    {
-        return new Dictionary<string, ICommandProcessor>
-        {
-            { "Shutdown", new ShutdownCommandProcessor() },
-            { "Wakeup", new WakeupCommandProcessor() },
-            { "RechargeBattery", new RechargeBatteryCommandProcessor() },
-            { "SetManualMode", new SetManualModeCommandProcessor() },
-            { "ThermalInspection", new ThermalInspectionCommandProcessor() },
-            { "CombustibleInspection", new CombustibleInspectionCommandProcessor() },
-            { "GasInspection", new GasInspectionCommandProcessor() },
-            { "AcousticMeasure", new AcousticMeasureCommandProcessor() }
-        };
-    }
-
     static async Task Main(string[] args)
     {
         // Parse the agent name from the command-line arguments
@@ -70,7 +55,7 @@ class Program
 
     static async Task MonitorCommandsAsync(AnymalService.AnymalServiceClient client, Agent agent)
     {
-        var commandProcessors = CreateCommandProcessors();
+        var commandProcessors = CommandProcessorDiscovery.DiscoverCommandProcessors();
 
         using var call = client.StreamCommands(new CommandListener { Id = agent.Id });
 

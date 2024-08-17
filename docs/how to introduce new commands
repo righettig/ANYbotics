@@ -61,15 +61,7 @@ To add new command "AcousticMeasure"
 					},
 					$"{{COMMAND_NAME}} agent {id}.", "Agent not found.");	
 				
-	Anymal Agent
-		- Update \anybotics-anymal\Program.cs by adding entry to dictionary
-		
-			return new Dictionary<string, ICommandProcessor>
-			{
-				{ "{{COMMAND_NAME}}", new {{COMMAND_NAME}}CommandProcessor() },
-				...
-			};
-		
+	Anymal Agent	
 		- Add command processor in \CommandProcessors
 		
 			using AnymalGrpc;
