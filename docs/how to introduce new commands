@@ -1,65 +1,88 @@
 To add new command "AcousticMeasure"
 
-	- Add command in \api\Commands
-	
-		﻿namespace anybotics_anymal_api.Commands;
+	gRPC Proto
+		- Update proto by adding custom message payload (ask user)
 
-		public class {{COMMAND_NAME}}Command(string agentId, string initiatedBy) : CommandBase(agentId, initiatedBy)
-		{
-			public override string ToString() => "{{COMMAND_NAME}}";
-		}
-	
-	- Add command handler in \api\Commands\CommandHandlers
-	
-		﻿using AnymalGrpc;
-		using AnymalService = anybotics_anymal_api.Services.AnymalService;
+	API
+		- Add command in \api\Commands
+		
+			﻿namespace anybotics_anymal_api.Commands;
 
-		namespace anybotics_anymal_api.Commands.CommandHandlers;
-
-		public class {{COMMAND_NAME}}CommandHandler(AnymalService anymalService) : CommandHandlerBase<{{COMMAND_NAME}}Command>(anymalService)
-		{
-			public override async Task<UpdateResponse> HandleAsync({{COMMAND_NAME}}Command command)
+			public class {{COMMAND_NAME}}Command(string agentId, string initiatedBy) : CommandBase(agentId, initiatedBy)
 			{
-				return await anymalService.{{COMMAND_NAME}}Async(command.AgentId);
+				public override string ToString() => "{{COMMAND_NAME}}";
 			}
-		}
 		
-	- Add endpoint \api\Controllers
-	
-		// POST: api/anymal/{{COMMAND_NAME_CAMEL_CASE}}
-		[HttpPost("{{COMMAND_NAME_CAMEL_CASE}}")]
-		[Deny("guest")]
-		public async Task<IActionResult> {{COMMAND_NAME}}([FromBody] string id)
-		{
-			if (string.IsNullOrEmpty(id))
+		- Add command handler in \api\Commands\CommandHandlers
+		
+			﻿using AnymalGrpc;
+			using AnymalService = anybotics_anymal_api.Services.AnymalService;
+
+			namespace anybotics_anymal_api.Commands.CommandHandlers;
+
+			public class {{COMMAND_NAME}}CommandHandler(AnymalService anymalService) : CommandHandlerBase<{{COMMAND_NAME}}Command>(anymalService)
 			{
-				return BadRequest("Invalid id.");
-			}
-
-			var result = await commandBus.SendAsync(new {{COMMAND_NAME}}Command(id, UserUid));
-
-			return Ok(result);
-		}
-		
-	- Register DI dependencies, add the follwing line to ServiceCollectionExtensions.cs
-		services.AddSingleton<ICommandHandler<{{COMMAND_NAME}}Command>, {{COMMAND_NAME}}CommandHandler>();
-		
-	- AnymalService.cs
-			public Task<UpdateResponse> {{COMMAND_NAME}}Async(string id)
-				=> PerformAgentActionAsync(id, async agentClient =>
+				public override async Task<UpdateResponse> HandleAsync({{COMMAND_NAME}}Command command)
 				{
-					// condition here
+					return await anymalService.{{COMMAND_NAME}}Async(command.AgentId);
+				}
+			}
+		
+		- Add endpoint \api\Controllers
+		
+			// POST: api/anymal/{{COMMAND_NAME_CAMEL_CASE}}
+			[HttpPost("{{COMMAND_NAME_CAMEL_CASE}}")]
+			[Deny("guest")]
+			public async Task<IActionResult> {{COMMAND_NAME}}([FromBody] string id)
+			{
+				if (string.IsNullOrEmpty(id))
+				{
+					return BadRequest("Invalid id.");
+				}
 
-					var @event = new Command { Id = id, CommandId = "{{COMMAND_NAME}}" };
-					await agentClient.CommandStream?.WriteAsync(@event);
+				var result = await commandBus.SendAsync(new {{COMMAND_NAME}}Command(id, UserUid));
 
-					// update agent (api) here
-				},
-				$"{{COMMAND_NAME}} agent {id}.", "Agent not found.");	
+				return Ok(result);
+			}
+		
+		- Register DI dependencies, add the follwing line to ServiceCollectionExtensions.cs
+			services.AddSingleton<ICommandHandler<{{COMMAND_NAME}}Command>, {{COMMAND_NAME}}CommandHandler>();
+		
+		- AnymalService.cs
+				public Task<UpdateResponse> {{COMMAND_NAME}}Async(string id)
+					=> PerformAgentActionAsync(id, async agentClient =>
+					{
+						// condition here
+
+						var @event = new Command { Id = id, CommandId = "{{COMMAND_NAME}}" };
+						await agentClient.CommandStream?.WriteAsync(@event);
+
+						// update agent (api) here
+					},
+					$"{{COMMAND_NAME}} agent {id}.", "Agent not found.");	
 				
-	- Update proto by adding custom message payload 
-	
-	- Update \anybotics-anymal\Program.cs
+	Anymal Agent
+		- Update \anybotics-anymal\Program.cs by adding entry to dictionary
+		
+			return new Dictionary<string, ICommandProcessor>
+			{
+				{ "{{COMMAND_NAME}}", new {{COMMAND_NAME}}CommandProcessor() },
+				...
+			};
+		
+		- Add command processor in \CommandProcessors
+		
+			using AnymalGrpc;
+
+			namespace anybotics_anymal.CommandProcessors;
+
+			public class {{COMMAND_NAME}}CommandProcessor() : BaseCommandProcessor("{{COMMAND_NAME}}")
+			{
+				public override void PerformCommand(Agent agent, Command response)
+				{
+					// placeholder
+				}
+			}
 			
 	Front-end	
 		- update service \src\app\services\agent.service.ts
