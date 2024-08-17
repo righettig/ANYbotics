@@ -35,8 +35,8 @@ export class CommandsComponent implements OnInit {
     this.agentService.wakeupAgent(this.agentId!);
   }
   
-  setManualMode() {
-    this.agentService.setManualMode(this.agentId!, true); // TODO: hardcoded
+  setManualMode(manualMode: boolean) {
+    this.agentService.setManualMode(this.agentId!, manualMode);
   }
   
   thermalInspection() {

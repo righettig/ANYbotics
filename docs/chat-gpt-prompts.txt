@@ -381,13 +381,10 @@ Let me also know if you need more info from me.
 
 35) Update generator script: --skip-proto to avoid adding message to proto file
 
+36) Add UI for SetManualMode On/Off
+
 TODO
 ====
-
-30) Add UI for SetManualMode On/Off
-
-
-
 36) Simulate events in anymal 
 
 - Every “x” amount of time the agent detects equipment failures, then performs maintenance.
@@ -430,6 +427,7 @@ TODO
 38) Mission (collection of commands)
 
 BUGS
+	Loacation is null when moving
 	Fix auth (f5 refresh)
 	28) Cleanup signalR server side subscriptions
 	
