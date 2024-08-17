@@ -15,8 +15,7 @@ const protoFilePath = path.join(__dirname, 'anybotics-anymal-common', 'Protos', 
 const commandFilePath = path.join(__dirname, 'anybotics-anymal-api', 'Commands', `${COMMAND_NAME}Command.cs`);
 const commandHandlerFilePath = path.join(__dirname, 'anybotics-anymal-api', 'Commands', 'CommandHandlers', `${COMMAND_NAME}CommandHandler.cs`);
 const controllerFilePath = path.join(__dirname, 'anybotics-anymal-api', 'Controllers', `${COMMAND_NAME}Controller.cs`);
-const diFilePath = path.join(__dirname, 'anybotics-anymal-api', 'Extensions', 'ServiceCollectionExtensions.cs');
-const anymalServiceFilePath = path.join(__dirname, 'anybotics-anymal-api', 'Services', 'AnymalService.cs');
+const anymalServiceFilePath = path.join(__dirname, 'anybotics-anymal-api', 'Services', `AnymalService.${COMMAND_NAME}.cs`);
 const commandProcessorFilePath = path.join(__dirname, 'anybotics-anymal', 'CommandProcessors', `${COMMAND_NAME}CommandProcessor.cs`);
 const agentServiceFilePath = path.join(__dirname, 'anybotics-workforce-ng', 'src', 'app', 'services', 'agent.service.ts');
 
@@ -98,22 +97,30 @@ public class ${COMMAND_NAME}Controller(ICommandBus commandBus) : BaseAnymalComma
     console.log(`Controller file created for ${COMMAND_NAME}`);
 }
 
-function updateAnymalServiceFile() {
+function createAnymalServiceFile() {
     const anymalServiceContent = `
+using AnymalGrpc;
+
+namespace anybotics_anymal_api.Services;
+
+public partial class AnymalService
+{
     public Task<UpdateResponse> ${COMMAND_NAME}Async(string id)
         => PerformAgentActionAsync(id, async agentClient =>
         {
-            // condition here
+            if (agentClient.Agent.Status == AnymalGrpc.Status.Offline)
+            {
+                throw new InvalidOperationException("Agent is Offline. ${COMMAND_NAME} requests are ignored.");
+            }
 
             var @event = new Command { Id = id, CommandId = "${COMMAND_NAME}" };
             await agentClient.CommandStream?.WriteAsync(@event);
-
-            // update agent (api) here
         },
-        $"${COMMAND_NAME} agent {id}.", "Agent not found.");\n`;
+        $"Performing ${COMMAND_NAME} agent {id}.", "Agent not found.");
+}\n`;
 
-    fs.appendFileSync(anymalServiceFilePath, anymalServiceContent, 'utf8');
-    console.log(`AnymalService updated for ${COMMAND_NAME}`);
+    fs.writeFileSync(anymalServiceFilePath, anymalServiceContent, 'utf8');
+    console.log(`AnymalService file created for ${COMMAND_NAME}`);
 }
 
 function createCommandProcessorFile() {
@@ -151,7 +158,7 @@ function main() {
     createCommandFile();
     createCommandHandlerFile();
     createControllerFile();
-    updateAnymalServiceFile();
+    createAnymalServiceFile();
     createCommandProcessorFile();
     updateAgentServiceFile();
 }

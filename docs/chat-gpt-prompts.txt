@@ -350,24 +350,32 @@ Let me also know if you need more info from me.
 		}
 		
 	OK AnymalService.cs
-		each one of these should be put into a separate class, use partial class?
-		    public Task<UpdateResponse> WakeupAsync(string id)
-				=> PerformAgentActionAsync(id, async agentClient =>
-				{
-					if (agentClient.Agent.Status == AnymalGrpc.Status.Unavailable ||
-						agentClient.Agent.Status == AnymalGrpc.Status.Active)
-					{
-						throw new InvalidOperationException("Agent is either already Active or Unavailable. Wake up requests are ignored.");
-					}
-
-					var @event = new Command { Id = id, CommandId = "Wakeup" };
-					await agentClient.CommandStream?.WriteAsync(@event);
-
-					agentClient.Agent.Status = AnymalGrpc.Status.Active;
-				},
-				$"Waking up agent {id}.", "Agent not found.");
 	
-	agent.service.ts
+		Instead of modifying the AnymalService.cs I'd like to create a separate file 
+		
+		AnymalService.{{COMMAND_NAME}}.cs
+	
+			using AnymalGrpc;
+
+			namespace anybotics_anymal_api.Services;
+
+			public partial class AnymalService
+			{
+				public Task<UpdateResponse> {{COMMAND_NAME}}Async(string id)
+					=> PerformAgentActionAsync(id, async agentClient =>
+					{
+						if (agentClient.Agent.Status == AnymalGrpc.Status.Offline)
+						{
+							throw new InvalidOperationException("Agent is Offline. {{COMMAND_NAME}} requests are ignored.");
+						}
+
+						var @event = new Command { Id = id, CommandId = "{{COMMAND_NAME}}" };
+						await agentClient.CommandStream?.WriteAsync(@event);
+					},
+					$"Performing {{COMMAND_NAME}} agent {id}.", "Agent not found.");
+			}
+
+	TODO: agent.service.ts
 
 TODO
 ====
