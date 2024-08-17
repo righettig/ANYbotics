@@ -14,7 +14,7 @@ const COMMAND_NAME_CAMEL_CASE = COMMAND_NAME.charAt(0).toLowerCase() + COMMAND_N
 const protoFilePath = path.join(__dirname, 'anybotics-anymal-common', 'Protos', 'anymal.proto');
 const commandFilePath = path.join(__dirname, 'anybotics-anymal-api', 'Commands', `${COMMAND_NAME}Command.cs`);
 const commandHandlerFilePath = path.join(__dirname, 'anybotics-anymal-api', 'Commands', 'CommandHandlers', `${COMMAND_NAME}CommandHandler.cs`);
-const controllerFilePath = path.join(__dirname, 'anybotics-anymal-api', 'Controllers', 'AnymalController.cs');
+const controllerFilePath = path.join(__dirname, 'anybotics-anymal-api', 'Controllers', `${COMMAND_NAME}Controller.cs`);
 const diFilePath = path.join(__dirname, 'anybotics-anymal-api', 'Extensions', 'ServiceCollectionExtensions.cs');
 const anymalServiceFilePath = path.join(__dirname, 'anybotics-anymal-api', 'Services', 'AnymalService.cs');
 const commandProcessorFilePath = path.join(__dirname, 'anybotics-anymal', 'CommandProcessors', `${COMMAND_NAME}CommandProcessor.cs`);
@@ -67,33 +67,35 @@ public class ${COMMAND_NAME}CommandHandler(AnymalService anymalService) : Comman
     console.log(`Command handler file created for ${COMMAND_NAME}`);
 }
 
-function updateControllerFile() {
+function createControllerFile() {
     const controllerContent = `
-    // POST: api/anymal/${COMMAND_NAME_CAMEL_CASE}
-    [HttpPost("${COMMAND_NAME_CAMEL_CASE}")]
+using anybotics_anymal_api.Commands;
+using anybotics_anymal_api.CustomAttributes;
+using Microsoft.AspNetCore.Mvc;
+
+namespace anybotics_anymal_api.Controllers;
+
+[ApiController]
+[Route("anymal/${COMMAND_NAME_CAMEL_CASE}")]
+public class ${COMMAND_NAME}Controller(ICommandBus commandBus) : BaseAnymalCommandController(commandBus)
+{
+    [HttpPost]
     [Deny("guest")]
     public async Task<IActionResult> ${COMMAND_NAME}([FromBody] string id)
     {
-        if (string.IsNullOrEmpty(id))
+        var validationResult = ValidateId(id);
+        if (validationResult != null)
         {
-            return BadRequest("Invalid id.");
+            return validationResult;
         }
 
         var result = await commandBus.SendAsync(new ${COMMAND_NAME}Command(id, UserUid));
-
         return Ok(result);
-    }\n`;
+    }
+}\n`;
 
-    fs.appendFileSync(controllerFilePath, controllerContent, 'utf8');
-    console.log(`Controller updated for ${COMMAND_NAME}`);
-}
-
-function updateDIFile() {
-    const diContent = `
-    services.AddSingleton<ICommandHandler<${COMMAND_NAME}Command>, ${COMMAND_NAME}CommandHandler>();\n`;
-
-    fs.appendFileSync(diFilePath, diContent, 'utf8');
-    console.log(`DI updated for ${COMMAND_NAME}`);
+    fs.writeFileSync(controllerFilePath, controllerContent, 'utf8');
+    console.log(`Controller file created for ${COMMAND_NAME}`);
 }
 
 function updateAnymalServiceFile() {
@@ -148,8 +150,7 @@ function main() {
     addProtoMessage();
     createCommandFile();
     createCommandHandlerFile();
-    updateControllerFile();
-    updateDIFile();
+    createControllerFile();
     updateAnymalServiceFile();
     createCommandProcessorFile();
     updateAgentServiceFile();
