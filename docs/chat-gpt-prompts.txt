@@ -294,28 +294,41 @@ Let me also know if you need more info from me.
 		I also want to update the front-end dto model and make sure the corresponding table shows the additional data that is now available by means
 		of new columns added to the UI table.
 				
-TODO
-====
 29) Introduce more commands | allow additional commands to be executed from details view
 	- `thermal inspection`
 	- `combustible inspection`
 	- `gas inspection`
 	- `acoustic measure`
 
-30)	
-	- `move` (left, right, forward, backward)
-	
-27) NgRx, convert shutdown, recharge, wake up actions
+TODO
+====
 
-28) Nx, introduce "admin library"?
+32) Refactoring: it should be possible to have just a single command stream
+	message AgentEvent { // https://stackoverflow.com/questions/59787586/the-right-way-to-send-generic-data-types-with-protobuf3-in-c-net
+	  string id = 1;
+	  string commandId = 2,
+	  object payload = 3
+	}
 
-29) story book, e2e tests
+33) Generic code 
 
-30) UI notifications
+30) Add UI for SetManualMode On/Off
 
-31) Add Angular signals
+31)	Introduce `move` (left, right, forward, backward) commands. They should update the agent location
 
-32) Download logs, images as bulk or single images, fullscreen images
+36) Simulate events in anymal 
+
+- Every “x” amount of time the agent detects equipment failures, then performs maintenance.
+- Every “y” amount of time the agent identifies a thermal anomaly (room, equipment_id).
+- Every “z” amount of time the agent identifies an acoustic anomaly (room, equipment_id).
+- Every “k” amount of time the agent identifies gas/combustible (room, equipment_id).
+	send notifications via signalR to be displayed using UI notifications
+
+32) Nx, introduce "admin library"?
+
+33) story book
+
+34) e2e tests using Cypress
 
 33) Babylon.js (manual drive mode)
 		render robot in 2d/3d world and then show the agent in the details view
@@ -324,16 +337,19 @@ TODO
 		I have an agent class which contains a location (x,y). I want to render agents using babylon.js
 		Generate an isometric 2d map which consists of a grid. In this map there are rooms and obstacles.
 		I want to be able to embed the world in an angular application 
-		
 
+30) SetManualMode should support bool payload | UI should be autogenerate based on back-end definition
+	send a message back 
+
+27) NgRx, convert shutdown, recharge, wake up actions
+
+30) loading spinner for commands
+
+31) Add Angular signals
+
+32) Download logs, images as bulk or single images, fullscreen images
+	
 35) [Authorize] to protect controllers
-
-36) Simulate events in anymal 
-
-- Every “x” amount of time the agent detects equipment failures, then performs maintenance.
-- Every “y” amount of time the agent identifies a thermal anomaly (room, equipment_id).
-- Every “z” amount of time the agent identifies an acoustic anomaly (room, equipment_id).
-- Every “k” amount of time the agent identifies gas/combustible (room, equipment_id).
 
 37) Fleet (group agents)
 

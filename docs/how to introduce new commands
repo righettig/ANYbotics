@@ -1,0 +1,103 @@
+To add new command "AcousticMeasure"
+
+	- Add command in \api\Commands
+	
+		﻿namespace anybotics_anymal_api.Commands;
+
+		public class {{COMMAND_NAME}}Command(string agentId, string initiatedBy) : CommandBase(agentId, initiatedBy)
+		{
+			public override string ToString() => "{{COMMAND_NAME}}";
+		}
+	
+	- Add command handler in \api\Commands\CommandHandlers
+	
+		﻿using AnymalGrpc;
+		using AnymalService = anybotics_anymal_api.Services.AnymalService;
+
+		namespace anybotics_anymal_api.Commands.CommandHandlers;
+
+		public class {{COMMAND_NAME}}CommandHandler(AnymalService anymalService) : CommandHandlerBase<{{COMMAND_NAME}}Command>(anymalService)
+		{
+			public override async Task<UpdateResponse> HandleAsync({{COMMAND_NAME}}Command command)
+			{
+				return await anymalService.{{COMMAND_NAME}}Async(command.AgentId);
+			}
+		}
+		
+	- Add endpoint \api\Controllers
+	
+		// POST: api/anymal/{{COMMAND_NAME_CAMEL_CASE}}
+		[HttpPost("{{COMMAND_NAME_CAMEL_CASE}}")]
+		[Deny("guest")]
+		public async Task<IActionResult> {{COMMAND_NAME}}([FromBody] string id)
+		{
+			if (string.IsNullOrEmpty(id))
+			{
+				return BadRequest("Invalid id.");
+			}
+
+			var result = await commandBus.SendAsync(new {{COMMAND_NAME}}Command(id, UserUid));
+
+			return Ok(result);
+		}
+		
+	- Register DI dependencies, add the follwing line to ServiceCollectionExtensions.cs
+		services.AddSingleton<ICommandHandler<{{COMMAND_NAME}}Command>, {{COMMAND_NAME}}CommandHandler>();
+		
+	- Soon to be redundant
+		Add stream to AgentClient.cs
+			public IServerStreamWriter<{{COMMAND_NAME}}Event>? {{COMMAND_NAME}}Stream { get; set; }
+			
+		- AnymalService.cs
+			public override Task Stream{{COMMAND_NAME}}Events({{COMMAND_NAME}}Event request,
+															  IServerStreamWriter<{{COMMAND_NAME}}Event> responseStream,
+															  ServerCallContext context)
+				=> StreamEvents(request.Id, client => client.{{COMMAND_NAME}}Stream = responseStream, context);
+				
+			public Task<UpdateResponse> {{COMMAND_NAME}}Async(string id)
+				=> PerformAgentActionAsync(id, async agentClient =>
+				{
+					// condition here
+
+					var @event = new Command { Id = id, CommandId = "{{COMMAND_NAME}}" };
+					await agentClient.CommandStream?.WriteAsync(@event);
+
+					// update agent (api) here
+				},
+				$"{{COMMAND_NAME}} agent {id}.", "Agent not found.");	
+				
+		- Update proto
+			rpc Stream{{COMMAND_NAME}}Events({{COMMAND_NAME}}Event) returns (stream {{COMMAND_NAME}}Event);
+			
+			message {{COMMAND_NAME}}Event {
+			  string id = 1;
+			}
+	
+		- Update \anybotics-anymal\Program.cs
+			(1) 
+				_ = Monitor{{COMMAND_NAME}}EventsAsync(client, agent); 
+			
+			(2) 
+				static async Task Monitor{{COMMAND_NAME}}Async(AnymalService.AnymalServiceClient client, Agent agent)
+				{
+					using var call = client.Stream{{COMMAND_NAME}}Events(new {{COMMAND_NAME}}Event { Id = agent.Id });
+
+					await foreach (var response in call.ResponseStream.ReadAllAsync())
+					{
+						if (response.Id == agent.Id && agent.Status == AnymalGrpc.Status.Active)
+						{
+							// Placeholder
+						}
+					}
+				}
+		
+	
+	Front-end	
+		- update service \src\app\services\agent.service.ts
+		
+		 async {{COMMAND_NAME_CAMEL_CASE}}(id: string): Promise<void> {
+			const url = `${this.baseApiUrl}/{{COMMAND_NAME_CAMEL_CASE}}`;
+			await this.performAction(url, id);
+		  }
+		  
+	TODO write a nodejs script

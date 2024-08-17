@@ -1,4 +1,5 @@
 ﻿using AnymalGrpc;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using System.Collections.Concurrent;
 
@@ -30,45 +31,10 @@ public class AnymalService : AnymalGrpc.AnymalService.AnymalServiceBase
     public override Task<UpdateResponse> UpdateStatus(StatusUpdate request, ServerCallContext context)
         => UpdateAgentField(request.Id, agent => agent.Status = request.Status, "status", request.Status);
 
-    public override Task StreamRechargeBatteryEvents(RechargeBatteryEvent request,
-                                                     IServerStreamWriter<RechargeBatteryEvent> responseStream,
-                                                     ServerCallContext context)
-        => StreamEvents(request.Id, client => client.RechargeBatteryStream = responseStream, context);
-
-    public override Task StreamShutdownEvents(ShutdownEvent request,
-                                              IServerStreamWriter<ShutdownEvent> responseStream,
-                                              ServerCallContext context)
-        => StreamEvents(request.Id, client => client.ShutdownStream = responseStream, context);
-
-    public override Task StreamWakeupEvents(WakeupEvent request,
-                                            IServerStreamWriter<WakeupEvent> responseStream,
-                                            ServerCallContext context)
-        => StreamEvents(request.Id, client => client.WakeupStream = responseStream, context);
-
-    public override Task StreamSetManualModeEvents(SetManualModeEvent request,
-                                                   IServerStreamWriter<SetManualModeEvent> responseStream,
-                                                   ServerCallContext context)
-        => StreamEvents(request.Id, client => client.SetManualModeStream = responseStream, context);
-
-    public override Task StreamThermalInspectionEvents(ThermalInspectionEvent request,
-                                                       IServerStreamWriter<ThermalInspectionEvent> responseStream,
-                                                       ServerCallContext context)
-        => StreamEvents(request.Id, client => client.ThermalInspectionStream = responseStream, context);
-
-    public override Task StreamCombustibleInspectionEvents(CombustibleInspectionEvent request,
-                                                           IServerStreamWriter<CombustibleInspectionEvent> responseStream,
-                                                           ServerCallContext context)
-        => StreamEvents(request.Id, client => client.CombustibleInspectionStream = responseStream, context);
-
-    public override Task StreamGasInspectionEvents(GasInspectionEvent request,
-                                                   IServerStreamWriter<GasInspectionEvent> responseStream,
-                                                   ServerCallContext context)
-        => StreamEvents(request.Id, client => client.GasInspectionStream = responseStream, context);
-
-    public override Task StreamAcousticMeasureEvents(AcousticMeasureEvent request,
-                                                     IServerStreamWriter<AcousticMeasureEvent> responseStream,
-                                                     ServerCallContext context)
-        => StreamEvents(request.Id, client => client.AcousticMeasureStream = responseStream, context);
+    public override Task StreamCommands(CommandListener request,
+                                        IServerStreamWriter<Command> responseStream,
+                                        ServerCallContext context)
+        => StreamEvents(request.Id, client => client.CommandStream = responseStream, context);
 
     public Task<UpdateResponse> RechargeBatteryAsync(string id)
         => PerformAgentActionAsync(id, async agentClient =>
@@ -78,8 +44,8 @@ public class AnymalService : AnymalGrpc.AnymalService.AnymalServiceBase
                 throw new InvalidOperationException("Agent is Offline. Recharge requests are ignored.");
             }
 
-            var @event = new RechargeBatteryEvent { Id = id };
-            await agentClient.RechargeBatteryStream?.WriteAsync(@event);
+            var @event = new Command { Id = id, CommandId = "RechargeBattery" };
+            await agentClient.CommandStream?.WriteAsync(@event);
 
             agentClient.Agent.BatteryLevel = 100;
             agentClient.Agent.Status = AnymalGrpc.Status.Active;
@@ -94,8 +60,8 @@ public class AnymalService : AnymalGrpc.AnymalService.AnymalServiceBase
                 throw new InvalidOperationException("Agent is Offline. Shutdown requests are ignored.");
             }
 
-            var @event = new ShutdownEvent { Id = id };
-            await agentClient.ShutdownStream?.WriteAsync(@event);
+            var @event = new Command { Id = id, CommandId = "Shutdown" };
+            await agentClient.CommandStream?.WriteAsync(@event);
 
             agentClient.Agent.Status = AnymalGrpc.Status.Offline;
         },
@@ -110,8 +76,8 @@ public class AnymalService : AnymalGrpc.AnymalService.AnymalServiceBase
                 throw new InvalidOperationException("Agent is either already Active or Unavailable. Wake up requests are ignored.");
             }
 
-            var @event = new WakeupEvent { Id = id };
-            await agentClient.WakeupStream?.WriteAsync(@event);
+            var @event = new Command { Id = id, CommandId = "Wakeup" };
+            await agentClient.CommandStream?.WriteAsync(@event);
 
             agentClient.Agent.Status = AnymalGrpc.Status.Active;
         },
@@ -125,8 +91,9 @@ public class AnymalService : AnymalGrpc.AnymalService.AnymalServiceBase
                 throw new InvalidOperationException("Agent is Unavailable. Set manual mode requests are ignored.");
             }
 
-            var @event = new SetManualModeEvent { Id = id, ManualMode = manualMode };
-            await agentClient.SetManualModeStream?.WriteAsync(@event);
+            var payload = new SetManualModeRequest { ManualMode = manualMode };
+            var @event = new Command { Id = id, CommandId = "SetManualMode", Payload = Any.Pack(payload) };
+            await agentClient.CommandStream?.WriteAsync(@event);
 
             agentClient.Agent.ManualMode = manualMode;
         },
@@ -140,8 +107,8 @@ public class AnymalService : AnymalGrpc.AnymalService.AnymalServiceBase
                 throw new InvalidOperationException("Agent is Offline. ThermalInspection requests are ignored.");
             }
 
-            var @event = new ThermalInspectionEvent { Id = id };
-            await agentClient.ThermalInspectionStream?.WriteAsync(@event);
+            var @event = new Command { Id = id, CommandId = "ThermalInspection" };
+            await agentClient.CommandStream?.WriteAsync(@event);
         },
         $"Performing thermal inspection agent {id}.", "Agent not found.");
 
@@ -153,8 +120,8 @@ public class AnymalService : AnymalGrpc.AnymalService.AnymalServiceBase
                 throw new InvalidOperationException("Agent is Offline. CombustibleInspection requests are ignored.");
             }
 
-            var @event = new CombustibleInspectionEvent { Id = id };
-            await agentClient.CombustibleInspectionStream?.WriteAsync(@event);
+            var @event = new Command { Id = id, CommandId = "CombustibleInspection" };
+            await agentClient.CommandStream?.WriteAsync(@event);
         },
         $"Performing combustible inspection agent {id}.", "Agent not found.");
 
@@ -166,8 +133,8 @@ public class AnymalService : AnymalGrpc.AnymalService.AnymalServiceBase
                 throw new InvalidOperationException("Agent is Offline. GasInspection requests are ignored.");
             }
 
-            var @event = new GasInspectionEvent { Id = id };
-            await agentClient.GasInspectionStream?.WriteAsync(@event);
+            var @event = new Command { Id = id, CommandId = "GasInspection" };
+            await agentClient.CommandStream?.WriteAsync(@event);
         },
         $"Performing gas inspection agent {id}.", "Agent not found.");
 
@@ -179,8 +146,8 @@ public class AnymalService : AnymalGrpc.AnymalService.AnymalServiceBase
                 throw new InvalidOperationException("Agent is Offline. AcousticMeasure requests are ignored.");
             }
 
-            var @event = new AcousticMeasureEvent { Id = id };
-            await agentClient.AcousticMeasureStream?.WriteAsync(@event);
+            var @event = new Command { Id = id, CommandId = "AcousticMeasure" };
+            await agentClient.CommandStream?.WriteAsync(@event);
         },
         $"Performing acoustic measure agent {id}.", "Agent not found.");
 
