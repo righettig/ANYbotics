@@ -1,11 +1,10 @@
 ﻿using AnymalGrpc;
-using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using System.Collections.Concurrent;
 
 namespace anybotics_anymal_api.Services;
 
-public class AnymalService : AnymalGrpc.AnymalService.AnymalServiceBase
+public partial class AnymalService : AnymalGrpc.AnymalService.AnymalServiceBase
 {
     private readonly ILogger<AnymalService> _logger;
 
@@ -35,121 +34,6 @@ public class AnymalService : AnymalGrpc.AnymalService.AnymalServiceBase
                                         IServerStreamWriter<Command> responseStream,
                                         ServerCallContext context)
         => StreamEvents(request.Id, client => client.CommandStream = responseStream, context);
-
-    public Task<UpdateResponse> RechargeBatteryAsync(string id)
-        => PerformAgentActionAsync(id, async agentClient =>
-        {
-            if (agentClient.Agent.Status == AnymalGrpc.Status.Offline)
-            {
-                throw new InvalidOperationException("Agent is Offline. Recharge requests are ignored.");
-            }
-
-            var @event = new Command { Id = id, CommandId = "RechargeBattery" };
-            await agentClient.CommandStream?.WriteAsync(@event);
-
-            agentClient.Agent.BatteryLevel = 100;
-            agentClient.Agent.Status = AnymalGrpc.Status.Active;
-        },
-        $"Recharged agent {id} to 100%.", "Agent not found.");
-
-    public Task<UpdateResponse> ShutdownAsync(string id)
-        => PerformAgentActionAsync(id, async agentClient =>
-        {
-            if (agentClient.Agent.Status == AnymalGrpc.Status.Offline)
-            {
-                throw new InvalidOperationException("Agent is Offline. Shutdown requests are ignored.");
-            }
-
-            var @event = new Command { Id = id, CommandId = "Shutdown" };
-            await agentClient.CommandStream?.WriteAsync(@event);
-
-            agentClient.Agent.Status = AnymalGrpc.Status.Offline;
-        },
-        $"Shutting down agent {id}.", "Agent not found.");
-
-    public Task<UpdateResponse> WakeupAsync(string id)
-        => PerformAgentActionAsync(id, async agentClient =>
-        {
-            if (agentClient.Agent.Status == AnymalGrpc.Status.Unavailable ||
-                agentClient.Agent.Status == AnymalGrpc.Status.Active)
-            {
-                throw new InvalidOperationException("Agent is either already Active or Unavailable. Wake up requests are ignored.");
-            }
-
-            var @event = new Command { Id = id, CommandId = "Wakeup" };
-            await agentClient.CommandStream?.WriteAsync(@event);
-
-            agentClient.Agent.Status = AnymalGrpc.Status.Active;
-        },
-        $"Waking up agent {id}.", "Agent not found.");
-
-    public Task<UpdateResponse> SetManualModeAsync(string id, bool manualMode)
-        => PerformAgentActionAsync(id, async agentClient =>
-        {
-            if (agentClient.Agent.Status == AnymalGrpc.Status.Unavailable)
-            {
-                throw new InvalidOperationException("Agent is Unavailable. Set manual mode requests are ignored.");
-            }
-
-            var payload = new SetManualModeRequest { ManualMode = manualMode };
-            var @event = new Command { Id = id, CommandId = "SetManualMode", Payload = Any.Pack(payload) };
-            await agentClient.CommandStream?.WriteAsync(@event);
-
-            agentClient.Agent.ManualMode = manualMode;
-        },
-        $"Setting up manual mode for agent {id} with value {manualMode}", "Agent not found.");
-
-    public Task<UpdateResponse> ThermalInspectionAsync(string id)
-        => PerformAgentActionAsync(id, async agentClient =>
-        {
-            if (agentClient.Agent.Status == AnymalGrpc.Status.Offline)
-            {
-                throw new InvalidOperationException("Agent is Offline. ThermalInspection requests are ignored.");
-            }
-
-            var @event = new Command { Id = id, CommandId = "ThermalInspection" };
-            await agentClient.CommandStream?.WriteAsync(@event);
-        },
-        $"Performing thermal inspection agent {id}.", "Agent not found.");
-
-    public Task<UpdateResponse> CombustibleInspectionAsync(string id)
-        => PerformAgentActionAsync(id, async agentClient =>
-        {
-            if (agentClient.Agent.Status == AnymalGrpc.Status.Offline)
-            {
-                throw new InvalidOperationException("Agent is Offline. CombustibleInspection requests are ignored.");
-            }
-
-            var @event = new Command { Id = id, CommandId = "CombustibleInspection" };
-            await agentClient.CommandStream?.WriteAsync(@event);
-        },
-        $"Performing combustible inspection agent {id}.", "Agent not found.");
-
-    public Task<UpdateResponse> GasInspectionAsync(string id)
-        => PerformAgentActionAsync(id, async agentClient =>
-        {
-            if (agentClient.Agent.Status == AnymalGrpc.Status.Offline)
-            {
-                throw new InvalidOperationException("Agent is Offline. GasInspection requests are ignored.");
-            }
-
-            var @event = new Command { Id = id, CommandId = "GasInspection" };
-            await agentClient.CommandStream?.WriteAsync(@event);
-        },
-        $"Performing gas inspection agent {id}.", "Agent not found.");
-
-    public Task<UpdateResponse> AcousticMeasureAsync(string id)
-        => PerformAgentActionAsync(id, async agentClient =>
-        {
-            if (agentClient.Agent.Status == AnymalGrpc.Status.Offline)
-            {
-                throw new InvalidOperationException("Agent is Offline. AcousticMeasure requests are ignored.");
-            }
-
-            var @event = new Command { Id = id, CommandId = "AcousticMeasure" };
-            await agentClient.CommandStream?.WriteAsync(@event);
-        },
-        $"Performing acoustic measure agent {id}.", "Agent not found.");
 
     public IEnumerable<Agent> GetAllAgents() => _agentClients.Values.Select(ac => ac.Agent);
 

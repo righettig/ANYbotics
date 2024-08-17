@@ -349,7 +349,7 @@ Let me also know if you need more info from me.
 			}
 		}
 		
-	AnymalService.cs
+	OK AnymalService.cs
 		each one of these should be put into a separate class, use partial class?
 		    public Task<UpdateResponse> WakeupAsync(string id)
 				=> PerformAgentActionAsync(id, async agentClient =>
