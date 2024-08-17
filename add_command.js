@@ -142,15 +142,46 @@ public class ${COMMAND_NAME}CommandProcessor() : BaseCommandProcessor("${COMMAND
 }
 
 function updateAgentServiceFile() {
-    const agentServiceContent = `
-  async ${COMMAND_NAME_CAMEL_CASE}(id: string): Promise<void> {
+    // Read the existing content of the agent service file
+    const agentServiceContent = fs.readFileSync(agentServiceFilePath, 'utf8');
+
+    // Define the new method to be inserted
+    const newMethodContent = `  async ${COMMAND_NAME_CAMEL_CASE}(id: string): Promise<void> {
     const url = \`\${this.baseApiUrl}/${COMMAND_NAME_CAMEL_CASE}\`;
     await this.performAction(url, id);
-  }\n`;
+  }`;
 
-    fs.appendFileSync(agentServiceFilePath, agentServiceContent, 'utf8');
-    console.log(`Agent service updated for ${COMMAND_NAME}`);
+    // Define the marker to locate the position of the private performAction method
+    const marker = 'private async performAction(url: string, id: string): Promise<void> {';
+
+    // Find the position of the marker
+    const markerIndex = agentServiceContent.indexOf(marker);
+
+    if (markerIndex === -1) {
+        console.error('performAction method not found in the agent service file.');
+        return;
+    }
+
+    // Find the last method's ending bracket before the performAction method
+    const methodEndIndex = agentServiceContent.lastIndexOf('}', markerIndex);
+
+    if (methodEndIndex === -1) {
+        console.error('Unable to find the end of the last method in the agent service file.');
+        return;
+    }
+
+    // Insert the new method content after the last method
+    const updatedContent =
+        agentServiceContent.slice(0, methodEndIndex + 1) + '\n\n' +
+        newMethodContent +
+        agentServiceContent.slice(methodEndIndex + 1);
+
+    // Write the updated content back to the file
+    fs.writeFileSync(agentServiceFilePath, updatedContent, 'utf8');
+    console.log(`Agent service updated with ${COMMAND_NAME_CAMEL_CASE} method.`);
 }
+
+
 
 // Main function
 function main() {
