@@ -126,7 +126,7 @@ export class AgentService {
   }
 
   async setManualMode(id: string, manualMode: boolean): Promise<void> {
-    const url = `${this.baseApiUrl}/setmanualmode`;
+    const url = `${this.baseApiUrl}/setManualMode`;
     
     try {
       const response = await fetch(url, {

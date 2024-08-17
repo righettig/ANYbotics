@@ -11,7 +11,7 @@ public class SetManualModeRequest
 }
 
 [ApiController]
-[Route("anymal/setmanualmode")]
+[Route("anymal/setManualMode")]
 public class SetManualModeController(ICommandBus commandBus) : BaseAnymalCommandController(commandBus)
 {
     [HttpPost]

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace anybotics_anymal_api.Controllers;
 
 [ApiController]
-[Route("anymal/recharge")]
+[Route("anymal/rechargeBattery")]
 public class RechargeBatteryController(ICommandBus commandBus) : BaseAnymalCommandController(commandBus)
 {
     [HttpPost]
