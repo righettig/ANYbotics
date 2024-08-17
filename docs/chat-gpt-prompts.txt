@@ -320,7 +320,7 @@ Let me also know if you need more info from me.
         services.AddSingleton<ICommandHandler<GasInspectionCommand>, GasInspectionCommandHandler>();
         services.AddSingleton<ICommandHandler<AcousticMeasureCommand>, AcousticMeasureCommandHandler>();
 		
-	AnymalController.cs, separate the endpoint to be in Controllers\Endpoints\Commands and use reflection to mount the endpoints
+	OK AnymalController.cs, separate the endpoint to be in Controllers\Endpoints\Commands and use reflection to mount the endpoints
 		
 	AnymalService.cs
 		each one of these should be put into a separate class, use partial class?

@@ -91,7 +91,7 @@ export class AgentService {
   }
 
   async rechargeAgent(id: string): Promise<void> {
-    const url = `${this.baseApiUrl}/recharge`;
+    const url = `${this.baseApiUrl}/rechargeBattery`;
     await this.performAction(url, id);
   }
 
