@@ -300,9 +300,6 @@ Let me also know if you need more info from me.
 	- `gas inspection`
 	- `acoustic measure`
 
-TODO
-====
-
 32) Refactoring: it should be possible to have just a single command stream
 	message AgentEvent { // https://stackoverflow.com/questions/59787586/the-right-way-to-send-generic-data-types-with-protobuf3-in-c-net
 	  string id = 1;
@@ -310,7 +307,12 @@ TODO
 	  object payload = 3
 	}
 
-33) Generic code 
+	also introduced command processor in anymal agent
+
+TODO
+====
+
+33) Code generatora
 
 30) Add UI for SetManualMode On/Off
 
@@ -323,6 +325,8 @@ TODO
 - Every “z” amount of time the agent identifies an acoustic anomaly (room, equipment_id).
 - Every “k” amount of time the agent identifies gas/combustible (room, equipment_id).
 	send notifications via signalR to be displayed using UI notifications
+
+<---
 
 32) Nx, introduce "admin library"?
 
