@@ -55,9 +55,19 @@ export class CommandsComponent implements OnInit {
     this.agentService.acousticMeasure(this.agentId!);
   }
 
-  // TODO
-  left() {}
-  right() {}
-  forward() {}
-  backward() {}
+  moveLeft() {
+    this.agentService.moveLeft(this.agentId!);
+  }
+
+  moveRight() {
+    this.agentService.moveRight(this.agentId!);
+  }
+
+  moveForward() {
+    this.agentService.moveForward(this.agentId!);
+  }
+
+  moveBackward() {
+    this.agentService.moveBackward(this.agentId!);
+  }
 }
