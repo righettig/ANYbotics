@@ -1,3 +1,5 @@
+// Usage: node add_command.js Foo [--skip-proto]
+
 const fs = require('fs');
 const path = require('path');
 
