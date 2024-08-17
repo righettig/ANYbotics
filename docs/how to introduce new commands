@@ -48,7 +48,7 @@ To add new command "AcousticMeasure"
 		- Register DI dependencies, add the follwing line to ServiceCollectionExtensions.cs
 			services.AddSingleton<ICommandHandler<{{COMMAND_NAME}}Command>, {{COMMAND_NAME}}CommandHandler>();
 		
-		- AnymalService.cs
+		- AnymalService.cs, add this
 				public Task<UpdateResponse> {{COMMAND_NAME}}Async(string id)
 					=> PerformAgentActionAsync(id, async agentClient =>
 					{
@@ -84,4 +84,4 @@ To add new command "AcousticMeasure"
 			await this.performAction(url, id);
 		  }
 		  
-	TODO write a nodejs script
+	Please write a nodejs script to do that.
