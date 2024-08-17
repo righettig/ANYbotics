@@ -23,6 +23,7 @@ const controllerFilePath = path.join(__dirname, 'anybotics-anymal-api', 'Control
 const anymalServiceFilePath = path.join(__dirname, 'anybotics-anymal-api', 'Services', `AnymalService.${COMMAND_NAME}.cs`);
 const commandProcessorFilePath = path.join(__dirname, 'anybotics-anymal', 'CommandProcessors', `${COMMAND_NAME}CommandProcessor.cs`);
 const agentServiceFilePath = path.join(__dirname, 'anybotics-workforce-ng', 'src', 'app', 'services', 'agent.service.ts');
+const commandsFilePath = path.join(__dirname, 'anybotics-workforce-ng', 'src', 'app', 'commands', 'commands.component.ts');
 
 // Helper functions
 function addProtoMessage() {
@@ -186,6 +187,34 @@ function updateAgentServiceFile() {
     console.log(`Agent service updated with ${COMMAND_NAME_CAMEL_CASE} method.`);
 }
 
+function updateCommandsFile() {
+    // Read the existing content of the commands file
+    const commandsFileContent = fs.readFileSync(commandsFilePath, 'utf8');
+
+    // Define the new method to be inserted
+    const newMethodContent = `  ${COMMAND_NAME_CAMEL_CASE}() {
+    this.agentService.${COMMAND_NAME_CAMEL_CASE}(this.agentId!);
+  }`;
+
+    // Find the last method's ending bracket
+    const lastMethodEndIndex = commandsFileContent.lastIndexOf('}');
+
+    if (lastMethodEndIndex === -1) {
+        console.error('Unable to find the end of the last method in the commands file.');
+        return;
+    }
+
+    // Insert the new method content before the last closing bracket
+    const updatedContent =
+        commandsFileContent.slice(0, lastMethodEndIndex) + '\n' +
+        newMethodContent + '\n' +
+        commandsFileContent.slice(lastMethodEndIndex);
+
+    // Write the updated content back to the file
+    fs.writeFileSync(commandsFilePath, updatedContent, 'utf8');
+    console.log(`Commands file updated with ${COMMAND_NAME_CAMEL_CASE} method.`);
+}
+
 // Main function
 function main() {
     if (!SKIP_PROTO) {
@@ -197,6 +226,7 @@ function main() {
     createAnymalServiceFile();
     createCommandProcessorFile();
     updateAgentServiceFile();
+    updateCommandsFile();
 }
 
 // Execute script
