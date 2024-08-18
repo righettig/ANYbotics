@@ -20,7 +20,7 @@ export class UserProfileComponent {
   constructor(private authService: AuthService) {}
 
   ngOnInit() {
-    this.authService.isLoggedIn.subscribe(
+    this.authService.isLoggedIn$.subscribe(
       (status) => (this.isLoggedIn = status)
     );
   }

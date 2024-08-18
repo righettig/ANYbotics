@@ -383,6 +383,14 @@ Let me also know if you need more info from me.
 
 36) Add UI for SetManualMode On/Off
 
+37) I have an angular already written and now I need to integrate authentication using Firebase. I would like to be able to perform login, store the authentication token in local storage, make sure the token is included in every http request. When closing and reopening the browser (also when refreshing the page)  I want to make sure the user can still login if the token has not expired yet and automatically refresh it if needed.
+
+>>>
+38) I want to create an admin module in an angular app that is lazy loaded. Only admin user should be able to the page and able to access it.
+From the admin page I need to be able to list all the users, create new ones and change their roles. I am using Firebase to store user credentials and 
+the user roles are kept into a firestore collection called "userRoles"
+
+
 TODO
 ====
 36) Simulate events in anymal 
@@ -410,7 +418,6 @@ TODO
 		I want to be able to embed the world in an angular application 
 
 30) SetManualMode should support bool payload | UI should be autogenerate based on back-end definition
-	send a message back 
 
 27) NgRx, convert shutdown, recharge, wake up actions
 
@@ -426,8 +433,9 @@ TODO
 
 38) Mission (collection of commands)
 
+Improve internal documentation and create project level documentation
+
 BUGS
-	Loacation is null when moving
-	Fix auth (f5 refresh)
+	Location is null when moving
 	28) Cleanup signalR server side subscriptions
 	

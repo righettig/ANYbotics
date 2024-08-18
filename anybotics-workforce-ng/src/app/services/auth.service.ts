@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import { auth } from '../firebase-config';
@@ -8,68 +8,83 @@ import { auth } from '../firebase-config';
   providedIn: 'root',
 })
 export class AuthService {
-  private loggedIn = new BehaviorSubject<boolean>(false);
-  private userRole = new BehaviorSubject<string | null>(null);
-  
+  private loggedIn$ = new BehaviorSubject<boolean>(false);
+  private userRole$ = new BehaviorSubject<string | null>(null);
+  private initialized$ = new BehaviorSubject<boolean>(false);
   private db = getFirestore();
+  private firebaseToken?: string;
 
-  constructor() {
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        this.loggedIn.next(true);
-        const role = await this.fetchUserRole(user.email!); // Fetch and store the user role
-        this.accessToken = await user.getIdToken();
-        this.userRole.next(role);
-      } else {
-        this.accessToken = undefined;
-        this.loggedIn.next(false);
-        this.userRole.next(null); // Clear the role when the user logs out
-      }
-    });
+  get isLoggedIn$(): Observable<boolean> {
+    return this.loggedIn$.asObservable();
   }
 
-  accessToken: string | undefined;
-
-  get isLoggedIn() {
-    return this.loggedIn.asObservable();
+  get currentUserRole$(): Observable<string | null> {
+    return this.userRole$.asObservable();
   }
 
-  get currentUserRole() {
-    return this.userRole.asObservable();
+  get isInitialized$(): Observable<boolean> {
+    return this.initialized$.asObservable();
   }
 
-  login(email: string, password: string) {
+  get accessToken() {
+    return this.firebaseToken;
+  }
+
+  login(email: string, password: string): Promise<void> {
     return signInWithEmailAndPassword(auth, email, password)
-      .then(async () => {
-        this.loggedIn.next(true);
-        const role = await this.fetchUserRole(email); // Fetch and store the user role
-        this.userRole.next(role);
-      })
+      .then(() => this.updateUserState(email))
       .catch((error) => {
         console.error('Login error', error);
-        this.loggedIn.next(false);
-        this.userRole.next(null);
+        this.clearUserState();
       });
   }
 
-  logout() {
+  logout(): Promise<void> {
     return signOut(auth)
-      .then(() => {
-        this.loggedIn.next(false);
-        this.userRole.next(null); // Clear the role on logout
-      })
+      .then(() => this.clearUserState())
       .catch((error) => console.error('Logout error', error));
   }
 
-  // Fetch the user's role from Firestore
-  private async fetchUserRole(email: string): Promise<string | null> {
-    const docRef = doc(this.db, 'userRoles', email);
-    const docSnap = await getDoc(docRef);
+  initializeAuthState(): Promise<void> {
+    return new Promise((resolve) => {
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          this.firebaseToken = await user.getIdToken();
+          await this.updateUserState(user.email!);
+        } else {
+          this.clearUserState();
+        }
+        this.initialized$.next(true);
+        resolve(); // Resolving the promise after initialization
+      });
+    });
+  }
 
-    if (docSnap.exists()) {
-      return docSnap.data()['role'] || null;
-    } else {
-      console.log('No such document!');
+  private async updateUserState(email: string): Promise<void> {
+    const role = await this.fetchUserRole(email);
+    this.loggedIn$.next(true);
+    this.userRole$.next(role);
+  }
+
+  private clearUserState(): void {
+    this.firebaseToken = undefined;
+    this.loggedIn$.next(false);
+    this.userRole$.next(null);
+  }
+
+  private async fetchUserRole(email: string): Promise<string | null> {
+    try {
+      const docRef = doc(this.db, 'userRoles', email);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        return docSnap.data()['role'] || null;
+      } else {
+        console.log('No such document!');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error fetching user role:', error);
       return null;
     }
   }

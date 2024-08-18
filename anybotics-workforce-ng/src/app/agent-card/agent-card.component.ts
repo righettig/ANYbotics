@@ -9,6 +9,7 @@ import { AgentStatusComponent } from '../agent-status/agent-status.component';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { Subscription } from 'rxjs';
+import { Roles } from '../models/roles.enum';
 
 @Component({
   selector: 'app-agent-card',
@@ -38,8 +39,8 @@ export class AgentCardComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.subscription = this.authService.currentUserRole.subscribe((role) => {
-      this.displayActions = role !== 'guest'; // TODO: add enum
+    this.subscription = this.authService.currentUserRole$.subscribe((role) => {
+      this.displayActions = role !== Roles.Guest;
     });
   }
 
