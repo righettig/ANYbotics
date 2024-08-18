@@ -11,4 +11,9 @@ export const routes: Routes = [
   { path: 'agents', component: AgentsComponent, canActivate: [AuthGuard] },
   { path: 'agents/:id', component: AgentDetailsComponent, canActivate: [AuthGuard] },
   { path: 'commands/:id', component: CommandsComponent, canActivate: [AuthGuard] },
+  {
+    path: 'admin',
+    loadComponent: () => import('./admin/admin.component').then(m => m.AdminComponent),
+    canActivate: [AuthGuard]
+  },
 ];
