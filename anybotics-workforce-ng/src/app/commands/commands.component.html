@@ -1,6 +1,8 @@
 <h2>Peform commands {{ agentId }}</h2>
 
-<!-- TODO: add progress bar / spinner while command is being executed -->
+@if (isLoading) {
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+}
 
 <!-- TODO: this UI should be auto-generated from command description (coming from back-end) -->
 <h3>General</h3>

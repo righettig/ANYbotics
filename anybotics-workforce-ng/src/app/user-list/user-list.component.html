@@ -1,3 +1,6 @@
+@if (isLoading) {
+<mat-spinner mode="indeterminate"></mat-spinner>
+} @else {
 <mat-card class="user-list-card">
   <mat-card-header>
     <mat-card-title>Users</mat-card-title>
@@ -11,3 +14,4 @@
     }
   </mat-card-content>
 </mat-card>
+}

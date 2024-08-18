@@ -3,71 +3,86 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { AgentService } from '../services/agent.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-commands',
   standalone: true,
-  imports: [MatButtonModule, RouterModule, MatListModule],
+  imports: [MatButtonModule, RouterModule, MatListModule, MatProgressBarModule],
   templateUrl: './commands.component.html',
-  styleUrl: './commands.component.scss'
+  styleUrl: './commands.component.scss',
 })
 export class CommandsComponent implements OnInit {
   public agentId!: string | null;
+  public isLoading: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
     private agentService: AgentService
   ) {}
 
+  private performAction(action: () => Promise<void>) {
+    this.isLoading = true;
+    action().finally(() => {
+      this.isLoading = false;
+    });
+  }
+
   ngOnInit(): void {
     this.agentId = this.route.snapshot.paramMap.get('id');
   }
 
   shutdown() {
-    this.agentService.shutdownAgent(this.agentId!);
+    this.performAction(() => this.agentService.shutdownAgent(this.agentId!));
   }
 
   recharge() {
-    this.agentService.rechargeAgent(this.agentId!);
+    this.performAction(() => this.agentService.rechargeAgent(this.agentId!));
   }
-  
+
   wakeup() {
-    this.agentService.wakeupAgent(this.agentId!);
+    this.performAction(() => this.agentService.wakeupAgent(this.agentId!));
   }
-  
+
   setManualMode(manualMode: boolean) {
-    this.agentService.setManualMode(this.agentId!, manualMode);
+    this.performAction(() =>
+      this.agentService.setManualMode(this.agentId!, manualMode)
+    );
   }
-  
+
   thermalInspection() {
-    this.agentService.thermalInspection(this.agentId!);
+    this.performAction(() =>
+      this.agentService.thermalInspection(this.agentId!)
+    );
   }
-  
+
   combustibleInspection() {
-    this.agentService.combustibleInspection(this.agentId!);
+    this.performAction(() =>
+      this.agentService.combustibleInspection(this.agentId!)
+    );
   }
-  
+
   gasInspection() {
-    this.agentService.gasInspection(this.agentId!);
+    this.performAction(() => this.agentService.gasInspection(this.agentId!));
   }
-  
+
   acousticMeasure() {
-    this.agentService.acousticMeasure(this.agentId!);
+    this.performAction(() => this.agentService.acousticMeasure(this.agentId!));
   }
 
   moveLeft() {
-    this.agentService.moveLeft(this.agentId!);
+    this.performAction(() => this.agentService.moveLeft(this.agentId!));
   }
 
   moveRight() {
-    this.agentService.moveRight(this.agentId!);
+    this.performAction(() => this.agentService.moveRight(this.agentId!));
   }
 
   moveForward() {
-    this.agentService.moveForward(this.agentId!);
+    this.performAction(() => this.agentService.moveForward(this.agentId!));
   }
 
   moveBackward() {
-    this.agentService.moveBackward(this.agentId!);
+    this.performAction(() => this.agentService.moveBackward(this.agentId!));
   }
 }
