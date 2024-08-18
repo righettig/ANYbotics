@@ -4,9 +4,12 @@ import { AgentDetailsComponent } from './agent-details/agent-details.component';
 import { LoginComponent } from './login/login.component';
 import { AuthGuard } from './auth.guard';
 import { CommandsComponent } from './commands/commands.component';
+import { AdminGuard } from './admin.guard';
+import { NotAuthorizedComponent } from './not-authorized/not-authorized.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/agents', pathMatch: 'full' },
+  { path: 'not-authorized', component: NotAuthorizedComponent },
   { path: 'login', component: LoginComponent },
   { path: 'agents', component: AgentsComponent, canActivate: [AuthGuard] },
   { path: 'agents/:id', component: AgentDetailsComponent, canActivate: [AuthGuard] },
@@ -14,6 +17,6 @@ export const routes: Routes = [
   {
     path: 'admin',
     loadComponent: () => import('./admin/admin.component').then(m => m.AdminComponent),
-    canActivate: [AuthGuard]
+    canActivate: [AdminGuard]
   },
 ];

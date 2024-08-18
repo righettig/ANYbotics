@@ -13,7 +13,7 @@
     <span>Settings</span>
   </button>
   @if (isAdmin) {
-  <button mat-menu-item>
+  <button mat-menu-item [routerLink]="['/admin']">
     <mat-icon>supervisor_account</mat-icon>
     <span>Admin</span>
   </button>

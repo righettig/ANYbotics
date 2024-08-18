@@ -2,14 +2,20 @@ import { Component, inject } from '@angular/core';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../services/auth.service';
 import { MatMenuModule } from '@angular/material/menu';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { Roles } from '../models/roles.enum';
 
 @Component({
   selector: 'app-user-profile',
   standalone: true,
-  imports: [MatIcon, MatMenuModule, MatButtonModule, MatIconModule],
+  imports: [
+    MatIcon,
+    MatMenuModule,
+    MatButtonModule,
+    MatIconModule,
+    RouterModule,
+  ],
   templateUrl: './user-profile.component.html',
   styleUrl: './user-profile.component.scss',
 })

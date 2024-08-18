@@ -401,8 +401,6 @@ TODO
 - Every “k” amount of time the agent identifies gas/combustible (room, equipment_id).
 	send notifications via signalR to be displayed using UI notifications
 
-<---
-
 32) Nx, introduce "admin library"?
 
 33) story book
@@ -419,9 +417,9 @@ TODO
 
 30) SetManualMode should support bool payload | UI should be autogenerate based on back-end definition
 
-27) NgRx, convert shutdown, recharge, wake up actions
-
 30) loading spinner for commands
+
+27) NgRx, convert shutdown, recharge, wake up actions
 
 31) Add Angular signals
 
@@ -431,7 +429,7 @@ TODO
 
 37) Fleet (group agents)
 
-38) Mission (collection of commands)
+38) Mission (collection of commands), store per user basis on firestore
 
 Improve internal documentation and create project level documentation
 
