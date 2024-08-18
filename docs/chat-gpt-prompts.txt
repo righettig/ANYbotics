@@ -390,6 +390,8 @@ Let me also know if you need more info from me.
 From the admin page I need to be able to list all the users, create new ones and change their roles. I am using Firebase to store user credentials and 
 the user roles are kept into a firestore collection called "userRoles". I do not need details on how to setup firebase please.
 
+also define http interceptor
+
 
 TODO
 ====
