@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { HttpService } from '../http.service';
 
 @Injectable({
   providedIn: 'root',
@@ -6,20 +7,17 @@ import { Injectable } from '@angular/core';
 export class AdminService {
   private readonly apiUrl = 'https://localhost:7272/Admin/list';
 
+  constructor(private http: HttpService) {}
+
   async getUsers(): Promise<{ uid: string; email: string }[]> {
-    const response = await fetch(this.apiUrl, {
+    const response = await this.http.fetch(this.apiUrl, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        // Uncomment and use the authorization header if needed
-        // 'Authorization': this.authService.accessToken!
-      }
     });
 
     if (!response.ok) {
       throw new Error(`Network response was not ok: ${response.statusText}`);
     }
 
-    return response.json(); // Parse the response body as JSON
+    return response.json();
   }
 }

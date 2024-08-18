@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { AgentDto } from '../models/agent-dto.model';
 import { AgentDetailsDto } from '../models/agent-details-dto.model';
-import { AuthService } from './auth.service';
+import { HttpService } from '../http.service';
 
 import * as signalR from '@microsoft/signalr';
 
@@ -21,7 +21,7 @@ export class AgentService {
   agents$ = this.agentsSubject.asObservable();
   agent$ = this.agentSubject.asObservable();
 
-  constructor(private authService: AuthService) {
+  constructor(private http: HttpService) {
     this.hubConnection = new signalR.HubConnectionBuilder()
       .withUrl(`${this.baseUrl}/agentsHub`, { withCredentials: false })
       .withAutomaticReconnect()
@@ -57,7 +57,7 @@ export class AgentService {
         .catch((err) => console.error('Error while starting the stream', err));
     });
   }
-  
+
   stopConnection() {
     if (this.hubConnection) {
       this.hubConnection
@@ -127,17 +127,13 @@ export class AgentService {
 
   async setManualMode(id: string, manualMode: boolean): Promise<void> {
     const url = `${this.baseApiUrl}/setManualMode`;
-    
+
     try {
-      const response = await fetch(url, {
+      const response = await this.http.fetch(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': this.authService.accessToken!
-        },
         body: JSON.stringify({
-          id, 
-          manualMode
+          id,
+          manualMode,
         }),
       });
 
@@ -172,12 +168,8 @@ export class AgentService {
 
   private async performAction(url: string, id: string): Promise<void> {
     try {
-      const response = await fetch(url, {
+      const response = await this.http.fetch(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': this.authService.accessToken!
-        },
         body: JSON.stringify(id),
       });
 
