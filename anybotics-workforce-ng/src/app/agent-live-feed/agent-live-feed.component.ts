@@ -48,7 +48,6 @@ export class AgentLiveFeedComponent implements AfterViewInit {
     this.createCamera(canvas);
     this.createLight();
     this.createGround();
-    //this.createObj();
     this.createRooms();
     this.createAnymalAgent(new Vector3(0, 0.65, 0));
   }
@@ -89,20 +88,6 @@ export class AgentLiveFeedComponent implements AfterViewInit {
     );
   }
 
-  private createObj(): void {
-    // Create a sphere mesh
-    const sphere = MeshBuilder.CreateSphere(
-      'sphere',
-      { diameter: 2 },
-      this.scene
-    );
-
-    // Create a standard material and assign it to the sphere
-    const material = new StandardMaterial('material1', this.scene);
-    material.diffuseColor = new Color3(1, 0, 0); // Red color
-    sphere.material = material;
-  }
-
   private createGround(): void {
     const gridMaterial = new GridMaterial('grid', this.scene);
     gridMaterial.gridRatio = 1;
@@ -132,19 +117,22 @@ export class AgentLiveFeedComponent implements AfterViewInit {
       new Vector3(-10, wallHeight / 2, -10),
       roomSize,
       wallHeight,
-      wallThickness
+      wallThickness,
+      new Color3(1, 0, 0) // Red object
     );
     this.createRoom(
       new Vector3(10, wallHeight / 2, -10),
       roomSize,
       wallHeight,
-      wallThickness
+      wallThickness,
+      new Color3(0, 1, 0) // Green object
     );
     this.createRoom(
       new Vector3(-10, wallHeight / 2, 10),
       roomSize,
       wallHeight,
-      wallThickness
+      wallThickness,
+      new Color3(0, 0, 1) // Blue object
     );
   }
 
@@ -152,7 +140,8 @@ export class AgentLiveFeedComponent implements AfterViewInit {
     position: Vector3,
     size: number,
     height: number,
-    thickness: number
+    thickness: number,
+    objectColor: Color3
   ): void {
     const halfSize = size / 2;
 
@@ -184,6 +173,20 @@ export class AgentLiveFeedComponent implements AfterViewInit {
       this.scene
     );
     wall4.position = new Vector3(position.x + halfSize, position.y, position.z);
+
+    // Create a unique object in the room
+    this.createRoomObject(position, objectColor);
+  }
+
+  private createRoomObject(position: Vector3, color: Color3): void {
+    // Create a box object
+    const object = MeshBuilder.CreateBox('roomObject', { size: 1 }, this.scene);
+    object.position = new Vector3(position.x, 0.5, position.z); // Placed directly on the ground
+
+    // Create a material and assign it to the object
+    const material = new StandardMaterial('objectMaterial', this.scene);
+    material.diffuseColor = color;
+    object.material = material;
   }
 
   private createAnymalAgent(position: Vector3): void {
