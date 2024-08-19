@@ -1,4 +1,10 @@
-import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  ViewChild,
+  AfterViewInit,
+  HostListener,
+} from '@angular/core';
 
 import {
   Engine,
@@ -8,6 +14,7 @@ import {
   HemisphericLight,
   MeshBuilder,
   FreeCamera,
+  Camera,
 } from '@babylonjs/core';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import { GridMaterial } from '@babylonjs/materials/grid/gridMaterial';
@@ -27,6 +34,11 @@ export class AgentLiveFeedComponent implements AfterViewInit {
   private engine!: Engine;
   private scene!: Scene;
 
+  private topDownCamera!: ArcRotateCamera;
+  private freeCamera!: FreeCamera;
+
+  private isTopDownView = false; // Track the current view
+
   ngAfterViewInit(): void {
     const canvas = this.renderCanvas.nativeElement;
 
@@ -42,41 +54,70 @@ export class AgentLiveFeedComponent implements AfterViewInit {
     window.addEventListener('resize', () => {
       this.engine.resize();
     });
+
+    // TODO: this needs to be invoked after clicking on the tab to ensure scene is correctly rendered
+    this.engine.resize(); // Force engine to resize to refresh the view
   }
 
   private initializeScene(canvas: HTMLCanvasElement): void {
-    this.createCamera(canvas);
+    this.createCameras(canvas);
     this.createLight();
     this.createGround();
     this.createRooms();
     this.createAnymalAgent(new Vector3(0, 0.65, 0));
   }
 
-  private createCamera(canvas: HTMLCanvasElement): void {
+  private createCameras(canvas: HTMLCanvasElement): void {
+    // // Create an orthographic camera
+    // const camera = new FreeCamera(
+    //   'orthoCamera',
+    //   new Vector3(0, 0, 10),
+    //   this.scene
+    // );
+    // camera.mode = Camera.ORTHOGRAPHIC_CAMERA;
+
+    // // Set orthographic parameters
+    // const aspectRatio = canvas.width / canvas.height;
+    // const orthoWidth = 10; // Width of the orthographic view
+    // const orthoHeight = orthoWidth / aspectRatio; // Calculate height based on aspect ratio
+
+    // camera.orthoLeft = -orthoWidth / 2;
+    // camera.orthoRight = orthoWidth / 2;
+    // camera.orthoTop = orthoHeight / 2;
+    // camera.orthoBottom = -orthoHeight / 2;
+
+    // // Point the camera to look downwards
+    // camera.setTarget(Vector3.Zero());
+
     // The ArcRotateCamera is designed to orbit around a target.
     // It is ideal for situations where you want to focus on a particular object or point in the scene
     // and allow the user to rotate around it.
     // The camera orbits around a target point using three parameters: alpha, beta, and radius.
-    // const camera = new ArcRotateCamera(
-    //   'camera1',
-    //   -Math.PI / 2,
-    //   Math.PI / 4,
-    //   100, // 4
-    //   Vector3.Zero(),
-    //   this.scene
-    // );
-    // camera.attachControl(canvas, true);
+    this.topDownCamera = new ArcRotateCamera(
+      'topDownCamera',
+      -Math.PI / 2,
+      Math.PI / 2.5,
+      50,
+      Vector3.Zero(),
+      this.scene, 
+      true
+    );
+    this.topDownCamera.attachControl(canvas, true);
 
     // The FreeCamera offers more traditional first-person or free movement controls.
     // It can move freely in any direction (forward, backward, left, right, up, down) without being tied
     // to a specific target or point of interest.
-    const camera = new FreeCamera(
-      'camera1',
+    this.freeCamera = new FreeCamera(
+      'freeCamera',
       new Vector3(0, 10, -30),
-      this.scene
+      this.scene,
+      true
     );
-    camera.setTarget(Vector3.Zero());
-    camera.attachControl(canvas, false);
+    this.freeCamera.setTarget(Vector3.Zero());
+    this.freeCamera.attachControl(canvas, true);
+
+    // Initialize with the 3D camera
+    this.scene.activeCamera = this.freeCamera;
   }
 
   private createLight(): void {
@@ -96,7 +137,6 @@ export class AgentLiveFeedComponent implements AfterViewInit {
     gridMaterial.backFaceCulling = false;
     gridMaterial.mainColor = new Color3(1, 1, 1);
     gridMaterial.lineColor = new Color3(0.5, 0.5, 0.5);
-    // gridMaterial.opacity = 0.8;
 
     // Create a ground plane
     const ground = MeshBuilder.CreateGround(
@@ -108,7 +148,6 @@ export class AgentLiveFeedComponent implements AfterViewInit {
   }
 
   private createRooms(): void {
-    // Create a few rooms using walls
     const wallHeight = 3;
     const wallThickness = 0.2;
     const roomSize = 10;
@@ -179,11 +218,9 @@ export class AgentLiveFeedComponent implements AfterViewInit {
   }
 
   private createRoomObject(position: Vector3, color: Color3): void {
-    // Create a box object
     const object = MeshBuilder.CreateBox('roomObject', { size: 1 }, this.scene);
     object.position = new Vector3(position.x, 0.5, position.z); // Placed directly on the ground
 
-    // Create a material and assign it to the object
     const material = new StandardMaterial('objectMaterial', this.scene);
     material.diffuseColor = color;
     object.material = material;
@@ -299,5 +336,22 @@ export class AgentLiveFeedComponent implements AfterViewInit {
     leg3.material = dogMaterial;
     leg4.material = dogMaterial;
     tail.material = dogMaterial;
+  }
+
+  toggleView(): void {
+    if (this.isTopDownView) {
+      this.scene.activeCamera = this.freeCamera;
+    } else {
+      this.scene.activeCamera = this.topDownCamera;
+    }
+    this.isTopDownView = !this.isTopDownView;
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent): void {
+    if (event.key === 'v') {
+      // Press 'v' to toggle view
+      this.toggleView();
+    }
   }
 }
