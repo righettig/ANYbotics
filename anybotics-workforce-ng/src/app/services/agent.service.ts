@@ -15,13 +15,15 @@ export class AgentService {
   private agentsSubject = new BehaviorSubject<AgentDto[]>([]);
   private agentSubject = new BehaviorSubject<AgentDetailsDto | null>(null);
   private anomalyDetectedSubject = new BehaviorSubject<any>(null);
-
+  private hardwareFailureSubject = new BehaviorSubject<any>(null);
+  
   private baseUrl = 'https://localhost:7272';
   private baseApiUrl = `${this.baseUrl}/Anymal`;
 
   agents$ = this.agentsSubject.asObservable();
   agent$ = this.agentSubject.asObservable();
   anomalyDetected$ = this.anomalyDetectedSubject.asObservable();
+  hardwareFailure$ = this.hardwareFailureSubject.asObservable();
 
   constructor(private http: HttpService) {
     this.hubConnection = new signalR.HubConnectionBuilder()
@@ -40,6 +42,10 @@ export class AgentService {
 
     this.hubConnection.on('AnomalyDetected', (data: any) => {
       this.anomalyDetectedSubject.next(data);
+    });
+
+    this.hubConnection.on('HardwareFailure', (data: any) => {
+      this.hardwareFailureSubject.next(data);
     });
   }
 

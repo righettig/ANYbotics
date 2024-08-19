@@ -68,14 +68,20 @@ public partial class AnymalService : AnymalGrpc.AnymalService.AnymalServiceBase
                 }
             }
 
+            // Notify the Angular front-end via SignalR
+            _hubContext.Clients.All.SendAsync(
+                "HardwareFailure", $"Updated hardware for agent {agent.Name}: {request.HardwareItem} with status '{request.FailureType}'");
+
             _logger.LogInformation($"Updated hardware failure for {request.HardwareItem} to '{request.FailureType}'.");
         }, "hardware failure", request.HardwareItem);
     }
 
     public override async Task<UpdateResponse> ReportAnomaly(AnomalyReport request, ServerCallContext context)
     {
+        var agentName = _agentClients[request.Id].Agent.Name;
+
         // Process the anomaly based on its type
-        string message = $"{request.AnomalyType} Anomaly Detected in {request.Room} for Equipment {request.EquipmentId}";
+        string message = $"{request.AnomalyType} Anomaly Detected in {request.Room} for Equipment {request.EquipmentId} by agent {agentName}";
         _logger.LogInformation(message);
 
         // Notify the Angular front-end via SignalR

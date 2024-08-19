@@ -665,15 +665,11 @@ I also need to have a separate update send by the console app about inspection e
 
 Everytime an hardware failure or an event happen I need the API to send a signalR update to an angular front-end application. I do not need to setup the angular application. When the update reaches the front-end I want an angular material notification to be shown.
 
-TODO: attach front-end to AnomalyDetected and display angular material notification using service
+38) I want to create an admin module in an angular app that is lazy loaded. Only admin user should be able to the page and able to access it. From the admin page I need to be able to list all the users, 
 
 
 TODO
 ====
-38) I want to create an admin module in an angular app that is lazy loaded. Only admin user should be able to the page and able to access it.
-From the admin page I need to be able to list all the users, create new ones and change their roles. I am using Firebase to store user credentials and 
-the user roles are kept into a firestore collection called "userRoles". I do not need details on how to setup firebase please.
-
 32) Nx, introduce "admin library"?
 
 33) story book
@@ -694,8 +690,7 @@ the user roles are kept into a firestore collection called "userRoles". I do not
 
 Improve internal documentation and create project level documentation
 
-
-Optional 
+IMPROVEMENTS 
 	30) SetManualMode should support bool payload | UI should be autogenerate based on back-end definition
 
 	27) NgRx, convert shutdown, recharge, wake up actions
@@ -706,6 +701,8 @@ Optional
 		
 	35) [Authorize] to protect controllers
 
+	39) admin module: create new ones and change their roles. I am using Firebase to store user credentials and 
+the user roles are kept into a firestore collection called "userRoles". I do not need details on how to setup firebase please.
 
 BUGS
 	28) Cleanup signalR server side subscriptions
