@@ -1,4 +1,5 @@
-﻿using AnymalGrpc;
+﻿using anybotics_anymal_common.Domain;
+using AnymalGrpc;
 using Grpc.Core;
 using System.Collections.Concurrent;
 
@@ -15,9 +16,9 @@ public partial class AnymalService : AnymalGrpc.AnymalService.AnymalServiceBase
         _logger = logger;
     }
 
-    public override Task<RegistrationResponse> RegisterAgent(Agent request, ServerCallContext context)
+    public override Task<RegistrationResponse> RegisterAgent(RegistrationRequest request, ServerCallContext context)
     {
-        var agentClient = new AgentClient { Agent = request };
+        var agentClient = new AgentClient { Agent = new AnymalAgent(request.Id, request.Name) };
         _agentClients[request.Id] = agentClient;
 
         _logger.LogInformation($"Registered agent {request.Name} with ID {request.Id}.");
@@ -35,9 +36,9 @@ public partial class AnymalService : AnymalGrpc.AnymalService.AnymalServiceBase
                                         ServerCallContext context)
         => StreamEvents(request.Id, client => client.CommandStream = responseStream, context);
 
-    public IEnumerable<Agent> GetAllAgents() => _agentClients.Values.Select(ac => ac.Agent);
+    public IEnumerable<AnymalAgent> GetAllAgents() => _agentClients.Values.Select(ac => ac.Agent);
 
-    public Agent GetAgentById(string id) => _agentClients.GetValueOrDefault(id)?.Agent;
+    public AnymalAgent GetAgentById(string id) => _agentClients.GetValueOrDefault(id)?.Agent;
 
     private async Task StreamEvents<T>(string id,
                                        Func<AgentClient, IServerStreamWriter<T>> getStream,
@@ -71,7 +72,7 @@ public partial class AnymalService : AnymalGrpc.AnymalService.AnymalServiceBase
     }
 
     private Task<UpdateResponse> UpdateAgentField(string id,
-                                                  Action<Agent> updateAction,
+                                                  Action<AnymalAgent> updateAction,
                                                   string fieldName,
                                                   object updatedValue)
     {

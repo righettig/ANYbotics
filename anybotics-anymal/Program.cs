@@ -1,4 +1,5 @@
 ﻿using anybotics_anymal;
+using anybotics_anymal_common.Domain;
 using AnymalGrpc;
 using Grpc.Core;
 using Grpc.Net.Client;
@@ -14,18 +15,14 @@ class Program
         using var channel = GrpcChannel.ForAddress("https://localhost:7272");
         var client = new AnymalService.AnymalServiceClient(channel);
 
-        var agent = new Agent
-        {
-            Id = Guid.NewGuid().ToString(),
-            Name = agentName,
-            BatteryLevel = 100,
-            Status = AnymalGrpc.Status.Active
-        };
+        var agentId = Guid.NewGuid().ToString();
+
+        var agent = new AnymalAgent(agentId, agentName);
 
         try
         {
             // Register the agent
-            await RegisterAgentAsync(client, agent);
+            await RegisterAgentAsync(client, agentId, agentName);
 
             // Start monitoring events
             _ = MonitorCommandsAsync(client, agent);
@@ -47,13 +44,14 @@ class Program
         }
     }
 
-    static async Task RegisterAgentAsync(AnymalService.AnymalServiceClient client, Agent agent)
+    static async Task RegisterAgentAsync(AnymalService.AnymalServiceClient client, string agentId, string agentName)
     {
-        var registrationResponse = await client.RegisterAgentAsync(agent);
-        Console.WriteLine($"Registration: {registrationResponse.Message} (ID: {agent.Id})");
+        var request = new RegistrationRequest { Id = agentId, Name = agentName };
+        var registrationResponse = await client.RegisterAgentAsync(request);
+        Console.WriteLine($"Registration: {registrationResponse.Message} (ID: {request.Id})");
     }
 
-    static async Task MonitorCommandsAsync(AnymalService.AnymalServiceClient client, Agent agent)
+    static async Task MonitorCommandsAsync(AnymalService.AnymalServiceClient client, AnymalAgent agent)
     {
         var commandProcessors = CommandProcessorDiscovery.DiscoverCommandProcessors();
 
@@ -71,7 +69,7 @@ class Program
         }
     }
 
-    static async Task BatteryDecreaseLoopAsync(AnymalService.AnymalServiceClient client, Agent agent)
+    static async Task BatteryDecreaseLoopAsync(AnymalService.AnymalServiceClient client, AnymalAgent agent)
     {
         while (agent.BatteryLevel > 0)
         {
@@ -94,7 +92,7 @@ class Program
         await NotifyBatteryDepletionAsync(client, agent);
     }
 
-    static async Task NotifyBatteryDepletionAsync(AnymalService.AnymalServiceClient client, Agent agent)
+    static async Task NotifyBatteryDepletionAsync(AnymalService.AnymalServiceClient client, AnymalAgent agent)
     {
         // Final battery update when battery reaches 0
         var finalUpdateResponse = await client.UpdateBatteryAsync(new BatteryUpdate

@@ -5,7 +5,7 @@ import "google/protobuf/any.proto";
 option csharp_namespace = "AnymalGrpc";
 
 service AnymalService {
-  rpc RegisterAgent (Agent) returns (RegistrationResponse);
+  rpc RegisterAgent (RegistrationRequest) returns (RegistrationResponse);
   
   rpc UpdateBattery (BatteryUpdate) returns (UpdateResponse);
   rpc UpdateStatus (StatusUpdate) returns (UpdateResponse);
@@ -14,13 +14,9 @@ service AnymalService {
   rpc StreamCommands(CommandListener) returns (stream Command);
 }
 
-message Agent {
+message RegistrationRequest {
   string id = 1;
   string name = 2;
-  int32 batteryLevel = 3;
-  Status status = 4;
-  bool manualMode = 5;
-  Location location = 6;
 }
 
 message BatteryUpdate {

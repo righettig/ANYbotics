@@ -1,6 +1,6 @@
 ﻿using anybotics_anymal_api.Commands;
 using anybotics_anymal_api.Models;
-using AnymalGrpc;
+using anybotics_anymal_common.Domain;
 using Microsoft.AspNetCore.Mvc;
 using AnymalService = anybotics_anymal_api.Services.AnymalService;
 
@@ -56,14 +56,5 @@ public class AnymalController(ICommandBus commandBus,
         return Ok(commandDtos);
     }
 
-    private AgentDto MapToDto(Agent agent)
-    {
-        return new AgentDto
-        {
-            Id = agent.Id,
-            Name = agent.Name,
-            BatteryLevel = agent.BatteryLevel,
-            Status = agent.Status
-        };
-    }
+    private AgentDto MapToDto(AnymalAgent agent) => new(agent.Id, agent.Name, agent.BatteryLevel, agent.Status);
 }

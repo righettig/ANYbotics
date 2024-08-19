@@ -17,7 +17,7 @@ public partial class AnymalService
             var @event = new Command { Id = id, CommandId = "SetManualMode", Payload = Any.Pack(payload) };
             await agentClient.CommandStream?.WriteAsync(@event);
 
-            agentClient.Agent.ManualMode = manualMode;
+            agentClient.Agent.General.ManualModeOn = manualMode;
         },
         $"Setting up manual mode for agent {id} with value {manualMode}", "Agent not found.");
 }

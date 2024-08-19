@@ -385,20 +385,293 @@ Let me also know if you need more info from me.
 
 37) I have an angular already written and now I need to integrate authentication using Firebase. I would like to be able to perform login, store the authentication token in local storage, make sure the token is included in every http request. When closing and reopening the browser (also when refreshing the page)  I want to make sure the user can still login if the token has not expired yet and automatically refresh it if needed.
 
->>>
+37) I have a console application that talks via gRPC to an ASP.NET Web Api: 
+
+using anybotics_anymal;
+using AnymalGrpc;
+using Grpc.Core;
+using Grpc.Net.Client;
+
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        // Parse the agent name from the command-line arguments
+        string agentName = args.Length > 0 ? args[0] : "Anymal";
+
+        // Create a channel to the gRPC server
+        using var channel = GrpcChannel.ForAddress("https://localhost:7272");
+        var client = new AnymalService.AnymalServiceClient(channel);
+
+        var agent = new Agent
+        {
+            Id = Guid.NewGuid().ToString(),
+            Name = agentName,
+            BatteryLevel = 100,
+            Status = AnymalGrpc.Status.Active
+        };
+
+        try
+        {
+            // Register the agent
+            await RegisterAgentAsync(client, agent);
+
+            // Start monitoring events
+            _ = MonitorCommandsAsync(client, agent);
+
+            // Start battery decrease loop
+            await BatteryDecreaseLoopAsync(client, agent);
+        }
+        catch (RpcException ex) when (ex.StatusCode == StatusCode.Unavailable)
+        {
+            Console.WriteLine($"Error: Server is unavailable.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Unexpected error: {ex.Message}");
+        }
+        finally
+        {
+            await channel.ShutdownAsync();
+        }
+    }
+
+    static async Task RegisterAgentAsync(AnymalService.AnymalServiceClient client, Agent agent)
+    {
+        var registrationResponse = await client.RegisterAgentAsync(agent);
+        Console.WriteLine($"Registration: {registrationResponse.Message} (ID: {agent.Id})");
+    }
+
+    static async Task MonitorCommandsAsync(AnymalService.AnymalServiceClient client, Agent agent)
+    {
+        var commandProcessors = CommandProcessorDiscovery.DiscoverCommandProcessors();
+
+        using var call = client.StreamCommands(new CommandListener { Id = agent.Id });
+
+        await foreach (var response in call.ResponseStream.ReadAllAsync())
+        {
+            if (response.Id == agent.Id && commandProcessors.TryGetValue(response.CommandId, out var processor))
+            {
+                if (processor.ConditionCheck(agent))
+                {
+                    processor.PerformCommand(agent, response);
+                }
+            }
+        }
+    }
+
+    static async Task BatteryDecreaseLoopAsync(AnymalService.AnymalServiceClient client, Agent agent)
+    {
+        while (agent.BatteryLevel > 0)
+        {
+            await Task.Delay(10 * 1000); // 10 seconds delay
+
+            if (agent.Status == AnymalGrpc.Status.Active)
+            {
+                agent.BatteryLevel--;
+
+                var updateResponse = await client.UpdateBatteryAsync(new BatteryUpdate
+                {
+                    Id = agent.Id,
+                    BatteryLevel = agent.BatteryLevel
+                });
+
+                Console.WriteLine($"Battery Update: {updateResponse.Message}");
+            }
+        }
+
+        await NotifyBatteryDepletionAsync(client, agent);
+    }
+
+    static async Task NotifyBatteryDepletionAsync(AnymalService.AnymalServiceClient client, Agent agent)
+    {
+        // Final battery update when battery reaches 0
+        var finalUpdateResponse = await client.UpdateBatteryAsync(new BatteryUpdate
+        {
+            Id = agent.Id,
+            BatteryLevel = agent.BatteryLevel
+        });
+
+        Console.WriteLine($"Final Battery Update: {finalUpdateResponse.Message}");
+
+        // Update status to Unavailable and notify the server
+        agent.Status = AnymalGrpc.Status.Unavailable;
+
+        var statusUpdateResponse = await client.UpdateStatusAsync(new StatusUpdate
+        {
+            Id = agent.Id,
+            Status = agent.Status
+        });
+
+        Console.WriteLine($"Status Update: {statusUpdateResponse.Message}");
+    }
+}
+
+This the gRPC proto file:
+
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+
+option csharp_namespace = "AnymalGrpc";
+
+service AnymalService {
+  rpc RegisterAgent (Agent) returns (RegistrationResponse);
+  
+  rpc UpdateBattery (BatteryUpdate) returns (UpdateResponse);
+  rpc UpdateStatus (StatusUpdate) returns (UpdateResponse);
+
+  // Server-side streaming RPCs for the API to notify commands to ANYmal(s)
+  rpc StreamCommands(CommandListener) returns (stream Command);
+}
+
+message Agent {
+  string id = 1;
+  string name = 2;
+  int32 batteryLevel = 3;
+  Status status = 4;
+  bool manualMode = 5;
+  Location location = 6;
+}
+
+message BatteryUpdate {
+  string id = 1;
+  int32 batteryLevel = 2;
+}
+
+message StatusUpdate {
+  string id = 1;
+  Status status = 2;
+}
+
+enum Status {
+  Unavailable = 0;
+  Active = 1;
+  Offline = 2;
+}
+
+message Location {
+  int32 X = 1;
+  int32 Y = 2;
+  int32 Z = 3;
+}
+
+message RegistrationResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message CommandListener {
+  string id = 1;
+}
+
+message UpdateResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message Command {
+  string id = 1;
+  string commandId = 2;
+  google.protobuf.Any payload = 3;
+}
+
+// add all command payload message here
+message SetManualModeRequest {
+  bool manualMode = 1;
+}
+
+I now want to be able to notify my API about hardware failures. I need the console app so genearate every “x” amount of time the agent an equipment failures
+and let the API know. Here you can find all info about hardware items. Please make sure that you randomly pick up an hardware item and a status (Running, Failed, Anomaly_detected).
+
+using AnymalGrpc;
+
+namespace anybotics_anymal_api.Models;
+
+public class AgentDetailsDto
+{
+    public required string Id { get; set; }
+    public required string Name { get; set; }
+    public int BatteryLevel { get; set; }
+    public Status Status { get; set; }
+    public required GeneralInfo General { get; set; }
+    public required HardwareInfo Hardware { get; set; }
+    public required List<string> RecentImages { get; set; }
+    public required List<CommandHistoryItem> CommandHistory { get; set; }
+    public required List<StatusHistoryItem> StatusHistory { get; set; }
+}
+
+public class GeneralInfo
+{
+    public required string CurrentCommand { get; set; }
+    public required string Model { get; set; }
+    public required string FirmwareVersion { get; set; }
+    public DateTime FirmwareLastUpdated { get; set; }
+    public bool ManualModeOn { get; set; }
+    public required Location Location { get; set; }
+    public required string TrekkerVersion { get; set; }
+    public DateTime TrekkerLastUpdated { get; set; }
+}
+
+public class Location
+{
+    public double X { get; set; }
+    public double Y { get; set; }
+    public double Z { get; set; }
+}
+
+public class HardwareInfo
+{
+    public required string TemperatureSensor { get; set; }
+    public required string PressureSensor { get; set; }
+    public required string Leg1Status { get; set; }
+    public required string Leg2Status { get; set; }
+    public required string Leg3Status { get; set; }
+    public required string Leg4Status { get; set; }
+    public required string Gps { get; set; }
+    public required string Engine { get; set; }
+    public required string Battery { get; set; }
+    public required string LidarScanner { get; set; }
+    public required string Wifi { get; set; }
+    public required string Lte { get; set; }
+    public required string Cpu1 { get; set; }
+    public required string Cpu2 { get; set; }
+    public required List<string> DepthCameras { get; set; }
+    public required List<string> OpticalCameras { get; set; }
+    public required string ThermalCamera { get; set; }
+    public required string PanTiltUnit { get; set; }
+    public required string Spotlight { get; set; }
+    public required string UltrasonicMicrophone { get; set; }
+}
+
+public class CommandHistoryItem
+{
+    public string InitiatedBy { get; set; }
+    public DateTime Timestamp { get; set; }
+    public string Description { get; set; }
+}
+
+public class StatusHistoryItem
+{
+    public DateTime Timestamp { get; set; }
+    public Status Status { get; set; }
+}
+
+I also need to have a separate update send by the console app about inspection events in the following way. Please a separate gPRC channel
+
+- Every “y” amount of time the agent identifies a thermal anomaly (room, equipment_id).
+- Every “z” amount of time the agent identifies an acoustic anomaly (room, equipment_id).
+- Every “k” amount of time the agent identifies gas/combustible (room, equipment_id).
+
+Everytime an hardware failure or an event happen I need the API to send a signalR update to an angular front-end application. I do not need to setup the angular application. When the update reaches the front-end I want an angular material notification to be shown.
+
+
+TODO
+====
 38) I want to create an admin module in an angular app that is lazy loaded. Only admin user should be able to the page and able to access it.
 From the admin page I need to be able to list all the users, create new ones and change their roles. I am using Firebase to store user credentials and 
 the user roles are kept into a firestore collection called "userRoles". I do not need details on how to setup firebase please.
 
-TODO
-====
-36) Simulate events in anymal 
-
-- Every “x” amount of time the agent detects equipment failures, then performs maintenance.
-- Every “y” amount of time the agent identifies a thermal anomaly (room, equipment_id).
-- Every “z” amount of time the agent identifies an acoustic anomaly (room, equipment_id).
-- Every “k” amount of time the agent identifies gas/combustible (room, equipment_id).
-	send notifications via signalR to be displayed using UI notifications
 
 32) Nx, introduce "admin library"?
 
@@ -415,8 +688,6 @@ TODO
 		I want to be able to embed the world in an angular application 
 
 30) SetManualMode should support bool payload | UI should be autogenerate based on back-end definition
-
-30) loading spinner for commands
 
 27) NgRx, convert shutdown, recharge, wake up actions
 
