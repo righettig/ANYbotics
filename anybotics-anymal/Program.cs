@@ -184,7 +184,7 @@ class Program
             };
 
             var response = await client.ReportHardwareFailureAsync(hardwareFailure);
-            Console.WriteLine($"Hardware Failure: {response.Message}");
+            Console.WriteLine($"Reported Hardware Failure: {hardwareFailure.HardwareItem} {hardwareFailure.FailureType}");
         }
     }
 
@@ -210,7 +210,7 @@ class Program
             };
 
             var response = await client.ReportAnomalyAsync(anomalyReport);
-            Console.WriteLine($"{anomalyType} Anomaly: {response.Message}");
+            Console.WriteLine($"{anomalyType} Anomaly: {response.Message} ({anomalyReport.Room}, {anomalyReport.EquipmentId})");
         }
     }
 }

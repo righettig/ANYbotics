@@ -14,12 +14,14 @@ export class AgentService {
 
   private agentsSubject = new BehaviorSubject<AgentDto[]>([]);
   private agentSubject = new BehaviorSubject<AgentDetailsDto | null>(null);
+  private anomalyDetectedSubject = new BehaviorSubject<any>(null);
 
   private baseUrl = 'https://localhost:7272';
   private baseApiUrl = `${this.baseUrl}/Anymal`;
 
   agents$ = this.agentsSubject.asObservable();
   agent$ = this.agentSubject.asObservable();
+  anomalyDetected$ = this.anomalyDetectedSubject.asObservable();
 
   constructor(private http: HttpService) {
     this.hubConnection = new signalR.HubConnectionBuilder()
@@ -35,6 +37,19 @@ export class AgentService {
     this.hubConnection.on('ReceiveAgentData', (agent: AgentDetailsDto) => {
       this.agentSubject.next(agent);
     });
+
+    this.hubConnection.on('AnomalyDetected', (data: any) => {
+      this.anomalyDetectedSubject.next(data);
+    });
+  }
+
+  stopConnection() {
+    if (this.hubConnection) {
+      this.hubConnection
+        .stop()
+        .then(() => console.log('SignalR Disconnected'))
+        .catch((err) => console.log('Error while stopping connection: ' + err));
+    }
   }
 
   startAgentsStreaming() {
@@ -56,15 +71,6 @@ export class AgentService {
         .invoke('StreamAgentsData')
         .catch((err) => console.error('Error while starting the stream', err));
     });
-  }
-
-  stopConnection() {
-    if (this.hubConnection) {
-      this.hubConnection
-        .stop()
-        .then(() => console.log('SignalR Disconnected'))
-        .catch((err) => console.log('Error while stopping connection: ' + err));
-    }
   }
 
   startAgentStreaming(id: string) {

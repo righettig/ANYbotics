@@ -68,7 +68,7 @@ public partial class AnymalService : AnymalGrpc.AnymalService.AnymalServiceBase
                 }
             }
 
-            _logger.LogInformation($"Updated hardware failure for {request.HardwareItem} to 'Failed'.");
+            _logger.LogInformation($"Updated hardware failure for {request.HardwareItem} to '{request.FailureType}'.");
         }, "hardware failure", request.HardwareItem);
     }
 
