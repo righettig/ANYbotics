@@ -12,6 +12,12 @@ service AnymalService {
 
   // Server-side streaming RPCs for the API to notify commands to ANYmal(s)
   rpc StreamCommands(CommandListener) returns (stream Command);
+
+  // Unified RPC for reporting anomalies
+  rpc ReportAnomaly(AnomalyReport) returns (UpdateResponse);
+
+  // New RPCs for Hardware Failure
+  rpc ReportHardwareFailure(HardwareFailure) returns (UpdateResponse);
 }
 
 message RegistrationRequest {
@@ -35,12 +41,6 @@ enum Status {
   Offline = 2;
 }
 
-message Location {
-  int32 X = 1;
-  int32 Y = 2;
-  int32 Z = 3;
-}
-
 message RegistrationResponse {
   bool success = 1;
   string message = 2;
@@ -59,6 +59,21 @@ message Command {
   string id = 1;
   string commandId = 2;
   google.protobuf.Any payload = 3;
+}
+
+// Message for Hardware Failures
+message HardwareFailure {
+  string id = 1;
+  string hardwareItem = 2;
+  string failureType = 3;
+}
+
+// Generalized message for Anomalies
+message AnomalyReport {
+  string id = 1;
+  string anomalyType = 2; // e.g., "Thermal", "Acoustic", "Gas"
+  string room = 3;
+  string equipmentId = 4;
 }
 
 // add all command payload message here

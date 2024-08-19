@@ -3,6 +3,7 @@ using anybotics_anymal_common.Domain;
 using AnymalGrpc;
 using Grpc.Core;
 using Grpc.Net.Client;
+using System.Reflection;
 
 class Program
 {
@@ -26,6 +27,8 @@ class Program
 
             // Start monitoring events
             _ = MonitorCommandsAsync(client, agent);
+            _ = ReportHardwareFailuresAsync(client, agent);
+            _ = ReportInspectionEventsAsync(client, agent);
 
             // Start battery decrease loop
             await BatteryDecreaseLoopAsync(client, agent);
@@ -113,5 +116,101 @@ class Program
         });
 
         Console.WriteLine($"Status Update: {statusUpdateResponse.Message}");
+    }
+
+    static async Task ReportHardwareFailuresAsync(AnymalService.AnymalServiceClient client, AnymalAgent agent)
+    {
+        var hardwareItems = new List<string>
+        {
+            "TemperatureSensor",
+            "PressureSensor",
+            "Leg1Status",
+            "Leg2Status",
+            "Leg3Status",
+            "Leg4Status",
+            "Gps",
+            "Engine",
+            "Battery",
+            "LidarScanner",
+            "Wifi",
+            "Lte",
+            "Cpu1",
+            "Cpu2",
+            "DepthCameras",
+            "OpticalCameras",
+            "ThermalCamera",
+            "PanTiltUnit",
+            "Spotlight",
+            "UltrasonicMicrophone"
+        };
+
+        var failureTypes = typeof(HardwareStatus).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+                                                 .Where(fi => fi.IsLiteral && !fi.IsInitOnly && fi.FieldType == typeof(string))
+                                                 .Select(fi => (string)fi.GetRawConstantValue())
+                                                 .ToList();
+
+        Random rand = new();
+
+        while (true)
+        {
+            await Task.Delay(rand.Next(15, 30) * 1000); // Random delay between 15-30 seconds
+
+            string hardwareItem = hardwareItems[rand.Next(hardwareItems.Count)];
+            string failureType = failureTypes[rand.Next(failureTypes.Count)];
+
+            // Using reflection to set hardware status
+            var propertyInfo = typeof(HardwareInfo).GetProperty(hardwareItem);
+            if (propertyInfo != null)
+            {
+                if (propertyInfo.PropertyType == typeof(string))
+                {
+                    propertyInfo.SetValue(agent.Hardware, failureType);
+                }
+                else if (propertyInfo.PropertyType == typeof(List<string>))
+                {
+                    var list = propertyInfo.GetValue(agent.Hardware) as List<string>;
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        list[i] = failureType;
+                    }
+                }
+            }
+
+            var hardwareFailure = new HardwareFailure
+            {
+                Id = agent.Id,
+                HardwareItem = hardwareItem,
+                FailureType = failureType
+            };
+
+            var response = await client.ReportHardwareFailureAsync(hardwareFailure);
+            Console.WriteLine($"Hardware Failure: {response.Message}");
+        }
+    }
+
+    static async Task ReportInspectionEventsAsync(AnymalService.AnymalServiceClient client, AnymalAgent agent)
+    {
+        var rooms = new List<string> { "Room1", "Room2", "Room3" };
+        var equipmentIds = new List<string> { "Equip1", "Equip2", "Equip3" };
+        var anomalyTypes = new List<string> { "Thermal", "Acoustic", "Gas" };
+
+        Random rand = new();
+
+        while (true)
+        {
+            await Task.Delay(rand.Next(20, 40) * 1000); // Random delay between 20-40 seconds
+            string anomalyType = anomalyTypes[rand.Next(anomalyTypes.Count)];
+
+            var anomalyReport = new AnomalyReport
+            {
+                Id = agent.Id,
+                AnomalyType = anomalyType,
+                Room = rooms[rand.Next(rooms.Count)],
+                EquipmentId = equipmentIds[rand.Next(equipmentIds.Count)]
+            };
+
+            var response = await client.ReportAnomalyAsync(anomalyReport);
+            Console.WriteLine($"{anomalyType} Anomaly: {response.Message}");
+        }
     }
 }

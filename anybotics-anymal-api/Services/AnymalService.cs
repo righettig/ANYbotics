@@ -1,6 +1,8 @@
-﻿using anybotics_anymal_common.Domain;
+﻿using anybotics_anymal_api.Hubs;
+using anybotics_anymal_common.Domain;
 using AnymalGrpc;
 using Grpc.Core;
+using Microsoft.AspNetCore.SignalR;
 using System.Collections.Concurrent;
 
 namespace anybotics_anymal_api.Services;
@@ -8,12 +10,14 @@ namespace anybotics_anymal_api.Services;
 public partial class AnymalService : AnymalGrpc.AnymalService.AnymalServiceBase
 {
     private readonly ILogger<AnymalService> _logger;
+    private readonly IHubContext<AgentsHub> _hubContext;
 
     private static readonly ConcurrentDictionary<string, AgentClient> _agentClients = new();
 
-    public AnymalService(ILogger<AnymalService> logger)
+    public AnymalService(ILogger<AnymalService> logger, IHubContext<AgentsHub> hubContext)
     {
         _logger = logger;
+        _hubContext = hubContext;
     }
 
     public override Task<RegistrationResponse> RegisterAgent(RegistrationRequest request, ServerCallContext context)
@@ -39,6 +43,46 @@ public partial class AnymalService : AnymalGrpc.AnymalService.AnymalServiceBase
     public IEnumerable<AnymalAgent> GetAllAgents() => _agentClients.Values.Select(ac => ac.Agent);
 
     public AnymalAgent GetAgentById(string id) => _agentClients.GetValueOrDefault(id)?.Agent;
+
+    public override Task<UpdateResponse> ReportHardwareFailure(HardwareFailure request, ServerCallContext context)
+    {
+        return UpdateAgentField(request.Id, agent =>
+        {
+            var hardwareInfo = agent.Hardware;
+
+            // Using reflection to set hardware status
+            var propertyInfo = hardwareInfo.GetType().GetProperty(request.HardwareItem);
+            if (propertyInfo != null)
+            {
+                if (propertyInfo.PropertyType == typeof(string))
+                {
+                    propertyInfo.SetValue(hardwareInfo, request.FailureType);
+                }
+                else if (propertyInfo.PropertyType == typeof(List<string>))
+                {
+                    var list = propertyInfo.GetValue(agent.Hardware) as List<string>;
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        list[i] = request.FailureType;
+                    }
+                }
+            }
+
+            _logger.LogInformation($"Updated hardware failure for {request.HardwareItem} to 'Failed'.");
+        }, "hardware failure", request.HardwareItem);
+    }
+
+    public override async Task<UpdateResponse> ReportAnomaly(AnomalyReport request, ServerCallContext context)
+    {
+        // Process the anomaly based on its type
+        string message = $"{request.AnomalyType} Anomaly Detected in {request.Room} for Equipment {request.EquipmentId}";
+        _logger.LogInformation(message);
+
+        // Notify the Angular front-end via SignalR
+        await _hubContext.Clients.All.SendAsync("AnomalyDetected", message);
+
+        return new UpdateResponse { Success = true, Message = $"{request.AnomalyType} anomaly reported successfully." };
+    }
 
     private async Task StreamEvents<T>(string id,
                                        Func<AgentClient, IServerStreamWriter<T>> getStream,
