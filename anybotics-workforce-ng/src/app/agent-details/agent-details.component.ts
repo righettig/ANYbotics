@@ -11,6 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatListModule } from '@angular/material/list';
+import { AgentLiveFeedComponent } from "../agent-live-feed/agent-live-feed.component";
 
 @Component({
   selector: 'app-agent-details',
@@ -28,7 +29,8 @@ import { MatListModule } from '@angular/material/list';
     CommonModule,
     AgentBatteryLevelComponent,
     AgentStatusComponent,
-  ],
+    AgentLiveFeedComponent
+],
   templateUrl: './agent-details.component.html',
   styleUrls: ['./agent-details.component.scss'],
 })

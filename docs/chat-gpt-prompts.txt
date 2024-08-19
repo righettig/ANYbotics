@@ -670,12 +670,6 @@ Everytime an hardware failure or an event happen I need the API to send a signal
 
 TODO
 ====
-32) Nx, introduce "admin library"?
-
-33) story book
-
-34) e2e tests using Cypress
-
 33) Babylon.js (manual drive mode)
 		render robot in 2d/3d world and then show the agent in the details view
 			with "manual mode on" -> you can drive the agent
@@ -684,11 +678,19 @@ TODO
 		Generate an isometric 2d map which consists of a grid. In this map there are rooms and obstacles.
 		I want to be able to embed the world in an angular application 
 
-37) Fleet (group agents)
 
-38) Mission (collection of commands), store per user basis on firestore
+move project to Nx
+	32) introduce "admin library"?
+	33) story book
+	34) e2e tests using Cypress
 
 Improve internal documentation and create project level documentation
+Improve front-end unit tests and add back-end unit tests
+
+37) Fleet (group agents)
+38) Mission (collection of commands), store per user basis on firestore
+
+
 
 IMPROVEMENTS 
 	30) SetManualMode should support bool payload | UI should be autogenerate based on back-end definition
