@@ -14,7 +14,6 @@ import {
   HemisphericLight,
   MeshBuilder,
   FreeCamera,
-  Camera,
 } from '@babylonjs/core';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import { GridMaterial } from '@babylonjs/materials/grid/gridMaterial';
@@ -68,27 +67,6 @@ export class AgentLiveFeedComponent implements AfterViewInit {
   }
 
   private createCameras(canvas: HTMLCanvasElement): void {
-    // // Create an orthographic camera
-    // const camera = new FreeCamera(
-    //   'orthoCamera',
-    //   new Vector3(0, 0, 10),
-    //   this.scene
-    // );
-    // camera.mode = Camera.ORTHOGRAPHIC_CAMERA;
-
-    // // Set orthographic parameters
-    // const aspectRatio = canvas.width / canvas.height;
-    // const orthoWidth = 10; // Width of the orthographic view
-    // const orthoHeight = orthoWidth / aspectRatio; // Calculate height based on aspect ratio
-
-    // camera.orthoLeft = -orthoWidth / 2;
-    // camera.orthoRight = orthoWidth / 2;
-    // camera.orthoTop = orthoHeight / 2;
-    // camera.orthoBottom = -orthoHeight / 2;
-
-    // // Point the camera to look downwards
-    // camera.setTarget(Vector3.Zero());
-
     // The ArcRotateCamera is designed to orbit around a target.
     // It is ideal for situations where you want to focus on a particular object or point in the scene
     // and allow the user to rotate around it.
@@ -99,7 +77,7 @@ export class AgentLiveFeedComponent implements AfterViewInit {
       Math.PI / 2.5,
       50,
       Vector3.Zero(),
-      this.scene, 
+      this.scene,
       true
     );
     this.topDownCamera.attachControl(canvas, true);
