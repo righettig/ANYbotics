@@ -10,7 +10,7 @@
     </div>
   </div>
 
-  <mat-tab-group animationDuration="0ms">
+  <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChanged($event)">
     <!-- General Information Tab -->
     <mat-tab label="General Information">
       <mat-card>
@@ -69,7 +69,7 @@
 
     <!-- Live Feed Tab -->
     <mat-tab label="Live Feed">
-      <app-agent-live-feed></app-agent-live-feed>
+      <app-agent-live-feed #liveFeed></app-agent-live-feed>
     </mat-tab>
 
     <!-- Recent Images Tab -->

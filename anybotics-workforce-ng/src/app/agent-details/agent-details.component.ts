@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { AgentService } from '../services/agent.service';
 import { AgentDetailsDto } from '../models/agent-details-dto.model';
@@ -8,7 +8,7 @@ import { Subscription } from 'rxjs';
 import { CommonModule, DatePipe, NgFor, NgIf } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-import { MatTabsModule } from '@angular/material/tabs';
+import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatListModule } from '@angular/material/list';
 import { AgentLiveFeedComponent } from "../agent-live-feed/agent-live-feed.component";
@@ -35,6 +35,8 @@ import { AgentLiveFeedComponent } from "../agent-live-feed/agent-live-feed.compo
   styleUrls: ['./agent-details.component.scss'],
 })
 export class AgentDetailsComponent implements OnInit, OnDestroy {
+  @ViewChild('liveFeed') liveFeed!: AgentLiveFeedComponent;
+  
   agent?: AgentDetailsDto;
   hardwareItems: { name: string; status: string }[] = [];
   
@@ -97,5 +99,13 @@ export class AgentDetailsComponent implements OnInit, OnDestroy {
       { name: 'Spotlight', status: hardware.spotlight },
       { name: 'Ultrasonic Microphone', status: hardware.ultrasonicMicrophone },
     ];
+  }
+
+  onTabChanged(event: MatTabChangeEvent) {
+    setTimeout(() => {
+      if (event.tab.textLabel === "Live Feed") {
+        this.liveFeed.engine.resize(); // ensures scene is correctly rendered
+      }
+    }, 0);
   }
 }

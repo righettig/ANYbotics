@@ -30,7 +30,7 @@ export class AgentLiveFeedComponent implements AfterViewInit {
   @ViewChild('renderCanvas', { static: true })
   renderCanvas!: ElementRef<HTMLCanvasElement>;
 
-  private engine!: Engine;
+  public engine!: Engine;
   private scene!: Scene;
 
   private topDownCamera!: ArcRotateCamera;
@@ -53,9 +53,6 @@ export class AgentLiveFeedComponent implements AfterViewInit {
     window.addEventListener('resize', () => {
       this.engine.resize();
     });
-
-    // TODO: this needs to be invoked after clicking on the tab to ensure scene is correctly rendered
-    this.engine.resize(); // Force engine to resize to refresh the view
   }
 
   private initializeScene(canvas: HTMLCanvasElement): void {
