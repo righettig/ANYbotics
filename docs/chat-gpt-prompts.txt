@@ -672,22 +672,73 @@ Everytime an hardware failure or an event happen I need the API to send a signal
 		
 I'd like to display a red battery shape next to the agent when the battery is almost depleted. Please just highlight the changes instead of generating the whole code again
 
+40) Mission (collection of commands), store per user basis on firestore
+
+	I have a solution consisting of an angular application using angular material framework and a web api made with ASP.Net Core.
+	I also have a console application to simulate an agent.
+	The agent talks with the web api via gRPC and exchanges events and commands. Examples of commands are Left, Right, Forward, 
+	Each command is invoked from the angular application by using a corresponding POST method on a controller.
+
+	Commands should be retrieved via an api endpoint using reflection to find classes implementing the interface ICommand (this 
+	endpoint must also be created).
+
+	Now I would like to introduce the concept of missions. A mission is a list of commands that need to be executed one after another
+	sequentially. For instance I'd like to define 
+
+	Mission 'GotoRoomA' as Left, Right, Forward, Forward, Left, Backward
+
+	I would like to extend my front-end application by adding a separate component that lists all the available missions 
+	and create one ones.
+
+	I should be able to create a new mission by selecting the mission name and by picking up existing commands from a drop down. Once selected the command is shown in the UI so that I can remove it. 
+	Once I selected all the desired commands I can save the mission by clicking on a button.
+
+	I should also be able to see which missions are available at the top of the component
+
+	I need both GET and POST endpoint to manage missions to be exposes by MissionsController. This controller should use the repository
+	pattern to manage missions. I need to store the mission in a Firestore collection called "missions".
+
+	Once all this is done I need to be able to execute a mission by extending the AnymalController. The controller should use
+	the repository to retrieve the mission and do something like: 
+
+	[HttpPost]
+	[Deny("guest")]
+	public async Task<IActionResult> Shutdown([FromBody] string id)
+	{
+		var validationResult = ValidateId(id);
+		if (validationResult != null)
+		{
+			return validationResult;
+		}
+
+		var result = await commandBus.SendAsync(new ShutdownCommand(id, UserUid));
+		return Ok(result);
+	}
+
+	The same UI component should allow to trigger the execution of a mission.
+
+	Please remember to generate the UI using angular material components. Also make sure the endpoint to execute mission
+	uses the command bus iterating on each command.
+	
+Mission "InspectRoomA" // during DEMO
+
 TODO
 ====
-move project to Nx
-	32) introduce "admin library"?
-	33) story book
-	34) e2e tests using Cypress
+Wednesday
+	move project to Nx
+		32) introduce "admin library"?
+		33) story book need some storybooks
+		34) e2e tests using Cypress
+			need a few e2e tests
 
-Improve internal documentation and create project level documentation
-Improve front-end unit tests and add back-end unit tests
-
-37) Fleet (group agents)
-38) Mission (collection of commands), store per user basis on firestore
-
+Thursday
+	Improve internal documentation and create project level documentation
+	Improve front-end unit tests and add back-end unit tests
 
 
 IMPROVEMENTS 
+	37) Fleet (group agents)
+
 	30) SetManualMode should support bool payload | UI should be autogenerate based on back-end definition
 
 	27) NgRx, convert shutdown, recharge, wake up actions
@@ -700,6 +751,8 @@ IMPROVEMENTS
 
 	39) admin module: create new ones and change their roles. I am using Firebase to store user credentials and 
 the user roles are kept into a firestore collection called "userRoles". I do not need details on how to setup firebase please.
+
+	Refactoring: https://chatgpt.com/c/cc898959-ceb6-46a5-a778-350c3b90bef8
 
 BUGS
 	28) Cleanup signalR server side subscriptions

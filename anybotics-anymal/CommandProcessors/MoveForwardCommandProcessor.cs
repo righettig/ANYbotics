@@ -8,7 +8,7 @@ public class MoveForwardCommandProcessor() : BaseCommandProcessor("MoveForward")
 {
     public override void PerformCommand(AnymalAgent agent, Command response)
     {
-        agent.General.Location.Z = agent.General.Location.Z + 1;
+        agent.General.Location.Z = agent.General.Location.Z - 1;
         Console.WriteLine($"Moving forward {agent.Name} (ID: {agent.Id})");
     }
 }

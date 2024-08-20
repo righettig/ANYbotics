@@ -1,6 +1,7 @@
 ﻿using anybotics_anymal_api.Commands;
 using anybotics_anymal_api.Commands.CommandHandlers;
 using anybotics_anymal_api.Filters;
+using anybotics_anymal_api.Missions.Repository;
 using anybotics_anymal_api.Services;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
@@ -24,6 +25,7 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton<ICommandBus, CommandBus>();
         services.AddSingleton<ICommandRepository, InMemoryCommandRepository>();
+        services.AddSingleton<IMissionRepository, InMemoryMissionRepository>();
         services.AddSingleton<AnymalService>();
 
         services.AddCommandHandlers(Assembly.GetExecutingAssembly());
