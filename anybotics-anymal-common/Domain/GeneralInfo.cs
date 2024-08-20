@@ -18,9 +18,9 @@ public class GeneralInfo
         ManualModeOn = false;
         Location = new Location
         {
-            X = 123.45,
-            Y = 67.89,
-            Z = 10.11
+            X = 0,
+            Y = 0.65,
+            Z = 0
         };
         TrekkerVersion = "1.0.0";
         TrekkerLastUpdated = new DateTime(2024, 7, 14, 15, 0, 0, DateTimeKind.Utc);

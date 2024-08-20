@@ -16,7 +16,7 @@ public partial class AnymalService
             var @event = new Command { Id = id, CommandId = "MoveForward" };
             await agentClient.CommandStream?.WriteAsync(@event);
 
-            agentClient.Agent.General.Location.Y = agentClient.Agent.General.Location.Y + 1;
+            agentClient.Agent.General.Location.Z = agentClient.Agent.General.Location.Z + 1;
         },
         $"Performing MoveForward agent {id}.", "Agent not found.");
 }

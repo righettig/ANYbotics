@@ -4,6 +4,9 @@ import {
   ViewChild,
   AfterViewInit,
   HostListener,
+  Input,
+  OnChanges,
+  SimpleChanges,
 } from '@angular/core';
 
 import {
@@ -14,10 +17,13 @@ import {
   HemisphericLight,
   MeshBuilder,
   FreeCamera,
+  Mesh,
 } from '@babylonjs/core';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import { GridMaterial } from '@babylonjs/materials/grid/gridMaterial';
 import { Color3 } from '@babylonjs/core/Maths/math.color';
+import { AgentState } from '../agent-details/agent-details.component';
+import { Status } from '../models/status.enum';
 
 @Component({
   selector: 'app-agent-live-feed',
@@ -26,9 +32,11 @@ import { Color3 } from '@babylonjs/core/Maths/math.color';
   templateUrl: './agent-live-feed.component.html',
   styleUrl: './agent-live-feed.component.scss',
 })
-export class AgentLiveFeedComponent implements AfterViewInit {
+export class AgentLiveFeedComponent implements AfterViewInit, OnChanges {
   @ViewChild('renderCanvas', { static: true })
   renderCanvas!: ElementRef<HTMLCanvasElement>;
+
+  @Input() agentState!: AgentState;
 
   public engine!: Engine;
   private scene!: Scene;
@@ -37,6 +45,8 @@ export class AgentLiveFeedComponent implements AfterViewInit {
   private freeCamera!: FreeCamera;
 
   private isTopDownView = false; // Track the current view
+
+  private agentMeshes: Mesh[] = [];
 
   ngAfterViewInit(): void {
     const canvas = this.renderCanvas.nativeElement;
@@ -55,12 +65,38 @@ export class AgentLiveFeedComponent implements AfterViewInit {
     });
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['agentState']) {
+      this.updateAgentState(changes['agentState'].currentValue);
+    }
+  }
+
+  private updateAgentState(state: AgentState): void {
+    this.clearAgentMeshes();
+
+    // Update the agent's position
+    this.createAnymalAgent(state.position);
+
+    // Update the agent's appearance based on batteryLevel and status
+    this.updateAgentAppearance(state.batteryLevel, state.status);
+  }
+
+  private updateAgentAppearance(batteryLevel: number, status: Status): void {
+    if (batteryLevel < 20) {
+      // Update to low battery state (e.g., change color)
+    }
+
+    if (status === Status.Offline) {
+    } else if (status === Status.Unavailable) {
+    }
+  }
+
   private initializeScene(canvas: HTMLCanvasElement): void {
     this.createCameras(canvas);
     this.createLight();
     this.createGround();
     this.createRooms();
-    this.createAnymalAgent(new Vector3(0, 0.65, 0));
+    this.createAnymalAgent(this.agentState.position);
   }
 
   private createCameras(canvas: HTMLCanvasElement): void {
@@ -203,12 +239,15 @@ export class AgentLiveFeedComponent implements AfterViewInit {
 
   private createAnymalAgent(position: Vector3): void {
     // Body
+    this.clearAgentMeshes();
+
     const body = MeshBuilder.CreateBox(
       'body',
       { width: 1, height: 0.5, depth: 2 },
       this.scene
     );
     body.position = new Vector3(position.x, position.y + 0.25, position.z);
+    this.agentMeshes.push(body);
 
     // Head
     const head = MeshBuilder.CreateBox(
@@ -221,6 +260,7 @@ export class AgentLiveFeedComponent implements AfterViewInit {
       position.y + 0.65,
       position.z - 1.3
     );
+    this.agentMeshes.push(head);
 
     // Ears
     const ear1 = MeshBuilder.CreateBox(
@@ -233,6 +273,7 @@ export class AgentLiveFeedComponent implements AfterViewInit {
       position.y + 1,
       position.z - 1.5
     );
+    this.agentMeshes.push(ear1);
 
     const ear2 = MeshBuilder.CreateBox(
       'ear2',
@@ -244,6 +285,7 @@ export class AgentLiveFeedComponent implements AfterViewInit {
       position.y + 1,
       position.z - 1.5
     );
+    this.agentMeshes.push(ear2);
 
     // Legs
     const leg1 = MeshBuilder.CreateCylinder(
@@ -256,6 +298,7 @@ export class AgentLiveFeedComponent implements AfterViewInit {
       position.y - 0.3,
       position.z + 0.7
     );
+    this.agentMeshes.push(leg1);
 
     const leg2 = MeshBuilder.CreateCylinder(
       'leg2',
@@ -267,6 +310,7 @@ export class AgentLiveFeedComponent implements AfterViewInit {
       position.y - 0.3,
       position.z + 0.7
     );
+    this.agentMeshes.push(leg2);
 
     const leg3 = MeshBuilder.CreateCylinder(
       'leg3',
@@ -278,6 +322,7 @@ export class AgentLiveFeedComponent implements AfterViewInit {
       position.y - 0.3,
       position.z - 0.7
     );
+    this.agentMeshes.push(leg3);
 
     const leg4 = MeshBuilder.CreateCylinder(
       'leg4',
@@ -289,6 +334,7 @@ export class AgentLiveFeedComponent implements AfterViewInit {
       position.y - 0.3,
       position.z - 0.7
     );
+    this.agentMeshes.push(leg4);
 
     // Tail
     const tail = MeshBuilder.CreateCylinder(
@@ -298,6 +344,7 @@ export class AgentLiveFeedComponent implements AfterViewInit {
     );
     tail.position = new Vector3(position.x, position.y + 0.2, position.z + 1.2);
     tail.rotation.x = Math.PI / 4; // Rotate tail upwards
+    this.agentMeshes.push(tail);
 
     // Add some basic material to the dog for better visualization
     const dogMaterial = new StandardMaterial('dogMaterial', this.scene);
@@ -311,6 +358,12 @@ export class AgentLiveFeedComponent implements AfterViewInit {
     leg3.material = dogMaterial;
     leg4.material = dogMaterial;
     tail.material = dogMaterial;
+  }
+
+  private clearAgentMeshes(): void {
+    // Dispose all agent meshes before re-creating them
+    this.agentMeshes.forEach((mesh) => mesh.dispose());
+    this.agentMeshes = [];
   }
 
   toggleView(): void {

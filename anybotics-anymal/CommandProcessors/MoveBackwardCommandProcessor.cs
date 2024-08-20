@@ -8,7 +8,7 @@ public class MoveBackwardCommandProcessor() : BaseCommandProcessor("MoveBackward
 {
     public override void PerformCommand(AnymalAgent agent, Command response)
     {
-        agent.General.Location.Y = agent.General.Location.Y - 1;
+        agent.General.Location.Z = agent.General.Location.Z - 1;
         Console.WriteLine($"Moving backward {agent.Name} (ID: {agent.Id})");
     }
 }

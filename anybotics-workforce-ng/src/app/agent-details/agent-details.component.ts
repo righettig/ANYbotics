@@ -12,6 +12,14 @@ import { MatTabChangeEvent, MatTabsModule } from '@angular/material/tabs';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatListModule } from '@angular/material/list';
 import { AgentLiveFeedComponent } from "../agent-live-feed/agent-live-feed.component";
+import { Status } from '../models/status.enum';
+import { Vector3 } from '@babylonjs/core';
+
+export interface AgentState {
+  position: Vector3;
+  batteryLevel: number;
+  status: Status;
+}
 
 @Component({
   selector: 'app-agent-details',
@@ -37,6 +45,14 @@ import { AgentLiveFeedComponent } from "../agent-live-feed/agent-live-feed.compo
 export class AgentDetailsComponent implements OnInit, OnDestroy {
   @ViewChild('liveFeed') liveFeed!: AgentLiveFeedComponent;
   
+  agentState: AgentState = {
+    position: new Vector3(0, 0.65, 0),
+    batteryLevel: 100,
+    status: Status.Active
+  };
+
+  private previousState: AgentState | null = null;
+
   agent?: AgentDetailsDto;
   hardwareItems: { name: string; status: string }[] = [];
   
@@ -63,6 +79,21 @@ export class AgentDetailsComponent implements OnInit, OnDestroy {
         this.hardwareItems = this.createHardwareItems(this.agent.hardware);
         this.statusHistoryDataSource = new MatTableDataSource(this.agent.statusHistory);
         this.commandHistoryDataSource = new MatTableDataSource(this.agent.commandHistory);
+
+        const newState: AgentState = {
+          position: new Vector3(
+            agent.general.location.x, 
+            agent.general.location.y, 
+            agent.general.location.z
+          ),
+          batteryLevel: agent.batteryLevel,
+          status: agent.status
+        };
+
+        if (!this.previousState || !this.isSameState(this.previousState, newState)) {
+          this.agentState = newState;
+          this.previousState = newState;
+        }
       }
     });
   }
@@ -107,5 +138,11 @@ export class AgentDetailsComponent implements OnInit, OnDestroy {
         this.liveFeed.engine.resize(); // ensures scene is correctly rendered
       }
     }, 0);
+  }
+
+  private isSameState(state1: AgentState, state2: AgentState): boolean {
+    return state1.position.equals(state2.position) &&
+           state1.batteryLevel === state2.batteryLevel &&
+           state1.status === state2.status;
   }
 }
