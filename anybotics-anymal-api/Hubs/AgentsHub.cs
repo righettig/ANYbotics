@@ -41,37 +41,40 @@ public class AgentsHub : Hub
         {
             var agent = _anymalService.GetAgentById(id);
 
-            var commandDtos = await _commandRepository.GetCommandsByAgentIdAsync(id);
-
-            // Fetch emails and build the command history
-            var commandHistoryTasks = commandDtos.Select(async c =>
+            if (agent is not null) 
             {
-                // Try to get the email from the cache
-                if (!userEmailsCache.TryGetValue(c.InitiatedBy, out var userEmail))
+                var commandDtos = await _commandRepository.GetCommandsByAgentIdAsync(id);
+
+                // Fetch emails and build the command history
+                var commandHistoryTasks = commandDtos.Select(async c =>
                 {
-                    // Fetch email if not found in cache
-                    userEmail = await FirebaseUserHelper.GetUserEmailAsync(c.InitiatedBy);
-                    userEmailsCache[c.InitiatedBy] = userEmail;
-                }
+                    // Try to get the email from the cache
+                    if (!userEmailsCache.TryGetValue(c.InitiatedBy, out var userEmail))
+                    {
+                        // Fetch email if not found in cache
+                        userEmail = await FirebaseUserHelper.GetUserEmailAsync(c.InitiatedBy);
+                        userEmailsCache[c.InitiatedBy] = userEmail;
+                    }
 
-                // Return a new CommandHistoryItem
-                return new CommandHistoryItem
-                {
-                    InitiatedBy = userEmail,
-                    Timestamp = c.Timestamp,
-                    Description = c.ToString(),
-                };
-            });
+                    // Return a new CommandHistoryItem
+                    return new CommandHistoryItem
+                    {
+                        InitiatedBy = userEmail,
+                        Timestamp = c.Timestamp,
+                        Description = c.ToString(),
+                    };
+                });
 
-            // Await all tasks to complete and order them
-            var commandHistory = await Task.WhenAll(commandHistoryTasks);
+                // Await all tasks to complete and order them
+                var commandHistory = await Task.WhenAll(commandHistoryTasks);
 
-            var agentDto = new AgentDetailsDto(agent, commandHistory.OrderByDescending(x => x.Timestamp));
+                var agentDto = new AgentDetailsDto(agent, commandHistory.OrderByDescending(x => x.Timestamp));
 
-            await Clients.All.SendAsync("ReceiveAgentData", agentDto);
+                await Clients.All.SendAsync("ReceiveAgentData", agentDto);
 
-            // Adjust the delay as needed
-            await Task.Delay(1000);
+                // Adjust the delay as needed
+                await Task.Delay(1000);
+            }
         }
     }
 }
