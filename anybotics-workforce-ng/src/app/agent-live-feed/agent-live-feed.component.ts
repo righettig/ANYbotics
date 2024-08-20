@@ -24,6 +24,7 @@ import { GridMaterial } from '@babylonjs/materials/grid/gridMaterial';
 import { Color3 } from '@babylonjs/core/Maths/math.color';
 import { AgentState } from '../agent-details/agent-details.component';
 import { Status } from '../models/status.enum';
+import { AdvancedDynamicTexture, TextBlock } from '@babylonjs/gui';
 
 @Component({
   selector: 'app-agent-live-feed',
@@ -47,6 +48,10 @@ export class AgentLiveFeedComponent implements AfterViewInit, OnChanges {
   private isTopDownView = false; // Track the current view
 
   private agentMeshes: Mesh[] = [];
+
+  private readonly OFFLINE_COLOR = new Color3(1, 0, 0); // Red for Offline
+  private readonly UNAVAILABLE_COLOR = new Color3(0.5, 0.5, 0.5); // Gray for Unavailable
+  private readonly DEFAULT_COLOR = new Color3(0.8, 0.5, 0.3); // Default color for other statuses
 
   ngAfterViewInit(): void {
     const canvas = this.renderCanvas.nativeElement;
@@ -78,17 +83,50 @@ export class AgentLiveFeedComponent implements AfterViewInit, OnChanges {
     this.createAnymalAgent(state.position);
 
     // Update the agent's appearance based on batteryLevel and status
-    this.updateAgentAppearance(state.batteryLevel, state.status);
+    this.updateAgentAppearance(state.name, state.batteryLevel, state.status);
   }
 
-  private updateAgentAppearance(batteryLevel: number, status: Status): void {
+  private updateAgentAppearance(name: string, batteryLevel: number, status: Status): void {
     if (batteryLevel < 20) {
-      // Update to low battery state (e.g., change color)
+      // Create a GUI
+      const advancedTexture = AdvancedDynamicTexture.CreateFullscreenUI(
+        'UI',
+        true,
+        this.scene
+      );
+
+      // Create a text block in GUI
+      const guiTextBlock = new TextBlock();
+      guiTextBlock.text = `Battery almost depleted for '${name}'`;
+      guiTextBlock.color = 'white';
+      guiTextBlock.fontSize = 24;
+      guiTextBlock.textHorizontalAlignment =
+        TextBlock.HORIZONTAL_ALIGNMENT_LEFT;
+      guiTextBlock.textVerticalAlignment = TextBlock.VERTICAL_ALIGNMENT_TOP;
+      guiTextBlock.paddingLeft = '10px'; // Add padding from the left
+      guiTextBlock.paddingTop = '10px'; // Add padding from the top
+      advancedTexture.addControl(guiTextBlock);
     }
 
-    if (status === Status.Offline) {
-    } else if (status === Status.Unavailable) {
+    // Apply color based on status
+    let color: Color3;
+    switch (status) {
+      case Status.Offline:
+        color = this.OFFLINE_COLOR;
+        break;
+      case Status.Unavailable:
+        color = this.UNAVAILABLE_COLOR;
+        break;
+      default:
+        color = this.DEFAULT_COLOR;
     }
+
+    // Apply color to each agent mesh
+    this.agentMeshes.forEach((mesh) => {
+      if (mesh.material instanceof StandardMaterial) {
+        (mesh.material as StandardMaterial).diffuseColor = color;
+      }
+    });
   }
 
   private initializeScene(canvas: HTMLCanvasElement): void {

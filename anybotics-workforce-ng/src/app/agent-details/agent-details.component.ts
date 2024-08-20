@@ -16,6 +16,7 @@ import { Status } from '../models/status.enum';
 import { Vector3 } from '@babylonjs/core';
 
 export interface AgentState {
+  name: string;
   position: Vector3;
   batteryLevel: number;
   status: Status;
@@ -46,6 +47,7 @@ export class AgentDetailsComponent implements OnInit, OnDestroy {
   @ViewChild('liveFeed') liveFeed!: AgentLiveFeedComponent;
   
   agentState: AgentState = {
+    name: '',
     position: new Vector3(0, 0.65, 0),
     batteryLevel: 100,
     status: Status.Active
@@ -81,6 +83,7 @@ export class AgentDetailsComponent implements OnInit, OnDestroy {
         this.commandHistoryDataSource = new MatTableDataSource(this.agent.commandHistory);
 
         const newState: AgentState = {
+          name: this.agent.name,
           position: new Vector3(
             agent.general.location.x, 
             agent.general.location.y, 

@@ -667,15 +667,13 @@ Everytime an hardware failure or an event happen I need the API to send a signal
 
 38) I want to create an admin module in an angular app that is lazy loaded. Only admin user should be able to the page and able to access it. From the admin page I need to be able to list all the users, 
 
-
-TODO
-====
 39) Babylon.js (manual drive mode)
 		OK render robot in 2d/3d world and then show the agent in the details view
 		
-		TODO with "manual mode on" -> you can drive the agent
-		TODO render agent based on "location"	
+I'd like to display a red battery shape next to the agent when the battery is almost depleted. Please just highlight the changes instead of generating the whole code again
 
+TODO
+====
 move project to Nx
 	32) introduce "admin library"?
 	33) story book
