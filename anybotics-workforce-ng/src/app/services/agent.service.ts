@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { AgentDto } from '../models/agent-dto.model';
 import { AgentDetailsDto } from '../models/agent-details-dto.model';
 import { HttpService } from '../http.service';
@@ -14,8 +14,8 @@ export class AgentService {
 
   private agentsSubject = new BehaviorSubject<AgentDto[]>([]);
   private agentSubject = new BehaviorSubject<AgentDetailsDto | null>(null);
-  private anomalyDetectedSubject = new BehaviorSubject<any>(null);
-  private hardwareFailureSubject = new BehaviorSubject<any>(null);
+  private anomalyDetectedSubject = new Subject<string>();
+  private hardwareFailureSubject = new Subject<string>();
   
   private baseUrl = 'https://localhost:7272';
   private baseApiUrl = `${this.baseUrl}/Anymal`;
@@ -40,11 +40,11 @@ export class AgentService {
       this.agentSubject.next(agent);
     });
 
-    this.hubConnection.on('AnomalyDetected', (data: any) => {
+    this.hubConnection.on('AnomalyDetected', (data: string) => {
       this.anomalyDetectedSubject.next(data);
     });
 
-    this.hubConnection.on('HardwareFailure', (data: any) => {
+    this.hubConnection.on('HardwareFailure', (data: string) => {
       this.hardwareFailureSubject.next(data);
     });
   }
