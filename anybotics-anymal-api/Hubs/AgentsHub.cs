@@ -2,7 +2,6 @@
 using anybotics_anymal_api.Helpers;
 using anybotics_anymal_api.Models;
 using anybotics_anymal_api.Services;
-using anybotics_anymal_common.Domain;
 using Microsoft.AspNetCore.SignalR;
 
 namespace anybotics_anymal_api.Hubs;
