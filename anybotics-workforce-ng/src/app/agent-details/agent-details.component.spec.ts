@@ -2,18 +2,64 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { AgentDetailsComponent } from './agent-details.component';
 import { AgentService } from '../services/agent.service';
-import { AgentDto } from '../models/agent-dto.model';
 import { AgentBatteryLevelComponent } from '../agent-battery-level/agent-battery-level.component';
 import { AgentStatusComponent } from '../agent-status/agent-status.component';
 import { By } from '@angular/platform-browser';
 import { Status } from '../models/status.enum';
 import { RouterModule } from '@angular/router';
 import { AgentsComponent } from '../agents/agents.component';
+import { AgentDetailsDto } from '../models/agent-details-dto.model';
 
 describe('AgentDetailsComponent', () => {
   let component: AgentDetailsComponent;
   let fixture: ComponentFixture<AgentDetailsComponent>;
   let mockAgentService: jasmine.SpyObj<AgentService>;
+
+  const mockAgent: AgentDetailsDto = {
+    id: '1',
+    name: 'Test Agent',
+    batteryLevel: 50,
+    status: Status.Active,
+    general: {
+      currentCommand: '',
+      model: 'ANYmal',
+      firmwareVersion: '',
+      firmwareLastUpdated: new Date(),
+      manualModeOn: false,
+      location: {
+        x: 0,
+        y: 0,
+        z: 0
+      },
+      trekkerVersion: '',
+      trekkerLastUpdated: new Date()
+    },
+    hardware: {
+      temperatureSensor: 'Running',
+      pressureSensor: 'Running',
+      leg1Status: 'Running',
+      leg2Status: 'Running',
+      leg3Status: 'Running',
+      leg4Status: 'Running',
+      gps: 'Running',
+      engine: 'Running',
+      battery: 'Running',
+      lidarScanner: 'Running',
+      wifi: 'Running',
+      lte: 'Running',
+      cpu1: 'Running',
+      cpu2: 'Running',
+      depthCameras: [],
+      opticalCameras: [],
+      thermalCamera: 'Running',
+      panTiltUnit: 'Running',
+      spotlight: 'Running',
+      ultrasonicMicrophone: 'Running'
+    },
+    recentImages: [],
+    commandHistory: [],
+    statusHistory: []
+  };
 
   beforeEach(async () => {
     const spy = jasmine.createSpyObj('AgentService', [
@@ -21,13 +67,6 @@ describe('AgentDetailsComponent', () => {
       'stopConnection',
       'agent$',
     ]);
-
-    const mockAgent: AgentDto = {
-      id: '1',
-      name: 'Test Agent',
-      batteryLevel: 50,
-      status: Status.Active,
-    };
 
     // Mock the agent$ observable
     spy.agent$ = of(mockAgent);
@@ -64,16 +103,55 @@ describe('AgentDetailsComponent', () => {
     component.ngOnInit();
 
     expect(mockAgentService.startAgentStreaming).toHaveBeenCalledWith(agentId);
-    component['subscription'].add(() => {}); // Ensure subscription is active
-    expect(component.agent).toEqual({ id: '1', name: 'Test Agent', batteryLevel: 50, status: Status.Active });
+    component['subscription'].add(() => { }); // Ensure subscription is active
+    expect(component.agent).toEqual(mockAgent);
   });
 
   it('should display agent details when agent is set', () => {
-    const mockAgent: AgentDto = {
+    const mockAgent: AgentDetailsDto = {
       id: '1',
       name: 'Test Agent',
       batteryLevel: 50,
       status: Status.Active,
+      general: {
+        currentCommand: '',
+        model: 'ANYmal',
+        firmwareVersion: '',
+        firmwareLastUpdated: new Date(),
+        manualModeOn: false,
+        location: {
+          x: 0,
+          y: 0,
+          z: 0
+        },
+        trekkerVersion: '',
+        trekkerLastUpdated: new Date()
+      },
+      hardware: {
+        temperatureSensor: 'Running',
+        pressureSensor: 'Running',
+        leg1Status: 'Running',
+        leg2Status: 'Running',
+        leg3Status: 'Running',
+        leg4Status: 'Running',
+        gps: 'Running',
+        engine: 'Running',
+        battery: 'Running',
+        lidarScanner: 'Running',
+        wifi: 'Running',
+        lte: 'Running',
+        cpu1: 'Running',
+        cpu2: 'Running',
+        depthCameras: [],
+        opticalCameras: [],
+        thermalCamera: 'Running',
+        panTiltUnit: 'Running',
+        spotlight: 'Running',
+        ultrasonicMicrophone: 'Running'
+      },
+      recentImages: [],
+      commandHistory: [],
+      statusHistory: []
     };
     component.agent = mockAgent;
     fixture.detectChanges();

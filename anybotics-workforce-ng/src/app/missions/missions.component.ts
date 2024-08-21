@@ -31,7 +31,7 @@ import { ReactiveFormsModule } from '@angular/forms';
   templateUrl: './missions.component.html',
   styleUrl: './missions.component.scss',
 })
-export class MissionComponent implements OnInit {
+export class MissionsComponent implements OnInit {
   availableCommands: string[] = [];
   selectedCommands: { id: number; command: string }[] = [];
 

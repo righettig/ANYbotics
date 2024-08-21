@@ -4,7 +4,7 @@ import { AgentDetailsComponent } from './agent-details/agent-details.component';
 import { LoginComponent } from './login/login.component';
 import { CommandsComponent } from './commands/commands.component';
 import { NotAuthorizedComponent } from './not-authorized/not-authorized.component';
-import { MissionComponent } from './missions/missions.component';
+import { MissionsComponent } from './missions/missions.component';
 import { AdminGuard } from './guards/admin.guard';
 import { AuthGuard } from './guards/auth.guard';
 
@@ -15,7 +15,7 @@ export const routes: Routes = [
   { path: 'agents', component: AgentsComponent, canActivate: [AuthGuard] },
   { path: 'agents/:id', component: AgentDetailsComponent, canActivate: [AuthGuard] },
   { path: 'commands/:id', component: CommandsComponent, canActivate: [AuthGuard] },
-  { path: 'missions/:id', component: MissionComponent, canActivate: [AuthGuard] },
+  { path: 'missions/:id', component: MissionsComponent, canActivate: [AuthGuard] },
   {
     path: 'admin',
     loadComponent: () => import('./admin/admin.component').then(m => m.AdminComponent),
