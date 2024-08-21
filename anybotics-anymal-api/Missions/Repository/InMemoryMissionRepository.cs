@@ -7,6 +7,43 @@ public class InMemoryMissionRepository : IMissionRepository
 {
     private readonly ConcurrentDictionary<string, Mission> _missions = new();
 
+    public InMemoryMissionRepository()
+    {
+        var inspectRoomA = new Mission
+        {
+            Id = Guid.NewGuid().ToString(),
+            Name = "inspect_room_A",
+            Commands =
+                [
+                    "MoveForwardCommand",
+                    "MoveForwardCommand",
+                    "MoveForwardCommand",
+                    "MoveForwardCommand",
+                    "MoveForwardCommand",
+
+                    "MoveRightCommand",
+                    "MoveRightCommand",
+                    "MoveRightCommand",
+
+                    "MoveForwardCommand",
+                    "MoveForwardCommand",
+                    "MoveForwardCommand",
+
+                    "MoveRightCommand",
+                    "MoveRightCommand",
+                    "MoveRightCommand",
+                    "MoveRightCommand",
+                    "MoveRightCommand",
+
+                    "GasInspectionCommand",
+                    "CombustibleInspectionCommand",
+                    "AcousticMeasureCommand"
+                ]
+        };
+
+        _missions[inspectRoomA.Id] = inspectRoomA;
+    }
+
     public Task<IEnumerable<Mission>> GetMissionsAsync()
     {
         var missions = _missions.Values.AsEnumerable();
