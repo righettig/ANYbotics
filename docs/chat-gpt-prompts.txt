@@ -722,12 +722,10 @@ I'd like to display a red battery shape next to the agent when the battery is al
 	
 Mission "InspectRoomA" // during DEMO
 
+Story book: requires additional study!
+
 >> Front-end: fix unit tests 
-Story book
-
 Introduce c# unit tests 
-
-
 
 TODO
 ====
