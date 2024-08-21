@@ -2,11 +2,11 @@ import { Routes } from '@angular/router';
 import { AgentsComponent } from './agents/agents.component';
 import { AgentDetailsComponent } from './agent-details/agent-details.component';
 import { LoginComponent } from './login/login.component';
-import { AuthGuard } from './auth.guard';
 import { CommandsComponent } from './commands/commands.component';
-import { AdminGuard } from './admin.guard';
 import { NotAuthorizedComponent } from './not-authorized/not-authorized.component';
 import { MissionComponent } from './missions/missions.component';
+import { AdminGuard } from './guards/admin.guard';
+import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/agents', pathMatch: 'full' },
