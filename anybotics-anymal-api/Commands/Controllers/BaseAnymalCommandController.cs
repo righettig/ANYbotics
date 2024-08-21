@@ -1,7 +1,7 @@
 ﻿using anybotics_anymal_api.Commands.Core;
 using Microsoft.AspNetCore.Mvc;
 
-namespace anybotics_anymal_api.Controllers;
+namespace anybotics_anymal_api.Commands.Controllers;
 
 public abstract class BaseAnymalCommandController(ICommandBus commandBus) : ControllerBase
 {

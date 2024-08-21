@@ -3,17 +3,15 @@ using anybotics_anymal_api.Commands.Core;
 using anybotics_anymal_api.CustomAttributes;
 using Microsoft.AspNetCore.Mvc;
 
-namespace anybotics_anymal_api.Controllers;
+namespace anybotics_anymal_api.Commands.Controllers;
 
 [ApiController]
-[Route("anymal/wakeup")]
-public class WakeupController : BaseAnymalCommandController
+[Route("anymal/acousticMeasure")]
+public class AcousticMeasureController(ICommandBus commandBus) : BaseAnymalCommandController(commandBus)
 {
-    public WakeupController(ICommandBus commandBus) : base(commandBus) { }
-
     [HttpPost]
     [Deny("guest")]
-    public async Task<IActionResult> WakeupAgent([FromBody] string id)
+    public async Task<IActionResult> AcousticMeasure([FromBody] string id)
     {
         var validationResult = ValidateId(id);
         if (validationResult != null)
@@ -21,7 +19,7 @@ public class WakeupController : BaseAnymalCommandController
             return validationResult;
         }
 
-        var result = await commandBus.SendAsync(new WakeUpCommand(id, UserUid));
+        var result = await commandBus.SendAsync(new AcousticMeasureCommand(id, UserUid));
         return Ok(result);
     }
 }
