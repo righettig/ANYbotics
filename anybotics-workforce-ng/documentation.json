@@ -5147,6 +5147,72 @@
             "templateData": "<mat-form-field class=\"sorting-dropdown\" appearance=\"outline\">\r\n  <mat-select class=\"sort-options\"\r\n    placeholder=\"Sort Agents\"\r\n    [(value)]=\"sortOption\"\r\n    (selectionChange)=\"onSortOptionChange($event.value)\"\r\n  >\r\n    <mat-option value=\"nameAsc\">Name (A to Z)</mat-option>\r\n    <mat-option value=\"nameDesc\">Name (Z to A)</mat-option>\r\n    <mat-option value=\"batteryAsc\">Battery Level (Low to High)</mat-option>\r\n    <mat-option value=\"batteryDesc\">Battery Level (High to Low)</mat-option>\r\n  </mat-select>\r\n</mat-form-field>\r\n"
         },
         {
+            "name": "StorybookSampleComponent",
+            "id": "component-StorybookSampleComponent-201fb08b8bb9938980819b739ebbbe5fe03332e75ae68520abdd4faf33e3fbac54dfc69bccf9157a394bbbb3006f6964b04ac6a20d32f0748f2f2a061f7c930c",
+            "file": "src/app/storybook-sample/storybook-sample.component.ts",
+            "encapsulation": [],
+            "entryComponents": [],
+            "inputs": [],
+            "outputs": [],
+            "providers": [],
+            "selector": "app-storybook-sample",
+            "styleUrls": [],
+            "styles": [],
+            "templateUrl": [
+                "./storybook-sample.component.html"
+            ],
+            "viewProviders": [],
+            "hostDirectives": [],
+            "inputsClass": [
+                {
+                    "name": "task",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "rawdescription": "\n\nThe shape of the task object\n",
+                    "description": "<p>The shape of the task object</p>\n",
+                    "line": 14,
+                    "type": "any",
+                    "decorators": []
+                }
+            ],
+            "outputsClass": [
+                {
+                    "name": "onArchiveTask",
+                    "defaultValue": "new EventEmitter<Event>()",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 20,
+                    "type": "EventEmitter"
+                },
+                {
+                    "name": "onPinTask",
+                    "defaultValue": "new EventEmitter<Event>()",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 17,
+                    "type": "EventEmitter"
+                }
+            ],
+            "propertiesClass": [],
+            "methodsClass": [],
+            "deprecated": false,
+            "deprecationMessage": "",
+            "hostBindings": [],
+            "hostListeners": [],
+            "standalone": true,
+            "imports": [],
+            "description": "",
+            "rawdescription": "\n",
+            "type": "component",
+            "sourceCode": "import { Component, Input, Output, EventEmitter } from '@angular/core';\r\n\r\n@Component({\r\n  selector: 'app-storybook-sample',\r\n  standalone: true,\r\n  imports: [],\r\n  templateUrl: './storybook-sample.component.html',\r\n  styleUrl: './storybook-sample.component.scss'\r\n})\r\nexport default class StorybookSampleComponent {\r\n  /**\r\n   * The shape of the task object\r\n  */\r\n  @Input() task: any;\r\n\r\n  // tslint:disable-next-line: no-output-on-prefix\r\n  @Output() onPinTask = new EventEmitter<Event>();\r\n\r\n  // tslint:disable-next-line: no-output-on-prefix\r\n  @Output() onArchiveTask = new EventEmitter<Event>();\r\n}",
+            "styleUrl": "./storybook-sample.component.scss",
+            "assetsDirs": [],
+            "styleUrlsData": "",
+            "stylesData": "",
+            "extends": [],
+            "templateData": "<div class=\"list-item\">\r\n    <label [attr.aria-label]=\"task.title + ''\" for=\"title\">\r\n        <input type=\"text\" [value]=\"task.title\" readonly=\"true\" id=\"title\" name=\"title\" />\r\n    </label>\r\n</div>"
+        },
+        {
             "name": "UserListComponent",
             "id": "component-UserListComponent-ceb71fb89ec9f6db736dee5aa2a9610835efb2e93fa876c2ccccbf90e7d664dcd097733996333b43cf6a3bcca5cea2295615891ea46f619ee432e6f8f8790556",
             "file": "src/app/user-list/user-list.component.ts",
@@ -6169,6 +6235,15 @@
                 "name": "SortingComponent",
                 "coveragePercent": 0,
                 "coverageCount": "0/4",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/storybook-sample/storybook-sample.component.ts",
+                "type": "component",
+                "linktype": "component",
+                "name": "StorybookSampleComponent",
+                "coveragePercent": 25,
+                "coverageCount": "1/4",
                 "status": "low"
             },
             {
