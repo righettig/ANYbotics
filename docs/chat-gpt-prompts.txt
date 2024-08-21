@@ -724,9 +724,6 @@ Mission "InspectRoomA" // during DEMO
 
 Story book: requires additional study!
 
->> Front-end: fix unit tests 
-Introduce c# unit tests 
-
 TODO
 ====
 Wednesday
