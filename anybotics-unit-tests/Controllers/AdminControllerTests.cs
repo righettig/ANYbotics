@@ -3,7 +3,7 @@ using anybotics_anymal_api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
-namespace Anybotics.UnitTests.Controllers;
+namespace anybotics_unit_tests.Controllers;
 
 public class AdminControllerTests
 {
