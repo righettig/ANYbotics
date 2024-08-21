@@ -4,13 +4,13 @@ namespace anybotics_anymal_api.Middlewares;
 
 public class FirebaseUserMiddleware
 {
+    private readonly IFirebaseService _firebaseService;
     private readonly RequestDelegate _next;
-    private readonly FirebaseService _firebaseService;
 
-    public FirebaseUserMiddleware(RequestDelegate next, FirebaseService firebaseService)
+    public FirebaseUserMiddleware(IFirebaseService firebaseService, RequestDelegate next)
     {
-        _next = next;
         _firebaseService = firebaseService;
+        _next = next;
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -26,8 +26,6 @@ public class FirebaseUserMiddleware
 
                 context.Items["UserUid"] = uid;
                 context.Items["UserEmail"] = userRecord.Email;
-
-                var firebaseService = new FirebaseService();
 
                 context.Items["UserRole"] = await _firebaseService.GetUserRoleAsync(userRecord.Email);
             }

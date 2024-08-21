@@ -17,7 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "anybotics-agent-runner", "anybotics-agent-runner\anybotics-agent-runner.csproj", "{372FBB22-8E6B-4485-ADCF-DE02FF6404DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anybotics.UnitTests", "Anybotics.UnitTests\Anybotics.UnitTests.csproj", "{73EDF47D-C02F-4993-8FAE-C3EFEBA2D776}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "anybotics-unit-tests", "anybotics-unit-tests\anybotics-unit-tests.csproj", "{72DCB3AF-6403-45CD-AE30-67BAE5F39953}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,10 +41,10 @@ Global
 		{372FBB22-8E6B-4485-ADCF-DE02FF6404DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{372FBB22-8E6B-4485-ADCF-DE02FF6404DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{372FBB22-8E6B-4485-ADCF-DE02FF6404DB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{73EDF47D-C02F-4993-8FAE-C3EFEBA2D776}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{73EDF47D-C02F-4993-8FAE-C3EFEBA2D776}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{73EDF47D-C02F-4993-8FAE-C3EFEBA2D776}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{73EDF47D-C02F-4993-8FAE-C3EFEBA2D776}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72DCB3AF-6403-45CD-AE30-67BAE5F39953}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72DCB3AF-6403-45CD-AE30-67BAE5F39953}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72DCB3AF-6403-45CD-AE30-67BAE5F39953}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72DCB3AF-6403-45CD-AE30-67BAE5F39953}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

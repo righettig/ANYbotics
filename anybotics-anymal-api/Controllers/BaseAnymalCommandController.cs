@@ -1,4 +1,4 @@
-﻿using anybotics_anymal_api.Commands;
+﻿using anybotics_anymal_api.Commands.Core;
 using Microsoft.AspNetCore.Mvc;
 
 namespace anybotics_anymal_api.Controllers;

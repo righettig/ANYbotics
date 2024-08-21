@@ -1,4 +1,4 @@
-﻿namespace anybotics_anymal_api.Commands;
+﻿namespace anybotics_anymal_api.Commands.Core;
 
 public abstract class CommandBase(string agentId, string initiatedBy) : ICommand
 {

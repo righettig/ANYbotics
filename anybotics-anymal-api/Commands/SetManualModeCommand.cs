@@ -1,4 +1,6 @@
-﻿namespace anybotics_anymal_api.Commands;
+﻿using anybotics_anymal_api.Commands.Core;
+
+namespace anybotics_anymal_api.Commands;
 
 public class SetManualModeCommand(string agentId, string initiatedBy, bool manualMode) : CommandBase(agentId, initiatedBy)
 {

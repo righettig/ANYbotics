@@ -1,5 +1,5 @@
-﻿using anybotics_anymal_api.Commands;
-using anybotics_anymal_api.Commands.CommandHandlers;
+﻿using anybotics_anymal_api.Commands.Core;
+using anybotics_anymal_api.Commands.Repository;
 using anybotics_anymal_api.Filters;
 using anybotics_anymal_api.Missions.Repository;
 using anybotics_anymal_api.Services;

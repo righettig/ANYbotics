@@ -1,6 +1,6 @@
 ﻿using AnymalGrpc;
 
-namespace anybotics_anymal_api.Commands;
+namespace anybotics_anymal_api.Commands.Core;
 
 public interface ICommandBus
 {

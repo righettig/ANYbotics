@@ -1,5 +1,6 @@
 
 using anybotics_anymal_api.Commands;
+using anybotics_anymal_api.Commands.Core;
 using anybotics_anymal_api.CustomAttributes;
 using Microsoft.AspNetCore.Mvc;
 

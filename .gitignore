@@ -6,7 +6,7 @@
 /anybotics-anymal-common/bin
 /anybotics-agent-runner/bin
 /anybotics-agent-runner/obj
-anybotics-workforce-ng/test-results.json
-anybotics-workforce-ng/test-results/.last-run.json
-/Anybotics.UnitTests/bin
-/Anybotics.UnitTests/obj
+/anybotics-unit-tests/bin
+/anybotics-unit-tests/obj
+/anybotics-workforce-ng/test-results.json
+/anybotics-workforce-ng/test-results/.last-run.json

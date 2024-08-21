@@ -1,7 +1,7 @@
-﻿using anybotics_anymal_api.Commands.CommandHandlers;
+﻿using anybotics_anymal_api.Commands.Repository;
 using AnymalGrpc;
 
-namespace anybotics_anymal_api.Commands;
+namespace anybotics_anymal_api.Commands.Core;
 
 public class CommandBus(IServiceProvider serviceProvider, ICommandRepository commandRepository) : ICommandBus
 {
@@ -10,7 +10,7 @@ public class CommandBus(IServiceProvider serviceProvider, ICommandRepository com
         await commandRepository.SaveCommandAsync(command);
 
         var handler = serviceProvider.GetService<ICommandHandler<TCommand>>();
-        
+
         if (handler != null)
         {
             return await handler.HandleAsync(command);

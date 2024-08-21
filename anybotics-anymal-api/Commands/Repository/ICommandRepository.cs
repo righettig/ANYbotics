@@ -1,4 +1,6 @@
-﻿namespace anybotics_anymal_api.Commands;
+﻿using anybotics_anymal_api.Commands.Core;
+
+namespace anybotics_anymal_api.Commands.Repository;
 
 public interface ICommandRepository
 {

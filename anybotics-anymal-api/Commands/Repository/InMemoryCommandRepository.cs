@@ -1,6 +1,7 @@
-﻿namespace anybotics_anymal_api.Commands;
+﻿namespace anybotics_anymal_api.Commands.Repository;
 
 using System.Collections.Concurrent;
+using anybotics_anymal_api.Commands.Core;
 
 public class InMemoryCommandRepository : ICommandRepository
 {

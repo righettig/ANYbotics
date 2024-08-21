@@ -1,4 +1,4 @@
-﻿using anybotics_anymal_api.Commands;
+﻿using anybotics_anymal_api.Commands.Repository;
 using anybotics_anymal_api.Models;
 using anybotics_anymal_api.Services;
 using Microsoft.AspNetCore.SignalR;
@@ -9,11 +9,11 @@ public class AgentsHub : Hub
 {
     private readonly AnymalService _anymalService;
     private readonly ICommandRepository _commandRepository;
-    private readonly FirebaseService _firebaseService;
+    private readonly IFirebaseService _firebaseService;
 
     public AgentsHub(AnymalService anymalService,
                      ICommandRepository commandRepository,
-                     FirebaseService firebaseService)
+                     IFirebaseService firebaseService)
     {
         _anymalService = anymalService;
         _commandRepository = commandRepository;

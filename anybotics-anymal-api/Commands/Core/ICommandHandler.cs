@@ -1,6 +1,6 @@
 ﻿using AnymalGrpc;
 
-namespace anybotics_anymal_api.Commands.CommandHandlers;
+namespace anybotics_anymal_api.Commands.Core;
 
 internal interface ICommandHandler<TCommand> where TCommand : ICommand
 {

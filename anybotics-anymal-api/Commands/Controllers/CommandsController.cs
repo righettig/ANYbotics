@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using anybotics_anymal_api.Commands.Core;
+using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
 
-namespace anybotics_anymal_api.Commands;
+namespace anybotics_anymal_api.Commands.Controllers;
 
 [ApiController]
 [Route("[controller]")]
