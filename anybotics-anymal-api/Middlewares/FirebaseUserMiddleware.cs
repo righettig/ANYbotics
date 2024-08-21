@@ -1,15 +1,16 @@
-﻿using anybotics_anymal_api.Helpers;
-using anybotics_anymal_api.Services;
+﻿using anybotics_anymal_api.Services;
 
 namespace anybotics_anymal_api.Middlewares;
 
 public class FirebaseUserMiddleware
 {
     private readonly RequestDelegate _next;
+    private readonly FirebaseService _firebaseService;
 
-    public FirebaseUserMiddleware(RequestDelegate next)
+    public FirebaseUserMiddleware(RequestDelegate next, FirebaseService firebaseService)
     {
         _next = next;
+        _firebaseService = firebaseService;
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -20,15 +21,15 @@ public class FirebaseUserMiddleware
         {
             try
             {
-                var uid = await FirebaseTokenHelper.GetUidFromTokenAsync(idToken);
-                var userRecord = await FirebaseUserHelper.GetUserRecordAsync(uid);
+                var uid = await _firebaseService.GetUidFromTokenAsync(idToken);
+                var userRecord = await _firebaseService.GetUserRecordAsync(uid);
 
                 context.Items["UserUid"] = uid;
                 context.Items["UserEmail"] = userRecord.Email;
 
                 var firebaseService = new FirebaseService();
 
-                context.Items["UserRole"] = await firebaseService.GetUserRoleAsync(userRecord.Email);
+                context.Items["UserRole"] = await _firebaseService.GetUserRoleAsync(userRecord.Email);
             }
             catch
             {

@@ -1,5 +1,4 @@
 ﻿using anybotics_anymal_api.Commands;
-using anybotics_anymal_api.Helpers;
 using anybotics_anymal_api.Models;
 using anybotics_anymal_api.Services;
 using Microsoft.AspNetCore.SignalR;
@@ -10,11 +9,15 @@ public class AgentsHub : Hub
 {
     private readonly AnymalService _anymalService;
     private readonly ICommandRepository _commandRepository;
+    private readonly FirebaseService _firebaseService;
 
-    public AgentsHub(AnymalService anymalService, ICommandRepository commandRepository)
+    public AgentsHub(AnymalService anymalService,
+                     ICommandRepository commandRepository,
+                     FirebaseService firebaseService)
     {
         _anymalService = anymalService;
         _commandRepository = commandRepository;
+        _firebaseService = firebaseService;
     }
 
     public async Task StreamAgentsData()
@@ -51,7 +54,7 @@ public class AgentsHub : Hub
                     if (!userEmailsCache.TryGetValue(c.InitiatedBy, out var userEmail))
                     {
                         // Fetch email if not found in cache
-                        userEmail = await FirebaseUserHelper.GetUserEmailAsync(c.InitiatedBy);
+                        userEmail = await _firebaseService.GetUserEmailAsync(c.InitiatedBy);
                         userEmailsCache[c.InitiatedBy] = userEmail;
                     }
 

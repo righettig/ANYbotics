@@ -1,11 +1,14 @@
 ﻿using Google.Cloud.Firestore;
 using Google.Apis.Auth.OAuth2;
+using FirebaseAdmin.Auth;
+using anybotics_anymal_api.Controllers;
 
 namespace anybotics_anymal_api.Services;
 
 public class FirebaseService
 {
-    private FirestoreDb firestoreDb;
+    private readonly FirebaseAuth _auth;
+    private readonly FirestoreDb _firestoreDb;
 
     public FirebaseService()
     {
@@ -18,7 +21,53 @@ public class FirebaseService
             ProjectId = "anybotics-c5ce9",
             Credential = credential
         };
-        firestoreDb = builder.Build();
+        _firestoreDb = builder.Build();
+
+        _auth = FirebaseAuth.DefaultInstance;
+    }
+
+    public async Task<List<UserInfo>> GetUsersAsync()
+    {
+        var userRecords = new List<UserInfo>();
+
+        await foreach (var response in _auth.ListUsersAsync(null).AsRawResponses())
+        {
+            userRecords.AddRange(
+                response.Users.Select(user => new UserInfo(user.Uid, user.Email)));
+        }
+
+        return userRecords;
+    }
+
+    public async Task<UserRecord> GetUserRecordAsync(string uid)
+    {
+        try
+        {
+            return await _auth.GetUserAsync(uid);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Failed to retrieve user record from Firebase.", ex);
+        }
+    }
+
+    public async Task<string> GetUserEmailAsync(string uid)
+    {
+        var userRecord = await GetUserRecordAsync(uid);
+        return userRecord.Email;
+    }
+
+    public async Task<string> GetUidFromTokenAsync(string idToken)
+    {
+        try
+        {
+            var decodedToken = await _auth.VerifyIdTokenAsync(idToken);
+            return decodedToken.Uid;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Failed to verify Firebase ID token.", ex);
+        }
     }
 
     public async Task<string?> GetUserRoleAsync(string userEmail)
@@ -26,7 +75,7 @@ public class FirebaseService
         try
         {
             // Reference to the document in the "userRoles" collection with the specified email
-            DocumentReference docRef = firestoreDb.Collection("userRoles").Document(userEmail);
+            DocumentReference docRef = _firestoreDb.Collection("userRoles").Document(userEmail);
 
             // Get the document snapshot
             DocumentSnapshot snapshot = await docRef.GetSnapshotAsync();

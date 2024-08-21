@@ -1,4 +1,4 @@
-﻿using FirebaseAdmin.Auth;
+﻿using anybotics_anymal_api.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace anybotics_anymal_api.Controllers;
@@ -8,26 +8,12 @@ public record UserInfo(string Uid, string Email);
 
 [ApiController]
 [Route("[controller]")]
-public class AdminController : ControllerBase
+public class AdminController(FirebaseService firebaseService) : ControllerBase
 {
-    private readonly FirebaseAuth _auth;
-
-    public AdminController()
-    {
-        _auth = FirebaseAuth.DefaultInstance;
-    }
-
     [HttpGet("list")]
     public async Task<IActionResult> ListUsers()
     {
-        var userRecords = new List<UserInfo>();
-
-        await foreach (var response in FirebaseAuth.DefaultInstance.ListUsersAsync(null).AsRawResponses())
-        {
-            userRecords.AddRange(
-                response.Users.Select(user => new UserInfo(user.Uid, user.Email)));
-        }
-
+        var userRecords = await firebaseService.GetUsersAsync();
         return Ok(userRecords);
     }
 }
