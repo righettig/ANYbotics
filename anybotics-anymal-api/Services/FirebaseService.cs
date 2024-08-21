@@ -1,7 +1,7 @@
 ﻿using Google.Cloud.Firestore;
 using Google.Apis.Auth.OAuth2;
 using FirebaseAdmin.Auth;
-using anybotics_anymal_api.Controllers;
+using anybotics_anymal_api.Admin.Controllers;
 
 namespace anybotics_anymal_api.Services;
 

@@ -1,6 +1,6 @@
 ﻿using AnymalGrpc;
 
-namespace anybotics_anymal_api.Services;
+namespace anybotics_anymal_api.Extensions;
 
 public static class LoggingExtensions
 {

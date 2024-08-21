@@ -1,4 +1,5 @@
-﻿using anybotics_anymal_api.Hubs;
+﻿using anybotics_anymal_api.Extensions;
+using anybotics_anymal_api.Hubs;
 using anybotics_anymal_common.Domain;
 using AnymalGrpc;
 using Grpc.Core;

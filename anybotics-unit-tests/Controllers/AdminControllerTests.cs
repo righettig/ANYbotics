@@ -1,4 +1,4 @@
-﻿using anybotics_anymal_api.Controllers;
+﻿using anybotics_anymal_api.Admin.Controllers;
 using anybotics_anymal_api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Moq;

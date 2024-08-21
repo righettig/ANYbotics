@@ -1,7 +1,7 @@
 ﻿using anybotics_anymal_api.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace anybotics_anymal_api.Controllers
+namespace anybotics_anymal_api.Admin.Controllers
 {
     /// <summary>
     /// Represents an API controller that provides administrative endpoints for managing users.
