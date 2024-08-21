@@ -26,7 +26,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ICommandBus, CommandBus>();
         services.AddSingleton<ICommandRepository, InMemoryCommandRepository>();
         services.AddSingleton<IMissionRepository, InMemoryMissionRepository>();
-        services.AddSingleton<FirebaseService>();
+        services.AddSingleton<IFirebaseService, FirebaseService>();
         services.AddSingleton<AnymalService>();
 
         services.AddCommandHandlers(Assembly.GetExecutingAssembly());

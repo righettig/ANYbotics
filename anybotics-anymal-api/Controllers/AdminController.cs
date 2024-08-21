@@ -8,7 +8,7 @@ public record UserInfo(string Uid, string Email);
 
 [ApiController]
 [Route("[controller]")]
-public class AdminController(FirebaseService firebaseService) : ControllerBase
+public class AdminController(IFirebaseService firebaseService) : ControllerBase
 {
     [HttpGet("list")]
     public async Task<IActionResult> ListUsers()

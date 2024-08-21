@@ -29,8 +29,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
     <Folder Include="Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\anybotics-anymal-api\anybotics-anymal-api.csproj" />
   </ItemGroup>
 
 </Project>

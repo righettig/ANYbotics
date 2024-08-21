@@ -5,7 +5,7 @@ using anybotics_anymal_api.Controllers;
 
 namespace anybotics_anymal_api.Services;
 
-public class FirebaseService
+public class FirebaseService : IFirebaseService
 {
     private readonly FirebaseAuth _auth;
     private readonly FirestoreDb _firestoreDb;
