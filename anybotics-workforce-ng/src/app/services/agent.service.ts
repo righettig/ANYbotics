@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { AgentDto } from '../models/agent-dto.model';
 import { AgentDetailsDto } from '../models/agent-details-dto.model';
-import { HttpService } from '../http.service';
+import { HttpService } from './http.service';
 
 import * as signalR from '@microsoft/signalr';
 
