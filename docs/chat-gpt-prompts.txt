@@ -759,3 +759,5 @@ the user roles are kept into a firestore collection called "userRoles". I do not
 BUGS
 	28) Cleanup signalR server side subscriptions
 	
+	After "Shutdown" command any other command is executed by the agent BUT not logged in the console
+	

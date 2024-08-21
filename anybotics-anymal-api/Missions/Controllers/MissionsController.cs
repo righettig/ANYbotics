@@ -5,104 +5,128 @@ using anybotics_anymal_api.Missions.Repository;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
 
-namespace anybotics_anymal_api.Missions.Controllers;
-
-public class ExecuteMissionRequest 
+namespace anybotics_anymal_api.Missions.Controllers
 {
-    public string AgentId { get; set; }
-    public string MissionId { get; set; }
-}
-
-[ApiController]
-[Route("[controller]")]
-public class MissionsController(IMissionRepository missionRepository, ICommandBus commandBus) : ControllerBase
-{
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<Mission>>> GetMissions()
+    public class ExecuteMissionRequest
     {
-        var missions = await missionRepository.GetMissionsAsync();
-        return Ok(missions);
+        public string AgentId { get; set; }
+        public string MissionId { get; set; }
     }
 
-    [HttpPost("create")]
-    [Deny("guest")]
-    public async Task<ActionResult> CreateMission([FromBody] Mission mission)
+    [ApiController]
+    [Route("[controller]")]
+    public class MissionsController : ControllerBase
     {
-        mission.Id = Guid.NewGuid().ToString();
-        await missionRepository.AddMissionAsync(mission);
-        return Ok(mission);
-    }
+        private readonly IMissionRepository _missionRepository;
+        private readonly ICommandBus _commandBus;
 
-    [HttpDelete]
-    [Deny("guest")]
-    public async Task<ActionResult> DeleteMission(string missionId)
-    {
-        await missionRepository.DeleteMissionAsync(missionId);
-        return Ok();
-    }
-
-    [HttpPost("execute")]
-    [Deny("guest")]
-    public async Task<IActionResult> ExecuteMission([FromBody] ExecuteMissionRequest request)
-    {
-        try
+        public MissionsController(IMissionRepository missionRepository, ICommandBus commandBus)
         {
-            // Retrieve the mission from the repository
-            var mission = await missionRepository.GetMissionByIdAsync(request.MissionId);
-            if (mission == null)
-            {
-                return NotFound("Mission not found");
-            }
+            _missionRepository = missionRepository;
+            _commandBus = commandBus;
+        }
 
-            // Iterate through each command specified in the mission
-            foreach (var commandName in mission.Commands)
-            {
-                // Find the command type based on the name
-                var commandType = Assembly.GetExecutingAssembly().GetTypes()
-                    .FirstOrDefault(t => t.Name == commandName && typeof(ICommand).IsAssignableFrom(t));
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Mission>>> GetMissions()
+        {
+            var missions = await _missionRepository.GetMissionsAsync();
+            return Ok(missions);
+        }
 
-                if (commandType != null)
-                {
-                    // Check if the command type has the expected constructor
-                    var constructor = commandType.GetConstructors()
-                        .FirstOrDefault(c => c.GetParameters().Length == 2 &&
-                                             c.GetParameters()[0].ParameterType == typeof(string) &&
-                                             c.GetParameters()[1].ParameterType == typeof(string));
+        [HttpPost("create")]
+        [Deny("guest")]
+        public async Task<ActionResult> CreateMission([FromBody] Mission mission)
+        {
+            mission.Id = Guid.NewGuid().ToString();
+            await _missionRepository.AddMissionAsync(mission);
+            return Ok(mission);
+        }
 
-                    if (constructor != null)
-                    {
-                        // Create an instance of the command using the constructor
-                        var command = constructor.Invoke([request.AgentId, UserUid]);
-
-                        // Get the SendAsync method info
-                        var sendAsyncMethod = 
-                            typeof(ICommandBus).GetMethod("SendAsync").MakeGenericMethod(commandType);
-
-                        // Invoke SendAsync with the created command instance
-                        await (Task)sendAsyncMethod.Invoke(commandBus, [command]);
-                    }
-                    else
-                    {
-                        // Return a bad request if the constructor is not found
-                        return BadRequest($"Command {commandName} does not have the expected constructor.");
-                    }
-                }
-                else
-                {
-                    // Return a bad request if the command type is not found
-                    return BadRequest($"Command {commandName} not found.");
-                }
-            }
-
+        [HttpDelete]
+        [Deny("guest")]
+        public async Task<ActionResult> DeleteMission(string missionId)
+        {
+            await _missionRepository.DeleteMissionAsync(missionId);
             return Ok();
         }
-        catch (Exception ex)
-        {
-            // Log the exception (ensure you have a logging mechanism set up)
-            // For example: _logger.LogError(ex, "An error occurred while executing the mission.");
-            return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
-        }
-    }
 
-    private string? UserUid => HttpContext.Items["UserUid"] as string;
+        [HttpPost("execute")]
+        [Deny("guest")]
+        public async Task<IActionResult> ExecuteMission([FromBody] ExecuteMissionRequest request)
+        {
+            try
+            {
+                var mission = await _missionRepository.GetMissionByIdAsync(request.MissionId);
+                if (mission == null)
+                {
+                    return NotFound("Mission not found");
+                }
+
+                var result = await ExecuteCommandsAsync(mission.Commands, request.AgentId);
+                if (result is not null)
+                {
+                    return result;
+                }
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (ensure you have a logging mechanism set up)
+                // For example: _logger.LogError(ex, "An error occurred while executing the mission.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
+            }
+        }
+
+        private async Task<IActionResult?> ExecuteCommandsAsync(IEnumerable<string> commandNames, string agentId)
+        {
+            foreach (var commandName in commandNames)
+            {
+                var commandType = GetCommandType(commandName);
+                if (commandType == null)
+                {
+                    return BadRequest($"Command {commandName} not found.");
+                }
+
+                var command = CreateCommandInstance(commandType, agentId, UserUid);
+                if (command == null)
+                {
+                    return BadRequest($"Command {commandName} does not have the expected constructor.");
+                }
+
+                await SendCommandAsync(commandType, command);
+            }
+
+            return null;
+        }
+
+        private Type? GetCommandType(string commandName)
+        {
+            return Assembly.GetExecutingAssembly().GetTypes()
+                .FirstOrDefault(t => t.Name == commandName && typeof(ICommand).IsAssignableFrom(t));
+        }
+
+        private ICommand? CreateCommandInstance(Type commandType, string agentId, string? userUid)
+        {
+            var constructor = commandType.GetConstructors()
+                .FirstOrDefault(c => c.GetParameters().Length == 2 &&
+                                     c.GetParameters()[0].ParameterType == typeof(string) &&
+                                     c.GetParameters()[1].ParameterType == typeof(string));
+
+            return constructor?.Invoke([agentId, userUid]) as ICommand;
+        }
+
+        private async Task SendCommandAsync(Type commandType, ICommand command)
+        {
+            var sendAsyncMethod = 
+                typeof(ICommandBus).GetMethod("SendAsync")?.MakeGenericMethod(commandType);
+
+            if (sendAsyncMethod != null)
+            {
+                await (Task)sendAsyncMethod.Invoke(_commandBus, [command]);
+            }
+        }
+
+        private string? UserUid => HttpContext.Items["UserUid"] as string;
+    }
 }
