@@ -724,6 +724,7 @@ Mission "InspectRoomA" // during DEMO
 
 Story book: requires additional study!
 
+
 TODO
 ====
 Wednesday
@@ -733,10 +734,60 @@ Wednesday
 		34) e2e tests using Cypress
 			need a few e2e tests
 
-Thursday
-	Improve internal documentation and create project level documentation
-	Improve front-end unit tests and add back-end unit tests
+	Improved front-end unit tests and add back-end unit tests
+		Updated Linkedin profile
+		verify profile
+		updated profile summary
+		summary for genesis/sea-maritech-clarksons
+		prepared application for anybotics
+		tool for recording video (Windows Game Bar + Clipchamp)	
 
+Thursday
+	1) DONE update linkedin experiences and summary (OK)
+	2) DONE update headline: Senior Full Stack Engineer | Technology Leadership
+	3) DONE update CV resume io
+	
+		maciej.maciaszek@clarksons.com
+		ahsan.mumtaz@clarksons.com
+		tanush.shukla@clarksons.com	
+	
+	4) DONE documenti laurea
+	
+	4) WIP missions, need a way to quick reach to the missions tab
+	
+	5) prepare script for video 
+	
+		DEMO
+			"GOAL" 
+			console app 
+			runner
+			api 
+			front-end
+				show agents as they come online
+				discuss concepts of commands, 
+				show details and live feed
+				
+				missions, need a way to quick reach to the missions tab
+					https://www.iconfinder.com/icons/8098508/four_legged_robot_ai_smart_pet_smart_dog_robotic_dog_icon
+					https://www.iconfinder.com/search?q=dog%20robot&price=free
+					https://cdn2.iconfinder.com/data/icons/robotic-4/64/Dog_Robot_dog_robot_machine_technology-512.png
+		
+		Code walkthrough
+			TODO 
+			
+		2 separate videos
+			prepare a "rough" version first to get an idea of how lenghty the videos will be, then record a refined version
+	
+	
+	GOAL By the end of the day I should have a rough-cut of the video to be shot the following day and updated all online  links
+	
+
+Friday	
+	Improve internal documentation and create project level documentation
+	
+	publish project (remove chatgpt stuff..)	
+		add improvements documentation
+	
 
 IMPROVEMENTS 
 	37) Fleet (group agents)
