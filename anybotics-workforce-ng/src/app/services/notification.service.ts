@@ -7,9 +7,17 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class NotificationService {
   constructor(private snackBar: MatSnackBar) {}
 
+  private _active: boolean = true;
+
   showNotification(message: string, action: string = 'Close', duration: number = 5000): void {
-    this.snackBar.open(message, action, {
-      duration: duration,
-    });
+    if (this._active) {
+      this.snackBar.open(message, action, {
+        duration: duration,
+      });
+    }
+  }
+
+  toggleShowSuppressNotifications() {
+    this._active = !this._active;
   }
 }

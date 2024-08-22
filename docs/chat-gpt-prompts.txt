@@ -752,18 +752,18 @@ Thursday
 		tanush.shukla@clarksons.com	
 	
 	4) DONE documenti laurea
-	
-	4) WIP missions, need a way to quick reach to the missions tab
+	5) DONE missions, need a way to quick reach to the missions tab
 	
 	5) prepare script for video 
 	
 		DEMO
-			"GOAL" 
-			console app 
-			runner
-			api 
+			"GOAL"
+				console app 
+				runner (use 6 agents)
+				api (run from VS, less UI clutter on console)
+			
 			front-end
-				show agents as they come online
+				show agents as they come online, hide notifications using button
 				discuss concepts of commands, 
 				show details and live feed
 				

@@ -5,6 +5,7 @@ import { LogoComponent } from '../logo/logo.component';
 import { AuthService } from '../services/auth.service';
 import { SearchComponent } from '../search/search.component';
 import { SortingComponent } from '../sorting/sorting.component';
+import { NotificationsComponent } from "../notifications/notifications.component";
 
 @Component({
   selector: 'app-navbar',
@@ -15,7 +16,8 @@ import { SortingComponent } from '../sorting/sorting.component';
     LogoComponent,
     SearchComponent,
     SortingComponent,
-  ],
+    NotificationsComponent
+],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
 })
