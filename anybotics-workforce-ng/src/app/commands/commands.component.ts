@@ -1,14 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { AgentService } from '../services/agent.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { PageHeaderComponent } from '../page-header/page-header.component';
 
 @Component({
   selector: 'app-commands',
   standalone: true,
-  imports: [MatButtonModule, RouterModule, MatListModule, MatProgressBarModule],
+  imports: [MatButtonModule, MatListModule, MatProgressBarModule, PageHeaderComponent],
   templateUrl: './commands.component.html',
   styleUrl: './commands.component.scss',
 })
@@ -19,7 +20,7 @@ export class CommandsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private agentService: AgentService
-  ) {}
+  ) { }
 
   private performAction(action: () => Promise<void>) {
     this.isLoading = true;

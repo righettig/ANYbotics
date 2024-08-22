@@ -12,6 +12,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Mission, MissionsService } from '../services/missions.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
+import { PageHeaderComponent } from "../page-header/page-header.component";
 
 @Component({
   selector: 'app-missions',
@@ -26,8 +27,9 @@ import { ReactiveFormsModule } from '@angular/forms';
     MatChipsModule,
     MatInputModule,
     MatProgressBarModule,
-    ReactiveFormsModule 
-  ],
+    ReactiveFormsModule,
+    PageHeaderComponent
+],
   templateUrl: './missions.component.html',
   styleUrl: './missions.component.scss',
 })

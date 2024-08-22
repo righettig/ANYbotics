@@ -1,8 +1,9 @@
 <mat-card class="agent-card">
   <mat-card-header>
+    <div mat-card-avatar class="dog-robot-image"></div>
     <mat-card-title>{{ agent.name }}</mat-card-title>
     <mat-card-subtitle class="agent-id">
-      ID: <span>{{ agent.id }}</span>
+      <span>ID: {{ agent.id }}</span>
       <button
         mat-icon-button
         (click)="copyToClipboard(agent.id)"
@@ -19,10 +20,8 @@
   @if (displayActions) {
     <mat-card-actions>
       <button mat-raised-button color="primary" [routerLink]="['/agents', agent.id]">Details</button>
-      <button mat-button color="primary" (click)="onRecharge()">Recharge</button>
-      <button mat-button color="warn" (click)="onShutdown()">Shutdown</button>
-      <button mat-button color="accent" (click)="onWakeup()">Wakeup</button>
-      <button mat-button color="accent" (click)="onAllCommands()">Commands</button>
+      <button mat-button color="accent" (click)="onCommands()">Commands</button>
+      <button mat-button color="accent" (click)="onMissions()">Missions</button>
     </mat-card-actions>
   }
 </mat-card>

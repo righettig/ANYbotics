@@ -28,7 +28,7 @@
 .agent-id {
   display: flex;
   align-items: center;
-  font-size: 0.9em; /* Smaller font size for ID */
+  font-size: 0.7em; /* Smaller font size for ID */
   color: gray; /* Less prominent color */
 }
 
@@ -59,4 +59,9 @@ mat-card-actions {
 mat-card-actions button {
   flex: 1; /* Ensure buttons take equal space */
   margin: 0 4px; /* Add margin between buttons */
+}
+
+.dog-robot-image {
+  background-image: url('../../../public/dog_robot_icon_48.png');
+  background-size: cover;
 }

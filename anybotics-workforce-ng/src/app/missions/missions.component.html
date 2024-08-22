@@ -1,26 +1,21 @@
 @if (isLoading) {
 <mat-progress-bar mode="indeterminate"></mat-progress-bar>
 } @else {
+
+<app-page-header title="Anymal - Missions"></app-page-header>
+
 <mat-card class="create-mission">
   <mat-card-title>Create a Mission</mat-card-title>
   <mat-card-content>
     <form [formGroup]="form">
       <mat-form-field>
-        <input
-          matInput
-          placeholder="Mission Name"
-          formControlName="missionName"
-        />
+        <input matInput placeholder="Mission Name" formControlName="missionName" />
         @if (form.get('missionName')?.hasError('required')) {
         <mat-error> Mission name is required </mat-error>
         }
       </mat-form-field>
       <mat-form-field class="commands-dropdown">
-        <mat-select
-          #matSelect
-          placeholder="Add Command"
-          (valueChange)="addCommand($event, matSelect)"
-        >
+        <mat-select #matSelect placeholder="Add Command" (valueChange)="addCommand($event, matSelect)">
           @for (command of availableCommands; track command) {
           <mat-option [value]="command">
             {{ command }}
@@ -41,12 +36,8 @@
           }
         </mat-chip-set>
       </div>
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="saveMission()"
-        [disabled]="form.invalid || selectedCommands.length === 0"
-      >
+      <button mat-raised-button color="primary" (click)="saveMission()"
+        [disabled]="form.invalid || selectedCommands.length === 0">
         Save Mission
       </button>
     </form>
@@ -60,18 +51,10 @@
       @for (mission of missions; track mission.id) {
       <mat-list-item>
         {{ mission.name }}
-        <button
-          mat-raised-button
-          color="accent"
-          (click)="executeMission(mission.id!)"
-        >
+        <button mat-raised-button color="accent" (click)="executeMission(mission.id!)">
           Execute
         </button>
-        <button
-          mat-raised-button
-          color="warn"
-          (click)="deleteMission(mission.id!)"
-        >
+        <button mat-raised-button color="warn" (click)="deleteMission(mission.id!)">
           Delete
         </button>
       </mat-list-item>

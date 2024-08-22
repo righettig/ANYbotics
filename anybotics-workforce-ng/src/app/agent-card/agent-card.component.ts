@@ -1,5 +1,4 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { AgentService } from '../services/agent.service';
 import { AgentDto } from '../models/agent-dto.model';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -33,7 +32,6 @@ export class AgentCardComponent implements OnInit, OnDestroy {
   private subscription!: Subscription;
 
   constructor(
-    private agentService: AgentService,
     private authService: AuthService,
     private router: Router,
   ) {}
@@ -50,35 +48,12 @@ export class AgentCardComponent implements OnInit, OnDestroy {
     }
   }
 
-  async onRecharge(): Promise<void> {
-    try {
-      await this.agentService.rechargeAgent(this.agent.id);
-      console.log(`Agent ${this.agent.name} recharged successfully.`);
-    } catch (error) {
-      console.error(`Failed to recharge agent ${this.agent.name}:`, error);
-    }
-  }
-
-  async onShutdown(): Promise<void> {
-    try {
-      await this.agentService.shutdownAgent(this.agent.id);
-      console.log(`Agent ${this.agent.name} shut down successfully.`);
-    } catch (error) {
-      console.error(`Failed to shut down agent ${this.agent.name}:`, error);
-    }
-  }
-
-  async onWakeup(): Promise<void> {
-    try {
-      await this.agentService.wakeupAgent(this.agent.id);
-      console.log(`Agent ${this.agent.name} woke up successfully.`);
-    } catch (error) {
-      console.error(`Failed to wake up agent ${this.agent.name}:`, error);
-    }
-  }
-
-  onAllCommands() {
+  onCommands() {
     this.router.navigate(['/commands', this.agent.id]);
+  }
+
+  onMissions() {
+    this.router.navigate(['/missions', this.agent.id]);
   }
 
   copyToClipboard(id: string) {
