@@ -1,0 +1,20 @@
+1) Fleet (group agents)
+
+2) SetManualMode should support bool payload | UI should be autogenerate based on back-end definition
+
+3) NgRx, convert shutdown, recharge, wake up actions
+
+4) Use Angular signals
+
+5) Download logs, images as bulk or single images, fullscreen images
+
+6) [Authorize] to protect controllers
+
+7) Admin: it should be possible to create new users and change their roles
+
+8) Refactoring & cleanup "LiveFeed" component
+
+BUGS
+	1) Cleanup signalR server side subscriptions
+	2) After "Shutdown" command any other command is executed by the agent BUT not logged in the console
+	
