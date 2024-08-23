@@ -58,6 +58,7 @@ public class ${COMMAND_NAME}Command(string agentId, string initiatedBy) : Comman
 function createCommandHandlerFile() {
     const commandHandlerContent = `
 using AnymalGrpc;
+using anybotics_anymal_api.Commands.Core;
 using AnymalService = anybotics_anymal_api.Services.AnymalService;
 
 namespace anybotics_anymal_api.Commands.CommandHandlers;
