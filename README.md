@@ -1,37 +1,4 @@
 # ANYbotics
-Job listings
-- https://jobs.lever.co/anybotics/9359a84a-22b2-4f85-a2dd-37ada28cce32
-- https://jobs.lever.co/anybotics/1e3dbed0-3189-4950-a1bf-4f094c464e78
-
-## Decision logs
-I have created 2 files, one for each job listing. I then asked ChatGPT to propose an interview project for both.
-I have defined milestones for the dashboard, the API and the agents.
-I have created some chat-gpt prompts for various tasks.
-I have setup the front-end application using prompt #4
-
-Finish it by visiting: https://cloud.nx.app/connect/CgEFov5gbo
-
-Angular material not installed correctly: https://stackoverflow.com/questions/66498407/add-angular-material-to-nx-workspace
-
-npx nx g @angular/material:ng-add --project=anybotics-workforce
-npx nx g ngrx-root-store --project=anybotics-workforce // alternatively ngrx-feature-store, https://andrewevans.dev/blog/2020-06-22-ngrx-feature-state-vs-root-state/
-https://medium.com/@danilrabizo/nx-angular-monorepo-and-shared-ngrx-store-f34bb3bb2bb5
-
-npx nx add @nx/cypress // https://nx.dev/nx-api/cypress, followed by the next command
-npx nx g @nx/cypress:configuration --project=anybotics-workforce
-
-because I was getting: npx nx e2e anybotics-workforce --verbose
-   NX   Cannot find configuration for task anybotics-workforce:e2e
-
-to run e2e tests you can simply do: npx nx e2e
-
-TODO
-I have setup the console application representing a bot using prompt
-I have setup the back-end API using prompt
-
-## Front-end
-
-To showcase your skills during the interview for the Frontend Engineer position at ANYbotics, you should consider creating a project that aligns with their tech stack and highlights your expertise in Angular, user experience design, and real-time data handling. Here’s a suggestion for a project:
 
 ### Project: **Robotic Fleet Management Dashboard**
 
@@ -87,11 +54,7 @@ To showcase your skills during the interview for the Frontend Engineer position 
 - **Performance:** Showcase any optimizations you’ve made for performance, especially for real-time data handling.
 - **Best Practices:** Highlight your adherence to software engineering best practices, such as code modularity, maintainability, and use of design patterns.
 
-By presenting this project, you can effectively demonstrate your skills in Angular, your ability to create complex, user-friendly interfaces, and your understanding of real-time data integration—all of which are highly relevant to the position at ANYbotics.
-
 ## Back-end
-
-To showcase your skills effectively during the interview for the Senior Backend Engineer position at ANYbotics, consider creating a project that aligns with their focus on robotics, scalable backend systems, and seamless integration with customer systems. Here’s a comprehensive project idea:
 
 ### Project: Robotic Inspection Dashboard with Real-Time Data Processing
 
@@ -136,5 +99,3 @@ Develop a web-based dashboard that integrates with a robotic system (simulated o
 - **Architecture Diagram:** Present an architecture diagram showing the interaction between different components.
 - **Challenges and Solutions:** Discuss the challenges you faced during development and the solutions you implemented.
 - **Future Enhancements:** Suggest potential improvements and additional features that could be added to the project.
-
-This project will not only demonstrate your technical skills in backend development, API design, and cloud integration but also show your ability to work on complex systems relevant to ANYbotics’ focus on robotic solutions.
