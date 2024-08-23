@@ -756,28 +756,51 @@ Thursday
 	
 	5) prepare script for video 
 	
-		DEMO
-			"GOAL"
-				console app 
-				runner (use 6 agents)
-				api (run from VS, less UI clutter on console)
-			
-			front-end
-				show agents as they come online, hide notifications using button
-				discuss concepts of commands, 
-				show details and live feed
-				
-				missions, need a way to quick reach to the missions tab
-					https://www.iconfinder.com/icons/8098508/four_legged_robot_ai_smart_pet_smart_dog_robotic_dog_icon
-					https://www.iconfinder.com/search?q=dog%20robot&price=free
-					https://cdn2.iconfinder.com/data/icons/robotic-4/64/Dog_Robot_dog_robot_machine_technology-512.png
-		
-		Code walkthrough
-			TODO 
-			
-		2 separate videos
-			prepare a "rough" version first to get an idea of how lenghty the videos will be, then record a refined version
+		BEAR IN MIND that Windows GAME cannot record multiple windows! So I can only show one window at at time.
+		Do NOT context-switch!!!
 	
+		DEMO
+			Hi and welcome to this demo! Throughout the course of this video I'll show you my take on the 
+			Anybotics Platform.
+
+			The Anybotics Workforce Dashboard acts as a hub gathering information about Anymal Agents.
+			
+			[So far we do not have any agent running yet, so let's start one!]
+			[Alternatively, start with 6 agents already]
+			
+			Agents are simulated via a console application that communicates with the ASP.NET Core API via gRPC providing status updates while listening for commands to be performed.
+			
+			The full anymal hardware is simulated and events - like hardware failure and anomalies - are randomly generated every now and then. Let's not turn of the notifications for now. 
+			
+			Communication between the front-end and the API is done via signalR to ensure real-time updates.
+			The app has been built using Angular and the Angular Material library.
+			
+			Let's now focus on each agent card. 
+			
+			As we can see, each agent has a name, an Id, and we can monitor the battery level and status, 
+			which right now is "Active" as everything is working as expected!  
+			
+			In addition we have a Details/Commands/Missions
+			
+			From the details screen, describe each section, 
+				I tried to accurately reproduce as much as possible from the information gathered from your web site.
+				Hardware status, show same failures. etc.
+				
+				Recently acquired images, full audit list of commands, and status updates
+				
+			[Live feed for last.]
+				DEMO Shutdown / Wakeup commands, Recharge
+				Move commands but bear in mind that I cannot record 2 windows simultaneously
+			
+			From the mission screen
+			
+			Missions are essentially a shortcut to execute multiple commands at once. [Create a mission and save it]
+			
+			Run "inspect_room_A"
+				
+			Thanks for watching! I hope you like it!
+					
+			
 	
 	GOAL By the end of the day I should have a rough-cut of the video to be shot the following day and updated all online  links
 	

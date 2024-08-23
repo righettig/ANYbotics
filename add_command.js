@@ -42,6 +42,8 @@ message ${COMMAND_NAME}Response {
 
 function createCommandFile() {
     const commandContent = `
+using anybotics_anymal_api.Commands.Core;
+
 namespace anybotics_anymal_api.Commands;
 
 public class ${COMMAND_NAME}Command(string agentId, string initiatedBy) : CommandBase(agentId, initiatedBy)
@@ -74,6 +76,8 @@ public class ${COMMAND_NAME}CommandHandler(AnymalService anymalService) : Comman
 
 function createControllerFile() {
     const controllerContent = `
+using anybotics_anymal_api.Commands.Controllers;
+using anybotics_anymal_api.Commands.Core;
 using anybotics_anymal_api.Commands;
 using anybotics_anymal_api.CustomAttributes;
 using Microsoft.AspNetCore.Mvc;
@@ -137,7 +141,7 @@ namespace anybotics_anymal.CommandProcessors;
 
 public class ${COMMAND_NAME}CommandProcessor() : BaseCommandProcessor("${COMMAND_NAME}")
 {
-    public override void PerformCommand(Agent agent, Command response)
+    public override void PerformCommand(AnymalAgent agent, Command response)
     {
         // placeholder
     }
@@ -193,7 +197,7 @@ function updateCommandsFile() {
 
     // Define the new method to be inserted
     const newMethodContent = `  ${COMMAND_NAME_CAMEL_CASE}() {
-    this.agentService.${COMMAND_NAME_CAMEL_CASE}(this.agentId!);
+    this.performAction(() => this.agentService.${COMMAND_NAME_CAMEL_CASE}(this.agentId!));
   }`;
 
     // Find the last method's ending bracket
