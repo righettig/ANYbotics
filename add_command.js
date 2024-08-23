@@ -137,6 +137,7 @@ public partial class AnymalService
 function createCommandProcessorFile() {
     const commandProcessorContent = `
 using AnymalGrpc;
+using anybotics_anymal_common.Domain;
 
 namespace anybotics_anymal.CommandProcessors;
 
