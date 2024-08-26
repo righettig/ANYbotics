@@ -1,7 +1,6 @@
-﻿using Google.Cloud.Firestore;
-using Google.Apis.Auth.OAuth2;
+﻿using anybotics_anymal_api.Admin.Controllers;
 using FirebaseAdmin.Auth;
-using anybotics_anymal_api.Admin.Controllers;
+using Google.Cloud.Firestore;
 
 namespace anybotics_anymal_api.Services;
 
@@ -10,20 +9,10 @@ public class FirebaseService : IFirebaseService
     private readonly FirebaseAuth _auth;
     private readonly FirestoreDb _firestoreDb;
 
-    public FirebaseService()
+    public FirebaseService(FirestoreDb firestoreDb)
     {
-        string path = "anybotics-c5ce9-b8d42a6f97b1.json";
-
-        // Initialize Firestore using the service account credentials
-        GoogleCredential credential = GoogleCredential.FromFile(path);
-        FirestoreDbBuilder builder = new FirestoreDbBuilder
-        {
-            ProjectId = "anybotics-c5ce9",
-            Credential = credential
-        };
-        _firestoreDb = builder.Build();
-
         _auth = FirebaseAuth.DefaultInstance;
+        _firestoreDb = firestoreDb;
     }
 
     public async Task<List<UserInfo>> GetUsersAsync()
