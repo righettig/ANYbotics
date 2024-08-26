@@ -12,7 +12,7 @@ public class FirebaseService : IFirebaseService
 
     public FirebaseService()
     {
-        string path = "anybotics-c5ce9-firebase-adminsdk-7igq5-41d3e14c5b.json";
+        string path = "anybotics-c5ce9-b8d42a6f97b1.json";
 
         // Initialize Firestore using the service account credentials
         GoogleCredential credential = GoogleCredential.FromFile(path);

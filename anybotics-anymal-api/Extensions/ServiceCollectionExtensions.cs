@@ -34,7 +34,7 @@ public static class ServiceCollectionExtensions
         // Initialize Firebase Admin SDK
         FirebaseApp.Create(new AppOptions
         {
-            Credential = GoogleCredential.FromFile("anybotics-c5ce9-firebase-adminsdk-7igq5-41d3e14c5b.json")
+            Credential = GoogleCredential.FromFile("anybotics-c5ce9-b8d42a6f97b1.json")
         });
 
         return services;

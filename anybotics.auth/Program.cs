@@ -10,8 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Set up environment variable for Firebase Admin SDK
 Environment.SetEnvironmentVariable(
-    "GOOGLE_APPLICATION_CREDENTIALS", 
-    @"anybotics-c5ce9-firebase-adminsdk-7igq5-41d3e14c5b.json");
+    "GOOGLE_APPLICATION_CREDENTIALS",
+    @"anybotics-c5ce9-b8d42a6f97b1.json");
 
 // Initialize Firebase Admin SDK
 builder.Services.AddSingleton(FirebaseApp.Create());
