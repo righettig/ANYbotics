@@ -1,20 +1,11 @@
 using anybotics.auth.Services;
+using anybotics_anymal_common.Extensions;
 using Firebase.Auth;
 using Firebase.Auth.Providers;
-using FirebaseAdmin;
-using Google.Cloud.Firestore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Set up environment variable for Firebase Admin SDK
-Environment.SetEnvironmentVariable(
-    "GOOGLE_APPLICATION_CREDENTIALS",
-    @"anybotics-c5ce9-b8d42a6f97b1.json");
-
-// Initialize Firebase Admin SDK
-builder.Services.AddSingleton(FirebaseApp.Create());
 
 // Firebase project configuration
 var firebaseProjectName = "anybotics-c5ce9";
@@ -27,8 +18,7 @@ builder.Services.AddSingleton(new FirebaseAuthClient(new FirebaseAuthConfig
     Providers = [ new EmailProvider() ]
 }));
 
-// Initialize Firestore using the service account credentials
-builder.Services.AddSingleton(FirestoreDb.Create(firebaseProjectName));
+builder.Services.AddFirebaseAndFirestore("anybotics-c5ce9-b8d42a6f97b1.json", firebaseProjectName);
 
 // Add custom Firebase Authentication service
 builder.Services.AddSingleton<IFirebaseAuthService, FirebaseAuthService>();

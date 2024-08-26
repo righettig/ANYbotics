@@ -3,8 +3,7 @@ using anybotics_anymal_api.Commands.Repository;
 using anybotics_anymal_api.Filters;
 using anybotics_anymal_api.Missions.Repository;
 using anybotics_anymal_api.Services;
-using FirebaseAdmin;
-using Google.Cloud.Firestore;
+using anybotics_anymal_common.Extensions;
 using Microsoft.AspNetCore.Authentication;
 using System.Reflection;
 
@@ -15,11 +14,6 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddCustomServices(this IServiceCollection services)
     {
-        // Set up environment variable for Firebase Admin SDK
-        Environment.SetEnvironmentVariable(
-            "GOOGLE_APPLICATION_CREDENTIALS",
-            @"anybotics-c5ce9-b8d42a6f97b1.json");
-
         services.ConfigureCors();
         services.ConfigureAuthentication();
         services.AddGrpc();
@@ -35,12 +29,7 @@ public static class ServiceCollectionExtensions
 
         services.AddCommandHandlers(Assembly.GetExecutingAssembly());
 
-        // Initialize Firebase Admin SDK
-        services.AddSingleton(FirebaseApp.Create());
-
-        // Initialize Firestore using the service account credentials
-        var firebaseProjectName = "anybotics-c5ce9";
-        services.AddSingleton(FirestoreDb.Create(firebaseProjectName));
+        services.AddFirebaseAndFirestore("anybotics-c5ce9-b8d42a6f97b1.json", "anybotics-c5ce9");
 
         return services;
     }
