@@ -8,7 +8,7 @@
 
 5) Download logs, images as bulk or single images, fullscreen images
 
-6) [Authorize] to protect controllers
+6) [Authorize] to protect controllers: https://bitbucket.org/RAPHAEL_BICKEL/aspnetcore.firebase.authentication/src/master/
 
 7) Admin: it should be possible to create new users and change their roles
 

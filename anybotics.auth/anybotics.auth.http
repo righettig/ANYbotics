@@ -1,0 +1,14 @@
+### Make sure the API is up and running before sending a request!
+@anybotics.auth_HostAddress = https://localhost:32773
+
+### Signup Request
+POST {{anybotics.auth_HostAddress}}/api/Auth/signup?email=test2%40anybotics.com&password=q1w2e3
+
+### Login Request
+POST {{anybotics.auth_HostAddress}}/api/Auth/login?email=test1%40anybotics.com&password=q1w2e3
+
+### Logout Request
+POST {{anybotics.auth_HostAddress}}/api/Auth/logout
+
+### Get User Role Request
+GET {{anybotics.auth_HostAddress}}/api/Auth/user-role?email=guest@anybotics.com
