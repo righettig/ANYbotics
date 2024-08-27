@@ -1,0 +1,14 @@
+{
+  "name": "anybotics.events",
+  "version": "0.0.0",
+  "description": "anybotics.events",
+  "main": "app.js",
+  "author": {
+    "name": ""
+  },
+  "eslintConfig": {},
+  "dependencies": {
+    "eslint": "^8.57.0",
+    "express": "^4.19.2"
+  }
+}
