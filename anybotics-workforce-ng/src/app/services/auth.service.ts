@@ -1,8 +1,7 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
-import { auth } from '../firebase-config';
+import { BehaviorSubject, firstValueFrom, Observable, tap } from 'rxjs';
+import { jwtDecode } from "jwt-decode";
 
 @Injectable({
   providedIn: 'root',
@@ -11,8 +10,13 @@ export class AuthService {
   private loggedIn$ = new BehaviorSubject<boolean>(false);
   private userRole$ = new BehaviorSubject<string | null>(null);
   private initialized$ = new BehaviorSubject<boolean>(false);
-  private db = getFirestore();
-  private firebaseToken?: string;
+
+  private apiUrl = 'https://localhost:32773/api/auth';
+
+  private storageKey = 'authToken';
+  private authToken?: string;
+
+  constructor(private http: HttpClient) { }
 
   get isLoggedIn$(): Observable<boolean> {
     return this.loggedIn$.asObservable();
@@ -27,65 +31,134 @@ export class AuthService {
   }
 
   get accessToken() {
-    return this.firebaseToken;
+    return this.authToken;
   }
 
-  login(email: string, password: string): Promise<void> {
-    return signInWithEmailAndPassword(auth, email, password)
-      .then(() => this.updateUserState(email))
-      .catch((error) => {
-        console.error('Login error', error);
-        this.clearUserState();
-      });
+  async login(email: string, password: string): Promise<void> {
+    try {
+      const response = await firstValueFrom(
+        this.http.post<{ token: string }>(`${this.apiUrl}/login`, { email, password })
+      );
+
+      this.authToken = response.token;
+      localStorage.setItem(this.storageKey, this.authToken);
+      await this.updateUserState(email);
+
+    } catch (error) {
+      console.error('Login error', error);
+      this.clearUserState();
+    }
   }
 
-  logout(): Promise<void> {
-    return signOut(auth)
-      .then(() => this.clearUserState())
-      .catch((error) => console.error('Logout error', error));
+  async logout(): Promise<void> {
+    try {
+      await firstValueFrom(
+        this.http.post(`${this.apiUrl}/logout`, {})
+      );
+
+      this.clearUserState();
+      localStorage.removeItem(this.storageKey);
+
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   }
 
   initializeAuthState(): Promise<void> {
-    return new Promise((resolve) => {
-      onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          this.firebaseToken = await user.getIdToken();
-          await this.updateUserState(user.email!);
+    return new Promise(async (resolve) => {
+      const token = localStorage.getItem(this.storageKey);
+
+      if (token) {
+        this.authToken = token;
+
+        const email = this.decodeEmailFromToken(token);
+
+        if (email) {
+          // Refresh token if needed
+          if (this.isTokenExpiring(token)) {
+            await this.refreshToken();
+          }
+
+          await this.updateUserState(email);
+
         } else {
           this.clearUserState();
         }
-        this.initialized$.next(true);
-        resolve(); // Resolving the promise after initialization
-      });
+
+      } else {
+        this.clearUserState();
+      }
+
+      this.initialized$.next(true);
+      resolve();
     });
   }
 
   private async updateUserState(email: string): Promise<void> {
-    const role = await this.fetchUserRole(email);
-    this.loggedIn$.next(true);
-    this.userRole$.next(role);
+    try {
+      const response = await firstValueFrom(
+        this.http.get<{ role: string }>(`${this.apiUrl}/user-role`, {
+          params: { email },
+        })
+      );
+
+      this.loggedIn$.next(true);
+      this.userRole$.next(response.role);
+
+    } catch (error) {
+      console.error('Error fetching user role:', error);
+      this.clearUserState();
+    }
   }
 
   private clearUserState(): void {
-    this.firebaseToken = undefined;
+    this.authToken = undefined;
+
     this.loggedIn$.next(false);
     this.userRole$.next(null);
   }
 
-  private async fetchUserRole(email: string): Promise<string | null> {
+  private decodeEmailFromToken(token: string): string | null {
     try {
-      const docRef = doc(this.db, 'userRoles', email);
-      const docSnap = await getDoc(docRef);
+      const decodedToken = jwtDecode<{ email?: string }>(token);
+      return decodedToken.email || null;
 
-      if (docSnap.exists()) {
-        return docSnap.data()['role'] || null;
-      } else {
-        console.log('No such document!');
-        return null;
-      }
     } catch (error) {
-      console.error('Error fetching user role:', error);
+      console.error('Error decoding token:', error);
       return null;
+    }
+  }
+
+  private isTokenExpiring(token: string): boolean {
+    try {
+      const decodedToken = jwtDecode<{ exp?: number }>(token);
+      const expiryTime = decodedToken.exp! * 1000; // Convert to milliseconds
+      const currentTime = new Date().getTime();
+      const bufferTime = 5 * 60 * 1000; // 5 minutes buffer
+
+      return (expiryTime - currentTime) <= bufferTime;
+
+    } catch (error) {
+      console.error('Error checking token expiry:', error);
+      return false;
+    }
+  }
+
+  private async refreshToken(): Promise<void> {
+    try {
+      const response = await firstValueFrom(
+        this.http.post<{ token: string }>(`${this.apiUrl}/refresh-token`, { token: this.authToken })
+      );
+
+      this.authToken = response.token;
+      localStorage.setItem(this.storageKey, this.authToken);
+
+    } catch (error) {
+      console.error('Token refresh error:', error);
+      
+      this.clearUserState();
+      localStorage.removeItem(this.storageKey);
+      window.location.reload();
     }
   }
 }

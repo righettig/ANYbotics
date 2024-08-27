@@ -5,10 +5,18 @@
 POST {{anybotics.auth_HostAddress}}/api/Auth/signup?email=test2%40anybotics.com&password=q1w2e3
 
 ### Login Request
-POST {{anybotics.auth_HostAddress}}/api/Auth/login?email=test1%40anybotics.com&password=q1w2e3
+POST {{anybotics.auth_HostAddress}}/api/Auth/login
+Content-Type: application/json
+{
+    "email": "guest@anybotics.com",
+    "password": "qwerty123"
+}
 
 ### Logout Request
 POST {{anybotics.auth_HostAddress}}/api/Auth/logout
+
+### Refresh Token Request
+POST {{anybotics.auth_HostAddress}}/api/Auth/refresh-token
 
 ### Get User Role Request
 GET {{anybotics.auth_HostAddress}}/api/Auth/user-role?email=guest@anybotics.com

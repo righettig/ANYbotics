@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace anybotics.auth.Controllers;
 
+public record LoginRequest(string Email, string Password);
+
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController(IFirebaseAuthService firebaseAuthService) : ControllerBase
@@ -21,13 +23,13 @@ public class AuthController(IFirebaseAuthService firebaseAuthService) : Controll
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login(string email, string password)
+    public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        var token = await firebaseAuthService.Login(email, password);
+        var token = await firebaseAuthService.Login(request.Email, request.Password);
 
-        if (token is not null) 
+        if (token is not null)
         {
-            return Ok(token);
+            return Ok(new { token });
         }
 
         return Unauthorized();
@@ -41,6 +43,14 @@ public class AuthController(IFirebaseAuthService firebaseAuthService) : Controll
         return Ok();
     }
 
+    [HttpPost("refresh-token")]
+    public async Task<IActionResult> RefreshToken()
+    {
+        var newToken = await firebaseAuthService.RefreshToken();
+
+        return Ok(new { token = newToken });
+    }
+
     [HttpGet("user-role")]
     public async Task<IActionResult> GetUserRole([FromQuery] string email)
     {
@@ -48,7 +58,7 @@ public class AuthController(IFirebaseAuthService firebaseAuthService) : Controll
 
         if (role != null) 
         {
-            return Ok(new { Role = role });
+            return Ok(new { role });
         }
         
         return NotFound();

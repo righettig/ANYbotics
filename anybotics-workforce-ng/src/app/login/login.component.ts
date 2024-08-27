@@ -38,10 +38,9 @@ export class LoginComponent {
 
   showOrHidePassword = signal(true);
 
-  login() {
-    this.authService.login(this.email, this.password).then(() => {
-      this.router.navigate(['/agents']);
-    });
+  async login() {
+    await this.authService.login(this.email, this.password);
+    this.router.navigate(['/agents']);
   }
 
   onUserSelect(user: { email: string; password: string }) {

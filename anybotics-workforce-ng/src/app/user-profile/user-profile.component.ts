@@ -22,16 +22,11 @@ import { Roles } from '../models/roles.enum';
 export class UserProfileComponent {
   private router = inject(Router);
 
-  isLoggedIn = false;
   isAdmin = false;
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   ngOnInit() {
-    this.authService.isLoggedIn$.subscribe(
-      (status) => (this.isLoggedIn = status)
-    );
-
     this.authService.currentUserRole$.subscribe(
       (role) => (this.isAdmin = role === Roles.Admin)
     );

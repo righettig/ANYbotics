@@ -25,10 +25,14 @@ public class FirebaseAuthService : IFirebaseAuthService
         return userCredentials is null ? null : await userCredentials.User.GetIdTokenAsync();
     }
 
+    public async Task<string?> RefreshToken()
+    {
+        var newToken = await _firebaseAuth.User.GetIdTokenAsync(forceRefresh: true);
+        return newToken;
+    }
+
     public void SignOut() => _firebaseAuth.SignOut();
 
-
-    // TODO: fixme
     public async Task<string> GetUserRole(string email)
     {
         var docRef = _firestoreDb.Collection("userRoles").Document(email);
