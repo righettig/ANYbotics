@@ -11,7 +11,7 @@ export class AuthService {
   private userRole$ = new BehaviorSubject<string | null>(null);
   private initialized$ = new BehaviorSubject<boolean>(false);
 
-  private apiUrl = 'https://localhost:32773/api/auth';
+  private apiUrl = 'https://localhost:32775/api/auth';
 
   private storageKey = 'authToken';
   private authToken?: string;
