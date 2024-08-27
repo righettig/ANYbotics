@@ -5,11 +5,12 @@ import { AgentCardComponent } from '../agent-card/agent-card.component';
 import { combineLatest, Subscription } from 'rxjs';
 import { SearchService } from '../services/search.service';
 import { SortingService, SortOption } from '../services/sorting.service';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-agents',
   standalone: true,
-  imports: [AgentCardComponent],
+  imports: [AgentCardComponent, RouterModule],
   templateUrl: './agents.component.html',
   styleUrls: ['./agents.component.scss'],
 })

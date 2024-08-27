@@ -1,3 +1,5 @@
+-> Online events (users can code their BOT behaviour)
+
 1) Fleet (group agents)
 
 2) SetManualMode should support bool payload | UI should be autogenerate based on back-end definition
