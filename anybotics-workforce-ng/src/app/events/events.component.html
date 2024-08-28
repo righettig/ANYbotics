@@ -1,8 +1,19 @@
 <p>Submit your BOT behaviour!</p>
 
-<div style="height: 500px">
-    <ngx-monaco-editor style="height: 100%" class="my-code-editor" [options]="editorOptions"
-        [(ngModel)]="code"></ngx-monaco-editor>
+<mat-form-field appearance="fill">
+    <mat-label>Select Language</mat-label>
+    <mat-select [(value)]="selectedLanguage" (selectionChange)="onLanguageChange($event.value)">
+        @for (behaviour of behaviours; track behaviour.language) {
+        <mat-option [value]="behaviour.language">
+            {{ behaviour.language }}
+        </mat-option>
+        }
+    </mat-select>
+</mat-form-field>
+
+<div style="height: 380px">
+    <ngx-monaco-editor class="my-code-editor" [options]="editorOptions" [(ngModel)]="code">
+    </ngx-monaco-editor>
 </div>
 
-<button>Submit</button>
+<button mat-raised-button color="primary">Submit</button>
