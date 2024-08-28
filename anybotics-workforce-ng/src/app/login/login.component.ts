@@ -28,6 +28,7 @@ export class LoginComponent {
 
   // Predefined users for quick selection
   users = [
+    { email: 'johndoe@anybotics.com', password: 'qwerty123' },
     { email: 'giacomo@anybotics.com', password: 'q1w2e3' },
     { email: 'guest@anybotics.com', password: 'qwerty123' },
     { email: 'admin@anybotics.com', password: 'q1w2e3' },
