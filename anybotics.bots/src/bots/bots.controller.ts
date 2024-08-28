@@ -16,6 +16,11 @@ export class BotController {
         return this.botService.findAll();
     }
 
+    @Get()
+    async findOne(botId: string): Promise<Bot | null> {
+        return this.botService.findOne(botId);
+    }
+
     @Get('validate/:botId')
     async validate(@Param('botId') botId: string): Promise<boolean> {
         return this.botService.validate(botId);
