@@ -48,7 +48,7 @@ const Home = () => {
         events={eventList}
         onDelete={handleDeleteEvent}
         onEdit={handleEditEvent}
-        onStart={handleStartEvent} // Pass the new handleStartEvent function
+        onStart={handleStartEvent}
       />
     </div>
   );
