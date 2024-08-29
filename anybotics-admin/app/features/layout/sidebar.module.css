@@ -1,5 +1,5 @@
 .sidebar {
-    width: 200px;
+    width: 180px;
     padding: 20px;
     background-color: #f4f4f4;
     height: 100vh;
@@ -7,11 +7,14 @@
     top: 0;
     left: 0;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    transition: width 0.3s ease;
+    transition:
+        width 0.3s ease,
+        padding 0.3s ease; /* Smooth transitions for both width and padding F*/
 }
 
 .sidebar.collapsed {
-    width: 60px;
+    width: 0px;
+    padding: 0; /* Set padding to 0 when collapsed */
 }
 
 .sidebar .toggleButton {
@@ -34,6 +37,12 @@
     margin-top: 50px;
     display: flex;
     flex-direction: column;
+    transition: opacity 0.2s ease; /* Smooth transition for opacity */
+}
+
+.sidebar.collapsed .menu {
+    opacity: 0; /* Hide the menu items when collapsed */
+    pointer-events: none; /* Prevent interaction with hidden items */
 }
 
 .sidebar button {
