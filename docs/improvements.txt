@@ -1,18 +1,57 @@
 -> Online events (users can code their BOT behaviour)
+	
+	WIP React app for admins
+		
+	scenario
+		user1 submit behaviour
+		user1 should NOT be able to see the "NEW event", instead it should see a list of subscribed events
+		
+		user2 submit behaviour
+		
+		admin to log in and see list of events with submissions
+			user1, timestamp, language?, [optional: it should be possible to download source code]
+			user2, timestamp, language?
+				click on <START_EVENT>
+				admin sees "Running" as event status (event completes in 30 seconds) (stubbed)
+					start_time, end_time should be displayed and recorded as logs to be later read, and who won
+					
+		[simulation starts for all users]
+			
+		users upon logging in from the Events\1 they should see status "running" + start timestamp | end timestamp
+			after 30 secs a winner is picked up and displayed on screen			
+			
+		users should be able to access the "old" event page and see status "finished" with the winner
+			also start_timestamp and end_timestamp
+		
+	Iteration #2
+		simulation loop implemented according to:
+			https://chatgpt.com/c/5a92b347-182f-41b4-9825-8ed5fcec16f8
+			https://chatgpt.com/c/d1a63a09-ef6d-48c1-bf66-d7282742c8b6
+	
+	Iteration #3
+		stubbed code (csharp, typescript, python) is compiled
+		everything else the same
+		
+	Iteration #4
+		compiled code is used to generate "moves"
+		
+	Iteration #5
+		Implemented event logic (i.e. rules) to decide when the simulation is finished
+		
+	Iteration #6
+		Use babylon.js or three.js to render scene in real time
 
-1) Fleet (group agents)
+	Iteration #7 User companion app, 
+		users can check real time status of events and get notifications
+		React Native
 
-2) SetManualMode should support bool payload | UI should be autogenerate based on back-end definition
 
-3) NgRx, convert shutdown, recharge, wake up actions
-
-4) Use Angular signals
-
-5) Download logs, images as bulk or single images, fullscreen images
-
-6) [Authorize] to protect controllers: https://bitbucket.org/RAPHAEL_BICKEL/aspnetcore.firebase.authentication/src/master/
-
-7) Refactoring & cleanup "LiveFeed" component
+- [Authorize] to protect controllers: https://bitbucket.org/RAPHAEL_BICKEL/aspnetcore.firebase.authentication/src/master/
+- Fleet (group agents)
+- SetManualMode should support bool payload | UI should be autogenerate based on back-end definition
+- NgRx, convert shutdown, recharge, wake up actions
+- Use Angular signals
+- Download logs, images as bulk or single images, fullscreen images
 
 BUGS
 	1) Cleanup signalR server side subscriptions
