@@ -1,11 +1,38 @@
 'use client';
 
-import Events from "./features/events/components/events";
+import { useState } from 'react';
+
+import Login from './login';
+import Sidebar from './sidebar';
+import Events from './features/events/components/events';
+import Users from './users';
 
 const Home = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [selectedView, setSelectedView] = useState<'events' | 'users'>('events');
+
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+  };
+
+  const handleSelectView = (view: 'events' | 'users') => {
+    setSelectedView(view);
+  };
+
+  if (!isLoggedIn) {
+    return <Login onLogin={handleLogin} />;
+  }
+
   return (
-    <div>
-      <Events />
+    <div style={{ display: 'flex' }}>
+      <Sidebar onLogout={handleLogout} onSelect={handleSelectView} />
+      <div style={{ marginLeft: '220px', padding: '20px', width: 'calc(100% - 240px)' }}>
+        {selectedView === 'events' ? <Events /> : <Users />}
+      </div>
     </div>
   );
 };
