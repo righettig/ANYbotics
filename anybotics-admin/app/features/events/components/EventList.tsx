@@ -5,9 +5,17 @@ import Event from '../types/event';
 interface EventListProps {
     events: Event[];
     onDelete: (id: string) => void;
+    onEdit: (event: Event) => void;
 }
 
-const EventList: FC<EventListProps> = ({ events, onDelete }) => {
+const EventList: FC<EventListProps> = ({ events, onDelete, onEdit }) => {
+    const handleDelete = (id: string) => {
+        const confirmed = window.confirm('Are you sure you want to delete this event?');
+        if (confirmed) {
+            onDelete(id);
+        }
+    };
+
     return (
         <div>
             <h2>Event List</h2>
@@ -22,7 +30,10 @@ const EventList: FC<EventListProps> = ({ events, onDelete }) => {
                             <p>Status: {event.status}</p>
                             <p>Created At: {new Date(event.createdAt).toLocaleString()}</p>
                         </div>
-                        <button onClick={() => onDelete(event.id)}>Delete</button>
+                        <div className="event-actions">
+                            <button onClick={() => onEdit(event)}>Edit</button>
+                            <button onClick={() => handleDelete(event.id)}>Delete</button>
+                        </div>
                     </li>
                 ))}
             </ul>

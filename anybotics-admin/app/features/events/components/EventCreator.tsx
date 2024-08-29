@@ -1,45 +1,66 @@
-import { FC, useState } from 'react';
+import { FC, useState, useEffect } from 'react';
 
 import Event from '../types/event';
 
 interface EventCreatorProps {
     onAdd: (event: Event) => void;
+    onUpdate: (event: Event) => void;
+    eventToEdit?: Event | null;
 }
 
-const EventCreator: FC<EventCreatorProps> = ({ onAdd }) => {
-    const [newEventName, setNewEventName] = useState('');
-    const [newEventDescription, setNewEventDescription] = useState('');
+const EventCreator: FC<EventCreatorProps> = ({ onAdd, onUpdate, eventToEdit }) => {
+    const [eventName, setEventName] = useState('');
+    const [eventDescription, setEventDescription] = useState('');
 
-    const handleAddEvent = () => {
-        const newEvent: Event = {
-            id: (Math.random() * 1000).toString(), // Using random ID for demo purposes
-            name: newEventName,
-            description: newEventDescription,
-            createdAt: new Date(),
+    useEffect(() => {
+        if (eventToEdit) {
+            setEventName(eventToEdit.name);
+            setEventDescription(eventToEdit.description);
+        }
+    }, [eventToEdit]);
+
+    const handleSaveEvent = () => {
+        if (!eventName || !eventDescription) {
+            return;
+        }
+
+        const event: Event = {
+            id: eventToEdit ? eventToEdit.id : (Math.random() * 1000).toString(), // Use existing ID or generate a new one
+            name: eventName,
+            description: eventDescription,
+            createdAt: eventToEdit ? eventToEdit.createdAt : new Date(),
             modifiedAt: new Date(),
-            status: 'NotStarted',
+            status: eventToEdit ? eventToEdit.status : 'NotStarted', // Retain status or default to NotStarted
         };
-        onAdd(newEvent);
-        setNewEventName('');
-        setNewEventDescription('');
+
+        if (eventToEdit) {
+            onUpdate(event);
+        } else {
+            onAdd(event);
+        }
+
+        setEventName('');
+        setEventDescription('');
     };
 
     return (
         <div>
-            <h2>Create New Event</h2>
+            <h2>{eventToEdit ? 'Edit Event' : 'Create New Event'}</h2>
             <input
                 type="text"
                 placeholder="Event Name"
-                value={newEventName}
-                onChange={(e) => setNewEventName(e.target.value)}
+                value={eventName}
+                onChange={(e) => setEventName(e.target.value)}
             />
             <input
                 type="text"
                 placeholder="Event Description"
-                value={newEventDescription}
-                onChange={(e) => setNewEventDescription(e.target.value)}
+                value={eventDescription}
+                onChange={(e) => setEventDescription(e.target.value)}
             />
-            <button onClick={handleAddEvent}>Add Event</button>
+            <button onClick={handleSaveEvent} disabled={!eventName || !eventDescription}>
+                {eventToEdit ? 'Update Event' : 'Add Event'}
+            </button>
         </div>
     );
 };

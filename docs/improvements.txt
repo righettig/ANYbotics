@@ -1,6 +1,16 @@
 -> Online events (users can code their BOT behaviour)
 	
-	WIP React app for admins
+	WIP React app for admins	
+		start
+	
+		create/read/update/delete events
+			attach microservice
+			
+		login page (use auth microservice)
+	
+		users page 
+			create/read/delete users using auth microservice
+	
 		
 	scenario
 		user1 submit behaviour
