@@ -3,8 +3,8 @@
 import { useState } from 'react';
 
 import Event from './features/events/types/event';
-import EventCreator from './features/events/components/EventCreator';
-import EventList from './features/events/components/EventList';
+import EventCreator from './features/events/components/event-creator';
+import EventList from './features/events/components/event-list';
 import mockEvents from './features/events/data/events';
 
 const Home = () => {
@@ -19,7 +19,7 @@ const Home = () => {
     setEventList(eventList.map(event =>
       event.id === updatedEvent.id ? updatedEvent : event
     ));
-    setEventToEdit(null); // Clear the edit state after updating
+    setEventToEdit(null);
   };
 
   const handleDeleteEvent = (id: string) => {
