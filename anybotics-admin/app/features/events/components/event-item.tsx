@@ -2,6 +2,8 @@ import { FC } from 'react';
 
 import Event from '../types/event';
 
+import styles from './event-item.module.css';
+
 interface EventItemProps {
     event: Event;
     onDelete: (id: string) => void;
@@ -23,16 +25,16 @@ const EventItem: FC<EventItemProps> = ({ event, onDelete, onEdit, onStart }) => 
     };
 
     return (
-        <li className="event-item">
-            <div className="event-details">
+        <li className={styles.eventItem}>
+            <div className={styles.eventDetails}>
                 <strong>{event.name}</strong>
                 <p>{event.description}</p>
             </div>
-            <div className="event-meta">
+            <div className={styles.eventMeta}>
                 <p>Status: {event.status}</p>
                 <p>Created At: {new Date(event.createdAt).toLocaleString()}</p>
             </div>
-            <div className="event-actions">
+            <div className={styles.eventActions}>
                 {event.status === 'NotStarted' && (
                     <button onClick={handleStart}>Start</button>
                 )}

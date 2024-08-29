@@ -2,6 +2,8 @@ import { FC, useState, useEffect } from 'react';
 
 import Event from '../types/event';
 
+import styles from './event-creator.module.css';
+
 interface EventCreatorProps {
     onAdd: (event: Event) => void;
     onUpdate: (event: Event) => void;
@@ -25,12 +27,12 @@ const EventCreator: FC<EventCreatorProps> = ({ onAdd, onUpdate, eventToEdit }) =
         }
 
         const event: Event = {
-            id: eventToEdit ? eventToEdit.id : (Math.random() * 1000).toString(), // Use existing ID or generate a new one
+            id: eventToEdit ? eventToEdit.id : (Math.random() * 1000).toString(),
             name: eventName,
             description: eventDescription,
             createdAt: eventToEdit ? eventToEdit.createdAt : new Date(),
             modifiedAt: new Date(),
-            status: eventToEdit ? eventToEdit.status : 'NotStarted', // Retain status or default to NotStarted
+            status: eventToEdit ? eventToEdit.status : 'NotStarted',
         };
 
         if (eventToEdit) {
@@ -44,7 +46,7 @@ const EventCreator: FC<EventCreatorProps> = ({ onAdd, onUpdate, eventToEdit }) =
     };
 
     return (
-        <div>
+        <div className={styles.eventCreator}>
             <h2>{eventToEdit ? 'Edit Event' : 'Create New Event'}</h2>
             <input
                 type="text"

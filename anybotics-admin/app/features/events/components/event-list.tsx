@@ -3,6 +3,8 @@ import { FC } from 'react';
 import Event from '../types/event';
 import EventItem from './event-item';
 
+import styles from './event-list.module.css';
+
 interface EventListProps {
     events: Event[];
     onDelete: (id: string) => void;
@@ -12,7 +14,7 @@ interface EventListProps {
 
 const EventList: FC<EventListProps> = ({ events, onDelete, onEdit, onStart }) => {
     return (
-        <div>
+        <div className={styles.eventList}>
             <h2>Event List</h2>
             <ul>
                 {events.map(event => (
