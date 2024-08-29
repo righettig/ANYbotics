@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 
-import Login from './login';
-import Sidebar from './sidebar';
+import Login from './features/login/login';
+import Sidebar from './features/layout/sidebar';
 import Events from './features/events/components/events';
-import Users from './users';
+import Users from './features/users/users';
 
 const Home = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
