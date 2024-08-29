@@ -7,7 +7,7 @@ import { HttpService } from './http.service';
 export class AdminService {
   private readonly apiUrl = 'https://localhost:7272/Admin';
 
-  constructor(private http: HttpService) {}
+  constructor(private http: HttpService) { }
 
   async getUsers(): Promise<{ uid: string; email: string }[]> {
     const response = await this.http.fetch(`${this.apiUrl}/list`, {
@@ -32,5 +32,17 @@ export class AdminService {
     }
 
     return response.json();
+  }
+
+  async deleteUser(uid: string): Promise<void> {
+    const response = await this.http.fetch(`${this.apiUrl}/delete/${uid}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Network response was not ok: ${response.statusText}`);
+    }
+
+    return;
   }
 }

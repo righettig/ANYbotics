@@ -69,6 +69,25 @@ namespace anybotics_anymal_api.Admin.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+        [HttpDelete("delete/{uid}")]
+        public async Task<IActionResult> DeleteUser(string uid)
+        {
+            if (string.IsNullOrWhiteSpace(uid))
+            {
+                return BadRequest("User ID is required.");
+            }
+
+            try
+            {
+                await _firebaseService.DeleteUserAsync(uid);
+                return NoContent(); // 204 No Content if the deletion is successful
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 
     public record CreateUserRequest

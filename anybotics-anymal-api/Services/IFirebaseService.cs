@@ -11,5 +11,6 @@ namespace anybotics_anymal_api.Services
         Task<string?> GetUserRoleAsync(string userEmail);
         Task<List<UserInfo>> GetUsersAsync();
         Task<UserInfo> CreateUserAsync(string email, string password, string role);
+        Task DeleteUserAsync(string uid);
     }
 }

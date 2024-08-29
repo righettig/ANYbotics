@@ -111,4 +111,29 @@ public class FirebaseService : IFirebaseService
             throw new Exception("Failed to create user in Firebase.", ex);
         }
     }
+
+    public async Task DeleteUserAsync(string uid)
+    {
+        if (string.IsNullOrWhiteSpace(uid))
+        {
+            throw new ArgumentException("User ID cannot be null or empty.", nameof(uid));
+        }
+
+        try
+        {
+            // Delete the user with the given UID
+            await _auth.DeleteUserAsync(uid);
+        }
+        catch (FirebaseAuthException ex)
+        {
+            // Handle Firebase-specific exceptions
+            // Log or rethrow as needed
+            throw new Exception($"Failed to delete user: {ex.Message}", ex);
+        }
+        catch (Exception ex)
+        {
+            // Handle other potential exceptions
+            throw new Exception($"An error occurred while deleting the user: {ex.Message}", ex);
+        }
+    }
 }

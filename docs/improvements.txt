@@ -12,9 +12,7 @@
 
 6) [Authorize] to protect controllers: https://bitbucket.org/RAPHAEL_BICKEL/aspnetcore.firebase.authentication/src/master/
 
-7) Admin: it should be possible to create new users and change their roles
-
-8) Refactoring & cleanup "LiveFeed" component
+7) Refactoring & cleanup "LiveFeed" component
 
 BUGS
 	1) Cleanup signalR server side subscriptions
