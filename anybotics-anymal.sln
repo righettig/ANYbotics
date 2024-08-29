@@ -23,6 +23,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "anybotics.auth", "anybotics
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microservices", "Microservices", "{E707CB35-84ED-4A8E-BDA1-ECAB7B006A96}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "anybotics.event-simulation", "anybotics.event-simulation\anybotics.event-simulation.csproj", "{2AB555D1-BA25-4133-8250-C0DAE60BF8D6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,12 +55,17 @@ Global
 		{CF908F6C-71E4-407C-AEC0-D1E167004B97}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF908F6C-71E4-407C-AEC0-D1E167004B97}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF908F6C-71E4-407C-AEC0-D1E167004B97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AB555D1-BA25-4133-8250-C0DAE60BF8D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AB555D1-BA25-4133-8250-C0DAE60BF8D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AB555D1-BA25-4133-8250-C0DAE60BF8D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AB555D1-BA25-4133-8250-C0DAE60BF8D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{CF908F6C-71E4-407C-AEC0-D1E167004B97} = {E707CB35-84ED-4A8E-BDA1-ECAB7B006A96}
+		{2AB555D1-BA25-4133-8250-C0DAE60BF8D6} = {E707CB35-84ED-4A8E-BDA1-ECAB7B006A96}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A35B3E45-7A42-4E4B-9161-936059C3B9BE}
