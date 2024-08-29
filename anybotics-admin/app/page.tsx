@@ -30,6 +30,12 @@ const Home = () => {
     setEventToEdit(event);
   };
 
+  const handleStartEvent = (updatedEvent: Event) => {
+    setEventList(eventList.map(event =>
+      event.id === updatedEvent.id ? updatedEvent : event
+    ));
+  };
+
   return (
     <div>
       <h1>Event Management</h1>
@@ -42,6 +48,7 @@ const Home = () => {
         events={eventList}
         onDelete={handleDeleteEvent}
         onEdit={handleEditEvent}
+        onStart={handleStartEvent} // Pass the new handleStartEvent function
       />
     </div>
   );

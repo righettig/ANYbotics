@@ -1,17 +1,19 @@
 -> Online events (users can code their BOT behaviour)
 	
 	WIP React app for admins	
-		event item
-		start
-		create/read/update/delete events (attach microservice)
-		dockerize the app	
 			
 		I now want to introduce a login screen that should be displayed by default
 		Once logged in (please stub it) I should see the app is it was before
 		Please add a left sidebar allowing me to logout and to choose between events and users
 		when clicking on Users I should see a different component (stub it for now) to display the list of users
 		when clicking on Events I should see the current list list of events
-			
+
+		users page 
+			create/read/delete users using auth microservice
+
+		create/read/update/delete events (attach microservice)
+		dockerize the app	
+
 		login page (use auth microservice)
 	
 		users page 
