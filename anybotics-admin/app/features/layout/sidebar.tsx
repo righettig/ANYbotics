@@ -1,22 +1,18 @@
-import { FC, useState } from 'react';
+import { FC } from 'react';
 
 import styles from './sidebar.module.css';
 
 interface SidebarProps {
     onLogout: () => void;
     onSelect: (view: 'events' | 'users') => void;
+    isCollapsed: boolean;
+    onToggle: () => void;
 }
 
-const Sidebar: FC<SidebarProps> = ({ onLogout, onSelect }) => {
-    const [isCollapsed, setIsCollapsed] = useState(false);
-
-    const handleToggle = () => {
-        setIsCollapsed(!isCollapsed);
-    };
-
+const Sidebar: FC<SidebarProps> = ({ onLogout, onSelect, isCollapsed, onToggle }) => {
     return (
         <div className={`${styles.sidebar} ${isCollapsed ? styles.collapsed : ''}`}>
-            <button onClick={handleToggle} className={styles.toggleButton}>
+            <button onClick={onToggle} className={styles.toggleButton}>
                 {isCollapsed ? '>' : '<'}
             </button>
             <div className={styles.menu}>
