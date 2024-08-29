@@ -34,6 +34,48 @@ namespace anybotics_anymal_api.Admin.Controllers
             var userRecords = await _firebaseService.GetUsersAsync();
             return Ok(userRecords);
         }
+
+        /// <summary>
+        /// Handles HTTP POST requests to create a new user in Firebase with a specified role.
+        /// </summary>
+        /// <param name="email">The email address of the new user.</param>
+        /// <param name="password">The password for the new user.</param>
+        /// <param name="role">The role of the new user (e.g., admin, standard, guest).</param>
+        /// <returns>
+        /// An <see cref="IActionResult"/> representing the result of the operation.
+        /// Returns 201 Created if the user is created successfully.
+        /// </returns>
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password) || string.IsNullOrWhiteSpace(request.Role))
+            {
+                return BadRequest("Email, password, and role are required.");
+            }
+
+            var validRoles = new[] { "admin", "standard", "guest" };
+            if (!validRoles.Contains(request.Role.ToLower()))
+            {
+                return BadRequest("Invalid role specified.");
+            }
+
+            try
+            {
+                var userInfo = await _firebaseService.CreateUserAsync(request.Email, request.Password, request.Role);
+                return CreatedAtAction(nameof(ListUsers), new { id = userInfo.Uid }, userInfo);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+    }
+
+    public record CreateUserRequest
+    {
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public string Role { get; set; }
     }
 
     /// <summary>

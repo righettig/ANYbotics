@@ -87,4 +87,28 @@ public class FirebaseService : IFirebaseService
             return null;
         }
     }
+
+    public async Task<UserInfo> CreateUserAsync(string email, string password, string role)
+    {
+        try
+        {
+            // Create the user in Firebase Authentication
+            var userRecordArgs = new UserRecordArgs
+            {
+                Email = email,
+                Password = password,
+            };
+            var userRecord = await _auth.CreateUserAsync(userRecordArgs);
+
+            // Set the user's role in Firestore
+            var docRef = _firestoreDb.Collection("userRoles").Document(email);
+            await docRef.SetAsync(new { role });
+
+            return new UserInfo(userRecord.Uid, userRecord.Email);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Failed to create user in Firebase.", ex);
+        }
+    }
 }
