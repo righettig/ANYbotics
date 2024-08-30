@@ -1,32 +1,14 @@
-const API_URL = 'https://localhost:32777/api/Auth';
+import { createApiService } from './api.service';
 
-const request = async (endpoint: string, method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE', body?: any) => {
-    try {
-        const response = await fetch(`${API_URL}/${endpoint}`, {
-            method,
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token') || ''}`,
-            },
-            body: body ? JSON.stringify(body) : null,
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        // Try to parse JSON response if it exists
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-            return await response.json();
-        }
+const AUTH_API_URL = 'https://localhost:32777/api/Auth';
 
-        // Return empty object or handle non-JSON response as needed
-        return {};
-    } catch (error) {
-        console.error('API request failed:', error);
-        throw error;
-    }
-};
+const authService = createApiService(AUTH_API_URL);
 
-export const login = (email: string, password: string) => request('login', 'POST', { email, password });
-export const logout = () => request('logout', 'POST');
-export const refreshToken = () => request('refresh-token', 'POST');
+export const login = (email: string, password: string) => 
+    authService.request('login', 'POST', { email, password });
+
+export const logout = () => 
+    authService.request('logout', 'POST');
+
+export const refreshToken = () => 
+    authService.request('refresh-token', 'POST');
