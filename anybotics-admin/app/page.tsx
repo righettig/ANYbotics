@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { logout, refreshToken } from '@/app/common/api.service';
+import { logout, refreshToken } from '@/app/common/auth.service';
 
 import Login from './features/login/login';
 import Sidebar from './features/layout/sidebar';
 import Events from './features/events/components/events';
-import Users from './features/users/users';
+import Users from './features/users/components/users';
 
 const Home = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

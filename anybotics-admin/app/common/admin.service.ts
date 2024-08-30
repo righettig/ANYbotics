@@ -1,4 +1,4 @@
-const API_URL = 'https://localhost:32775/api/Auth';
+const API_URL = 'https://localhost:7272/Admin';
 
 const request = async (endpoint: string, method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE', body?: any) => {
     try {
@@ -27,6 +27,4 @@ const request = async (endpoint: string, method: 'GET' | 'POST' | 'PUT' | 'PATCH
     }
 };
 
-export const login = (email: string, password: string) => request('login', 'POST', { email, password });
-export const logout = () => request('logout', 'POST');
-export const refreshToken = () => request('refresh-token', 'POST');
+export const fetchUsers = () => request('list', 'GET');

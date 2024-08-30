@@ -38,9 +38,9 @@ public static class ServiceCollectionExtensions
     {
         services.AddCors(options =>
         {
-            options.AddPolicy("AllowAngularApp", policyBuilder =>
+            options.AddPolicy("AllowLocalApps", policyBuilder =>
             {
-                policyBuilder.WithOrigins("http://localhost:4200")
+                policyBuilder.WithOrigins("http://localhost:4200", "http://localhost:3000")
                              .AllowAnyHeader()
                              .AllowAnyMethod()
                              .AllowCredentials();

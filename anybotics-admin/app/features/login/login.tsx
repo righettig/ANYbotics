@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import { login } from '@/app/common/api.service';
+import { login } from '@/app/common/auth.service';
 
 import styles from './login.module.css';
 

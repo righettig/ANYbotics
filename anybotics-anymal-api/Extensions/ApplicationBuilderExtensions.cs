@@ -23,11 +23,11 @@ public static class ApplicationBuilderExtensions
         app.UseHttpsRedirection();
         app.UseAuthentication();
         app.UseAuthorization();
-        app.UseCors("AllowAngularApp");
+        app.UseCors("AllowLocalApps");
 
         // Endpoint mappings
         app.MapGrpcService<AnymalService>();
-        app.MapHub<AgentsHub>("/agentsHub").RequireCors("AllowAngularApp");
+        app.MapHub<AgentsHub>("/agentsHub").RequireCors("AllowLocalApps");
         app.MapControllers();
 
         return app;
