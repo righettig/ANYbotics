@@ -38,7 +38,7 @@ const Events = () => {
 
     const handleUpdateEvent = async (updatedEvent: Event) => {
         try {
-            await updateEvent(updatedEvent);
+            await updateEvent(updatedEvent.id, updatedEvent);
             setEventList(eventList.map(event =>
                 event.id === updatedEvent.id ? updatedEvent : event
             ));
