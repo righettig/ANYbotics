@@ -1,11 +1,17 @@
 services:
-  react-app:
+  admin-app:
     build:
       context: ./anybotics-admin
     ports:
       - "4000:3000"
     # depends_on:
     #   - auth-service
+
+  users-app:
+    build:
+      context: ./anybotics-workforce-ng
+    ports:
+      - "4001:4200"
 
   # auth-service:
   #   build:
