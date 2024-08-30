@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import User from '../types/user';
 import UserList from './user-list';
-import { fetchUsers } from '@/app/common/admin.service';
+import { fetchUsers, deleteUser } from '@/app/common/admin.service';
 
 const Users: FC = () => {
     const [users, setUsers] = useState<User[]>([]);
@@ -23,10 +23,19 @@ const Users: FC = () => {
         getUsers();
     }, []);
 
+    const handleDelete = async (uid: string) => {
+        try {
+            await deleteUser(uid);
+            setUsers(users.filter(user => user.uid !== uid));
+        } catch (err) {
+            setError('Failed to delete user.');
+        }
+    };
+
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
 
-    return <UserList users={users} />;
+    return <UserList users={users} onDelete={handleDelete} />;
 };
 
 export default Users;

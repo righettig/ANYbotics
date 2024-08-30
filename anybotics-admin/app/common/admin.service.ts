@@ -28,3 +28,4 @@ const request = async (endpoint: string, method: 'GET' | 'POST' | 'PUT' | 'PATCH
 };
 
 export const fetchUsers = () => request('list', 'GET');
+export const deleteUser = (uid: string) => request(`delete/${uid}`, 'DELETE');
