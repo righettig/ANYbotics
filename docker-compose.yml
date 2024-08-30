@@ -1,0 +1,17 @@
+services:
+  react-app:
+    build:
+      context: ./anybotics-admin
+    ports:
+      - "4000:3000"
+    # depends_on:
+    #   - auth-service
+
+  # auth-service:
+  #   build:
+  #     context: ./anybotics.auth
+  #   ports:
+  #     - "3001:8080"
+  #     - "3002:8081"
+    
+  # TODO: add more services here

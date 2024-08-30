@@ -1,15 +1,14 @@
 -> Online events (users can code their BOT behaviour)
 	
 	WIP React app for admins	
-		dockerize the app
-		define kubernetes cluster so that I can start the whole thing at once without having port issues
+		define kubernetes cluster/docker compose to start the whole thing at once without having port issues
 		
-		-> create/read/update/delete events (attach microservice)
-			update events ms 
-
+	TODO: implement this for each nestjs microservice
+		Health Checks: Add health checks to ensure that your services are up and running before dependent services start.
 		
+	-> create/read/update/delete events (attach microservice)
+		update events ms 
 	
-		
 	scenario
 		user1 submit behaviour
 		user1 should NOT be able to see the "NEW event", instead it should see a list of subscribed events
