@@ -1,6 +1,8 @@
 import { FC, useEffect, useState } from 'react';
+
 import User from '../types/user';
 import UserList from './user-list';
+
 import { fetchUsers, deleteUser } from '@/app/common/admin.service';
 
 const Users: FC = () => {

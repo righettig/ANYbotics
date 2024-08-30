@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { CosmosClient, Container, Database } from '@azure/cosmos';
-import { Event } from './event.interface';
+import { Event, EventDto } from './event.interface';
 
 import * as https from 'https';
 
@@ -26,7 +26,12 @@ export class EventsService implements OnModuleInit, OnModuleDestroy {
     this.container = this.database.container('events');
   }
 
-  async createEvent(event: Event) {
+  async createEvent(eventDto: EventDto) {
+    const event = {
+      ...eventDto,
+      status: 'NotStarted',
+      createdAt: new Date(),
+    } as Event;
     const { resource } = await this.container.items.create(event);
     return resource;
   }

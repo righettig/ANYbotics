@@ -9,6 +9,7 @@ import { fetchEvents, addEvent, updateEvent, deleteEvent, startEvent } from '@/a
 const Events = () => {
     const [eventList, setEventList] = useState<Event[]>([]);
     const [eventToEdit, setEventToEdit] = useState<Event | null>(null);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
@@ -18,6 +19,8 @@ const Events = () => {
                 setEventList(events);
             } catch (err) {
                 setError('Failed to fetch events.');
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -68,6 +71,8 @@ const Events = () => {
         setEventToEdit(event);
     };
 
+    if (loading) return <div>Loading...</div>;
+
     return (
         <div>
             <h1>Event Management</h1>
@@ -76,12 +81,13 @@ const Events = () => {
                 onUpdate={handleUpdateEvent}
                 eventToEdit={eventToEdit}
             />
-            <EventList
+            {error && <div>{error}</div>}
+            {!error && <EventList
                 events={eventList}
                 onDelete={handleDeleteEvent}
                 onEdit={handleEditEvent}
                 onStart={handleStartEvent}
-            />
+            />}
         </div>
     );
 };

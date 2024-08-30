@@ -1,6 +1,6 @@
 import { createApiService } from './api.service';
 
-const AUTH_API_URL = 'https://localhost:32777/api/Auth';
+const AUTH_API_URL = 'https://localhost:32769/api/Auth';
 
 const authService = createApiService(AUTH_API_URL);
 
