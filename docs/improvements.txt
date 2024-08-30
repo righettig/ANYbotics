@@ -1,9 +1,20 @@
 -> Online events (users can code their BOT behaviour)
 	
-	WIP React app for admins	
-		define kubernetes cluster/docker compose to start the whole thing at once without having port issues
+	define kubernetes cluster/docker compose to start the whole thing at once without having port issues
 			there are issues when launching docker container or (creating image) for the .NET "auth" service
-			
+
+	The whole solution consists of the following apps and services	
+		front-end(s)
+			admin 
+			users
+
+		services
+			auth 
+			admin + anymal_api
+			events
+			bots
+			event-simulation
+
 	TODO: implement this for each nestjs microservice
 		Health Checks: Add health checks to ensure that your services are up and running before dependent services start.
 		
