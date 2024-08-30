@@ -12,18 +12,6 @@ interface EventItemProps {
 }
 
 const EventItem: FC<EventItemProps> = ({ event, onDelete, onEdit, onStart }) => {
-    const handleDelete = () => {
-        const confirmed = window.confirm('Are you sure you want to delete this event?');
-        if (confirmed) {
-            onDelete(event.id);
-        }
-    };
-
-    const handleStart = () => {
-        const updatedEvent = { ...event, status: 'Running', modifiedAt: new Date() } as Event;
-        onStart(updatedEvent);
-    };
-
     return (
         <li className={styles.eventItem}>
             <div className={styles.eventDetails}>
@@ -36,10 +24,10 @@ const EventItem: FC<EventItemProps> = ({ event, onDelete, onEdit, onStart }) => 
             </div>
             <div className={styles.eventActions}>
                 {event.status === 'NotStarted' && (
-                    <button onClick={handleStart}>Start</button>
+                    <button onClick={() => onStart(event)}>Start</button>
                 )}
                 <button onClick={() => onEdit(event)}>Edit</button>
-                <button onClick={handleDelete}>Delete</button>
+                <button onClick={() => onDelete(event.id)}>Delete</button>
             </div>
         </li>
     );

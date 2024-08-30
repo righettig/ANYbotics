@@ -1,37 +1,71 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Event from '../types/event';
 import EventCreator from './event-creator';
 import EventList from './event-list';
-import mockEvents from '../data/events';
+
+import { fetchEvents, addEvent, updateEvent, deleteEvent, startEvent } from '@/app/common/events.service';
 
 const Events = () => {
-    const [eventList, setEventList] = useState<Event[]>(mockEvents);
+    const [eventList, setEventList] = useState<Event[]>([]);
     const [eventToEdit, setEventToEdit] = useState<Event | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
-    const handleAddEvent = (newEvent: Event) => {
-        setEventList([...eventList, newEvent]);
+    useEffect(() => {
+        const getEvents = async () => {
+            try {
+                const events = await fetchEvents();
+                setEventList(events);
+            } catch (err) {
+                setError('Failed to fetch events.');
+            }
+        };
+
+        getEvents();
+    }, []);
+
+    const handleAddEvent = async (newEvent: Event) => {
+        try {
+            await addEvent(newEvent);
+            setEventList([...eventList, newEvent]);
+        } catch (err) {
+            setError('Failed to add event.');
+        }
     };
 
-    const handleUpdateEvent = (updatedEvent: Event) => {
+    const handleUpdateEvent = async (updatedEvent: Event) => {
+        try {
+            await updateEvent(updatedEvent);
+            setEventList(eventList.map(event =>
+                event.id === updatedEvent.id ? updatedEvent : event
+            ));
+            setEventToEdit(null);
+        } catch (err) {
+            setError('Failed to update event.');
+        }
+    };
+
+    const handleDeleteEvent = async (id: string) => {
+        if (window.confirm('Are you sure you want to delete this event?')) {
+            try {
+                await deleteEvent(id);
+                setEventList(eventList.filter(event => event.id !== id));
+            } catch (err) {
+                setError('Failed to delete event.');
+            }
+        }
+    };
+
+    const handleStartEvent = (event: Event) => {
+        const updatedEvent = { ...event, status: 'Running', modifiedAt: new Date() } as Event;
+
         setEventList(eventList.map(event =>
             event.id === updatedEvent.id ? updatedEvent : event
         ));
-        setEventToEdit(null);
-    };
-
-    const handleDeleteEvent = (id: string) => {
-        setEventList(eventList.filter(event => event.id !== id));
     };
 
     const handleEditEvent = (event: Event) => {
         setEventToEdit(event);
-    };
-
-    const handleStartEvent = (updatedEvent: Event) => {
-        setEventList(eventList.map(event =>
-            event.id === updatedEvent.id ? updatedEvent : event
-        ));
     };
 
     return (

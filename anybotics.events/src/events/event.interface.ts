@@ -1,5 +1,11 @@
+export type EventStatus = 'NotStarted' | 'Running' | 'Finished';
+
 export interface Event {
-    eventId: string;
-    eventName: string;
+    id: string;
+    name: string;
+    description: string;
+    createdAt: Date;
+    modifiedAt: Date;
+    status: EventStatus;
     botIds: string[];
 }

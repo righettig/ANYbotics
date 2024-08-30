@@ -1,11 +1,13 @@
 -> Online events (users can code their BOT behaviour)
 	
 	WIP React app for admins	
-		users page 
-			create/read/delete users using auth microservice
-
-		create/read/update/delete events (attach microservice)
 		dockerize the app
+		define kubernetes cluster so that I can start the whole thing at once without having port issues
+		
+		-> create/read/update/delete events (attach microservice)
+			update events ms 
+
+		
 	
 		
 	scenario
