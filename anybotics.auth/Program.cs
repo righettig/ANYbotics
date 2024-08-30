@@ -2,7 +2,6 @@ using anybotics.auth.Services;
 using anybotics_anymal_common.Extensions;
 using Firebase.Auth;
 using Firebase.Auth.Providers;
-using Google.Api;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -46,9 +45,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAngularApp", policyBuilder =>
+    options.AddPolicy("AllowLocalApps", policyBuilder =>
     {
-        policyBuilder.WithOrigins("http://localhost:4200")
+        policyBuilder.WithOrigins("http://localhost:4200", "http://localhost:3000")
                      .AllowAnyHeader()
                      .AllowAnyMethod()
                      .AllowCredentials();
@@ -68,7 +67,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCors("AllowAngularApp");
+
+app.UseCors("AllowLocalApps");
 
 app.MapControllers();
 

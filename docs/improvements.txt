@@ -9,9 +9,6 @@
 
 		login page (use auth microservice)
 	
-		users page 
-			create/read/delete users using auth microservice
-	
 		
 	scenario
 		user1 submit behaviour

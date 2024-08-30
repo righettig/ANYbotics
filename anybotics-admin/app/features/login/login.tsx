@@ -1,20 +1,28 @@
 import { FC, useState } from 'react';
+import { login } from '@/app/common/api.service';
 
 import styles from './login.module.css';
 
 const Login: FC<{ onLogin: () => void }> = ({ onLogin }) => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const [username, setUsername] = useState('admin@anybotics.com');
+    const [password, setPassword] = useState('q1w2e3');
 
-    const handleLogin = () => {
-        if (username && password) {
+    const [error, setError] = useState('');
+
+    const handleLogin = async () => {
+        try {
+            const response = await login(username, password);
+            localStorage.setItem('token', response.token);
             onLogin();
+        } catch (err) {
+            setError('Login failed. Please try again.');
         }
     };
 
     return (
         <div className={styles.loginContainer}>
             <h2>Login</h2>
+            {error && <div className={styles.error}>{error}</div>}
             <input
                 type="text"
                 placeholder="Username"

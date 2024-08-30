@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { logout, refreshToken } from '@/app/common/api.service';
 
 import Login from './features/login/login';
 import Sidebar from './features/layout/sidebar';
@@ -11,13 +12,27 @@ const Home = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [selectedView, setSelectedView] = useState<'events' | 'users'>('events');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   const handleLogin = () => {
     setIsLoggedIn(true);
   };
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
+  const handleLogout = async () => {
+    try {
+      await logout();
+      localStorage.removeItem('token');
+      setIsLoggedIn(false);
+    } catch (err) {
+      setError('Logout failed.');
+    }
   };
 
   const handleSelectView = (view: 'events' | 'users') => {
@@ -27,6 +42,23 @@ const Home = () => {
   const handleSidebarToggle = () => {
     setIsSidebarCollapsed(!isSidebarCollapsed);
   };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      const checkToken = async () => {
+        try {
+          const response = await refreshToken();
+          localStorage.setItem('token', response.token);
+        } catch {
+          setIsLoggedIn(false);
+          localStorage.removeItem('token');
+        }
+      };
+
+      const intervalId = setInterval(checkToken, 15 * 60 * 1000); // Check every 15 minutes
+      return () => clearInterval(intervalId);
+    }
+  }, [isLoggedIn]);
 
   if (!isLoggedIn) {
     return <Login onLogin={handleLogin} />;
@@ -50,6 +82,7 @@ const Home = () => {
       >
         {selectedView === 'events' ? <Events /> : <Users />}
       </div>
+      {error && <div>{error}</div>}
     </div>
   );
 };
