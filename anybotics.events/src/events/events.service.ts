@@ -1,6 +1,7 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { CosmosClient, Container, Database } from '@azure/cosmos';
 import { Event, EventDto } from './event.interface';
+import { ConfigService } from './config.service';
 
 import * as https from 'https';
 
@@ -13,10 +14,10 @@ export class EventsService implements OnModuleInit, OnModuleDestroy {
   private database: Database;
   private container: Container;
 
-  constructor() {
+  constructor(private configService: ConfigService) {
     this.client = new CosmosClient({
-      endpoint: 'https://localhost:8081', // Cosmos DB Emulator endpoint
-      key: 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==',
+      endpoint: this.configService.cosmosDbEndpoint,
+      key: this.configService.cosmosDbKey,
       agent
     });
   }

@@ -1,17 +1,41 @@
 services:
   admin-app:
+    depends_on:
+      #- auth-service
+      - events-service
     build:
       context: ./anybotics-admin
     ports:
       - "4000:3000"
-    # depends_on:
-    #   - auth-service
+    develop:
+      context: ./anybotics-admin
+      watch:
+        - action: sync
+          path: ./anybotics-admin
+          target: /app
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: ./anybotics-admin/package.json
 
   users-app:
+    depends_on:
+      - events-service
+      - bots-service
     build:
       context: ./anybotics-workforce-ng
     ports:
       - "4001:4200"
+    develop:
+      context: ./anybotics-workforce-ng
+      watch:
+        - action: sync
+          path: ./anybotics-workforce-ng
+          target: /app
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: ./anybotics-workforce-ng/package.json
 
   # auth-service:
   #   build:
@@ -20,4 +44,69 @@ services:
   #     - "3001:8080"
   #     - "3002:8081"
     
+  events-service:
+    build:
+      context: ./anybotics.events
+    # environment:
+    #   - COSMOSDB_ENDPOINT=http://cosmosdb:8081
+    #   - COSMOSDB_KEY=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
+    #   - COSMOSDB_DATABASE_ID=anybotics
+    #   - COSMOSDB_CONTAINER_ID=events
+    ports:
+      - "3003:3000"
+    # depends_on:
+    #   - cosmosdb
+    develop:
+      context: ./anybotics.events
+      watch:
+        - action: sync
+          path: ./anybotics.events
+          target: /app
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: ./anybotics.events/package.json
+
+  bots-service:
+    environment:
+      - MONGO_URL=mongodb://mongo:27017/anybotics-bots # Database names cannot contain the character '.'
+    depends_on:
+      - mongo
+    build:
+      context: ./anybotics.bots
+    ports:
+      - "3004:3000"
+    develop:
+      context: ./anybotics.bots
+      watch:
+        - action: sync
+          path: ./anybotics.bots
+          target: /app
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: ./anybotics.bots/package.json
+
+  mongo:
+    image: mongo:6.0
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo_data:/data/db
+
+  # cosmosdb:
+  #   image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator
+  #   environment:
+  #     - AZURE_COSMOS_EMULATOR_PARTITION_COUNT=3
+  #     - AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE=true
+  #   ports:
+  #     - "8081:8081"
+  #   volumes:
+  #     - ./cosmosdata:/CosmosDB/data
+    # command: "start -p 8081 --no-upgrade"
+
   # TODO: add more services here
+
+volumes:
+  mongo_data:
+  #  cosmosdata:
