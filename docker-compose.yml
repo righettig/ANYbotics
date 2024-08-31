@@ -45,6 +45,8 @@ services:
   #     - "3002:8081"
     
   events-service:
+    # depends_on:
+    #   - cosmosdb
     build:
       context: ./anybotics.events
     # environment:
@@ -54,8 +56,6 @@ services:
     #   - COSMOSDB_CONTAINER_ID=events
     ports:
       - "3003:3000"
-    # depends_on:
-    #   - cosmosdb
     develop:
       context: ./anybotics.events
       watch:
@@ -103,9 +103,7 @@ services:
   #     - "8081:8081"
   #   volumes:
   #     - ./cosmosdata:/CosmosDB/data
-    # command: "start -p 8081 --no-upgrade"
-
-  # TODO: add more services here
+  #   command: "start -p 8081 --no-upgrade"
 
 volumes:
   mongo_data:
