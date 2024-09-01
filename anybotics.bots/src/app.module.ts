@@ -12,7 +12,8 @@ import { APP_GUARD } from '@nestjs/core';
       ttl: 60 * 1000,
       limit: 10,
     }]),
-    BotsModule, BehavioursModule,
+    BotsModule, 
+    BehavioursModule,
   ],
   providers: [
     {
