@@ -5,7 +5,7 @@ import { ConfigService } from './config.service';
 
 import * as https from 'https';
 
-// Create an HTTPS agent that accepts self-signed certificates
+// Create an HTTPS agent that accepts self-signed certificates, avoiding 'ERROR [ExceptionsHandler] self-signed certificate'
 const agent = new https.Agent({ rejectUnauthorized: false });
 
 @Injectable()
@@ -23,8 +23,22 @@ export class EventsService implements OnModuleInit, OnModuleDestroy {
   }
 
   async onModuleInit() {
-    this.database = this.client.database('anybotics');
-    this.container = this.database.container('events');
+    const { database } = await this.client.databases.createIfNotExists({
+      id: 'anybotics',
+      throughput: 400
+    });
+
+    const { container } = await database.containers.createIfNotExists({
+      id: 'events',
+      partitionKey: {
+        paths: [
+          '/id'
+        ]
+      }
+    });
+
+    this.database = database;
+    this.container = container;
   }
 
   async createEvent(eventDto: EventDto) {

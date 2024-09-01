@@ -1,7 +1,5 @@
 -> Online events (users can code their BOT behaviour)
 	
-	docker compose up --watch
-	
 	define kubernetes cluster/docker compose to start the whole thing at once without having port issues
 			there are issues when launching docker container or (creating image) for the .NET "auth" service
 
