@@ -47,7 +47,8 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowLocalApps", policyBuilder =>
     {
-        policyBuilder.WithOrigins("http://localhost:4200", "http://localhost:3000")
+        // TODO: should be passed as configuration
+        policyBuilder.WithOrigins("http://localhost:4000", "http://localhost:4001")
                      .AllowAnyHeader()
                      .AllowAnyMethod()
                      .AllowCredentials();
@@ -61,6 +62,10 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+else 
+{
+    app.UseHsts();
 }
 
 app.UseHttpsRedirection();

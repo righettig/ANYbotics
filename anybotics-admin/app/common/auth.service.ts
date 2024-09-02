@@ -1,6 +1,7 @@
 import { createApiService } from './api.service';
 
-const AUTH_API_URL = 'https://localhost:32769/api/Auth';
+// TODO: should be passed as configuration
+const AUTH_API_URL = 'http://localhost:3001/api/Auth';
 
 const authService = createApiService(AUTH_API_URL);
 
