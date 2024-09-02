@@ -8,9 +8,9 @@ services:
     ports:
       - "4000:3000"
     environment:
-      - AUTH_API_URL=${AUTH_API_URL}
-      - ADMIN_API_URL=${ADMIN_API_URL}
-      - EVENTS_API_URL=${EVENTS_API_URL}
+      - NEXT_PUBLIC_AUTH_API_URL=${AUTH_API_URL}
+      - NEXT_PUBLIC_ADMIN_API_URL=${ADMIN_API_URL}
+      - NEXT_PUBLIC_EVENTS_API_URL=${EVENTS_API_URL}
     develop:
       context: ./anybotics-admin
       watch:

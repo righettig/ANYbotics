@@ -1,6 +1,6 @@
 import { createApiService } from './api.service';
 
-const AUTH_API_URL = process.env.AUTH_API_URL!;
+const AUTH_API_URL = process.env.NEXT_PUBLIC_AUTH_API_URL!;
 
 const authService = createApiService(AUTH_API_URL);
 

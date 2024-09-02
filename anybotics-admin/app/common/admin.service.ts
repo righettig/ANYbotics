@@ -1,6 +1,6 @@
 import { createApiService } from './api.service';
 
-const ADMIN_API_URL = process.env.ADMIN_API_URL!;
+const ADMIN_API_URL = process.env.NEXT_PUBLIC_ADMIN_API_URL!;
 
 const adminService = createApiService(ADMIN_API_URL);
 
