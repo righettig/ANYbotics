@@ -11,6 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 var firebaseProjectName = "anybotics-c5ce9";
 var firebaseApiKey = "AIzaSyBz6G-oi3GX4owL3qEl23huE5N2-zAHuco";
 
+var corsAllowedOrigins = builder.Configuration["CORS_ALLOWED_ORIGINS"]?.Split(',') ?? new string[0];
+
 builder.Services.AddSingleton(new FirebaseAuthClient(new FirebaseAuthConfig
 {
     ApiKey = firebaseApiKey,
@@ -47,8 +49,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowLocalApps", policyBuilder =>
     {
-        // TODO: should be passed as configuration
-        policyBuilder.WithOrigins("http://localhost:4000", "http://localhost:4001")
+        policyBuilder.WithOrigins(corsAllowedOrigins)
                      .AllowAnyHeader()
                      .AllowAnyMethod()
                      .AllowCredentials();
