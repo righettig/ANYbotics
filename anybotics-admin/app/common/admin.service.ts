@@ -1,6 +1,6 @@
 import { createApiService } from './api.service';
 
-const ADMIN_API_URL = 'https://localhost:7272/Admin';
+const ADMIN_API_URL = process.env.ADMIN_API_URL!;
 
 const adminService = createApiService(ADMIN_API_URL);
 

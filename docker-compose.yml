@@ -2,11 +2,15 @@ services:
   admin-app:
     depends_on:
       - auth-service
-      - events-service
+      #- events-service
     build:
       context: ./anybotics-admin
     ports:
       - "4000:3000"
+    environment:
+      - AUTH_API_URL=${AUTH_API_URL}
+      - ADMIN_API_URL=${ADMIN_API_URL}
+      - EVENTS_API_URL=${EVENTS_API_URL}
     develop:
       context: ./anybotics-admin
       watch:
@@ -18,24 +22,24 @@ services:
         - action: rebuild
           path: ./anybotics-admin/package.json
 
-  users-app:
-    depends_on:
-      - events-service
-      - bots-service
-    build:
-      context: ./anybotics-workforce-ng
-    ports:
-      - "4001:4200"
-    develop:
-      context: ./anybotics-workforce-ng
-      watch:
-        - action: sync
-          path: ./anybotics-workforce-ng
-          target: /app
-          ignore:
-            - node_modules/
-        - action: rebuild
-          path: ./anybotics-workforce-ng/package.json
+  # users-app:
+  #   depends_on:
+  #     - events-service
+  #     - bots-service
+  #   build:
+  #     context: ./anybotics-workforce-ng
+  #   ports:
+  #     - "4001:4200"
+  #   develop:
+  #     context: ./anybotics-workforce-ng
+  #     watch:
+  #       - action: sync
+  #         path: ./anybotics-workforce-ng
+  #         target: /app
+  #         ignore:
+  #           - node_modules/
+  #       - action: rebuild
+  #         path: ./anybotics-workforce-ng/package.json
 
   auth-service:
     build:
@@ -44,87 +48,87 @@ services:
     ports:
       - "3001:8080" # https not working so far!
 
-  events-service:
-    depends_on:
-      cosmosdb:
-        condition: service_healthy
-    build:
-      context: ./anybotics.events
-    environment:
-      - COSMOSDB_ENDPOINT=https://cosmosdb:8081
-      - COSMOSDB_KEY=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
-      - COSMOSDB_DATABASE_ID=anybotics
-      - COSMOSDB_CONTAINER_ID=events
-    ports:
-      - "3003:3000"
-    develop:
-      context: ./anybotics.events
-      watch:
-        - action: sync
-          path: ./anybotics.events
-          target: /app
-          ignore:
-            - node_modules/
-        - action: rebuild
-          path: ./anybotics.events/package.json
+#   events-service:
+#     depends_on:
+#       cosmosdb:
+#         condition: service_healthy
+#     build:
+#       context: ./anybotics.events
+#     environment:
+#       - COSMOSDB_ENDPOINT=https://cosmosdb:8081
+#       - COSMOSDB_KEY=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
+#       - COSMOSDB_DATABASE_ID=anybotics
+#       - COSMOSDB_CONTAINER_ID=events
+#     ports:
+#       - "3003:3000"
+#     develop:
+#       context: ./anybotics.events
+#       watch:
+#         - action: sync
+#           path: ./anybotics.events
+#           target: /app
+#           ignore:
+#             - node_modules/
+#         - action: rebuild
+#           path: ./anybotics.events/package.json
 
-  bots-service:
-    environment:
-      - MONGO_URL=mongodb://mongo:27017/anybotics-bots # Database names cannot contain the character '.'
-    depends_on:
-      - mongo
-    build:
-      context: ./anybotics.bots
-    ports:
-      - "3004:3000"
-    develop:
-      context: ./anybotics.bots
-      watch:
-        - action: sync
-          path: ./anybotics.bots
-          target: /app
-          ignore:
-            - node_modules/
-        - action: rebuild
-          path: ./anybotics.bots/package.json
+#   bots-service:
+#     environment:
+#       - MONGO_URL=mongodb://mongo:27017/anybotics-bots # Database names cannot contain the character '.'
+#     depends_on:
+#       - mongo
+#     build:
+#       context: ./anybotics.bots
+#     ports:
+#       - "3004:3000"
+#     develop:
+#       context: ./anybotics.bots
+#       watch:
+#         - action: sync
+#           path: ./anybotics.bots
+#           target: /app
+#           ignore:
+#             - node_modules/
+#         - action: rebuild
+#           path: ./anybotics.bots/package.json
 
-  events-simulation-service:
-    build:
-      context: .
-      dockerfile: ./anybotics.event-simulation/Dockerfile
-    ports:
-      - "3005:8080"
+#   events-simulation-service:
+#     build:
+#       context: .
+#       dockerfile: ./anybotics.event-simulation/Dockerfile
+#     ports:
+#       - "3005:8080"
 
-  mongo:
-    image: mongo:6.0
-    ports:
-      - '27017:27017'
-    volumes:
-      - mongo_data:/data/db
+#   mongo:
+#     image: mongo:6.0
+#     ports:
+#       - '27017:27017'
+#     volumes:
+#       - mongo_data:/data/db
       
-  cosmosdb:
-    # fix for: https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/103
-    image: cosmos-emulator-wrapper
-    build:
-      dockerfile_inline: |
-        FROM mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
-        RUN apt-get update && \
-            DEBIAN_FRONTEND=noninteractive apt-get install -y \
-            curl
-    environment:
-      - AZURE_COSMOS_EMULATOR_PARTITION_COUNT=3
-      - AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE=true
-    ports:
-      - "8081:8081"
-    volumes:
-      - cosmos_data:/CosmosDB/data
-    healthcheck:
-      test: ["CMD", "curl", "-f", "-k", "https://localhost:8081/_explorer/emulator.pem"]
-      start_period: 30s
-      interval: 30s
-      timeout: 10s
-      retries: 10
+#   cosmosdb:
+#     # fix for: https://github.com/Azure/azure-cosmos-db-emulator-docker/issues/103
+#     image: cosmos-emulator-wrapper
+#     build:
+#       dockerfile_inline: |
+#         FROM mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
+#         RUN apt-get update && \
+#             DEBIAN_FRONTEND=noninteractive apt-get install -y \
+#             curl
+#     environment:
+#       - AZURE_COSMOS_EMULATOR_PARTITION_COUNT=3
+#       - AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE=true
+#     ports:
+#       - "8081:8081"
+#     volumes:
+#       - cosmos_data:/CosmosDB/data
+#     healthcheck:
+#       test: ["CMD", "curl", "-f", "-k", "https://localhost:8081/_explorer/emulator.pem"]
+#       start_period: 30s
+#       interval: 30s
+#       timeout: 10s
+#       retries: 10
 
-volumes:
-  mongo_data:
-  cosmos_data:
+# volumes:
+#   mongo_data:
+#   cosmos_data:

@@ -2,7 +2,7 @@ import { createApiService } from './api.service';
 
 import { EventDto } from '@/app/features/events/types/event';
 
-const EVENTS_API_URL = 'http://localhost:3001/events';
+const EVENTS_API_URL = process.env.EVENTS_API_URL!;
 
 const eventsService = createApiService(EVENTS_API_URL);
 

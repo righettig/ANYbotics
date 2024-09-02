@@ -1,7 +1,6 @@
 import { createApiService } from './api.service';
 
-// TODO: should be passed as configuration
-const AUTH_API_URL = 'http://localhost:3001/api/Auth';
+const AUTH_API_URL = process.env.AUTH_API_URL!;
 
 const authService = createApiService(AUTH_API_URL);
 
