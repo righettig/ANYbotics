@@ -8,8 +8,8 @@ using Microsoft.IdentityModel.Tokens;
 var builder = WebApplication.CreateBuilder(args);
 
 // Firebase project configuration
-var firebaseProjectName = "anybotics-c5ce9";
-var firebaseApiKey = "AIzaSyBz6G-oi3GX4owL3qEl23huE5N2-zAHuco";
+var firebaseProjectName = builder.Configuration["FIREBASE_PROJECT_NAME"];
+var firebaseApiKey = builder.Configuration["FIREBASE_API_KEY"];
 
 var corsAllowedOrigins = builder.Configuration["CORS_ALLOWED_ORIGINS"]?.Split(',') ?? new string[0];
 
@@ -29,7 +29,7 @@ builder.Services.AddSingleton<IFirebaseAuthService, FirebaseAuthService>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.Authority = $"https://securetoken.google.com/{firebaseProjectName}";
+        options.Authority = builder.Configuration["JWT_AUTHORITY"];
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
