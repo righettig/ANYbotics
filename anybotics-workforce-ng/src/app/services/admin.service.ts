@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from './http.service';
+import { ConfigService } from './config.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AdminService {
-  private readonly apiUrl = 'https://localhost:7272/Admin';
+  private readonly apiUrl = this.configService.config.adminApiUrl;
 
-  constructor(private http: HttpService) { }
+  constructor(private configService: ConfigService, private http: HttpService) { }
 
   async getUsers(): Promise<{ uid: string; email: string }[]> {
     const response = await this.http.fetch(`${this.apiUrl}/list`, {

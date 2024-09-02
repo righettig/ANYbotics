@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from './http.service';
+import { ConfigService } from './config.service';
 
 export interface Mission {
   id?: string;
@@ -11,12 +12,12 @@ export interface Mission {
   providedIn: 'root',
 })
 export class MissionsService {
-  private baseUrl = 'https://localhost:7272';
+  private baseUrl = this.configService.config.anymalApiUrl;
 
   private commandsApiUrl = `${this.baseUrl}/commands`;
   private missionsApiUrl = `${this.baseUrl}/missions`;
 
-  constructor(private http: HttpService) {}
+  constructor(private configService: ConfigService, private http: HttpService) {}
 
   async getCommands(): Promise<string[]> {
     const response = await this.http.fetch(this.commandsApiUrl, {

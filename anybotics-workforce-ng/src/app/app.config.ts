@@ -5,9 +5,13 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { AuthService } from './services/auth.service';
 import { provideHttpClient } from '@angular/common/http';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
+import { ConfigService } from './services/config.service';
 
-function initializeAuth(authService: AuthService) {
-  return () => authService.initializeAuthState();
+function initializeApp(configService: ConfigService, authService: AuthService) {
+  return async () => {
+    await configService.loadConfig();
+    await authService.initializeAuthState();
+  };
 }
 
 export const appConfig: ApplicationConfig = {
@@ -18,9 +22,9 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     {
       provide: APP_INITIALIZER,
-      useFactory: initializeAuth,
-      deps: [AuthService],
-      multi: true,
+      useFactory: initializeApp,
+      deps: [ConfigService, AuthService],
+      multi: true
     },
     importProvidersFrom(MonacoEditorModule.forRoot() )
   ],

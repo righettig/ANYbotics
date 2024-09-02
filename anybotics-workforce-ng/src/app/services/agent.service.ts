@@ -3,6 +3,7 @@ import { BehaviorSubject, Subject } from 'rxjs';
 import { AgentDto } from '../models/agent-dto.model';
 import { AgentDetailsDto } from '../models/agent-details-dto.model';
 import { HttpService } from './http.service';
+import { ConfigService } from './config.service';
 
 import * as signalR from '@microsoft/signalr';
 
@@ -17,7 +18,7 @@ export class AgentService {
   private anomalyDetectedSubject = new Subject<string>();
   private hardwareFailureSubject = new Subject<string>();
   
-  private baseUrl = 'https://localhost:7272';
+  private baseUrl = this.configService.config.anymalApiUrl;
   private baseApiUrl = `${this.baseUrl}/Anymal`;
 
   agents$ = this.agentsSubject.asObservable();
@@ -25,7 +26,7 @@ export class AgentService {
   anomalyDetected$ = this.anomalyDetectedSubject.asObservable();
   hardwareFailure$ = this.hardwareFailureSubject.asObservable();
 
-  constructor(private http: HttpService) {
+  constructor(private configService: ConfigService, private http: HttpService) {
     this.hubConnection = new signalR.HubConnectionBuilder()
       .withUrl(`${this.baseUrl}/agentsHub`, { withCredentials: false })
       .withAutomaticReconnect()

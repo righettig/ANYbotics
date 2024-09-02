@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, firstValueFrom, Observable, tap } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
 import { jwtDecode } from "jwt-decode";
+import { ConfigService } from './config.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,12 +12,14 @@ export class AuthService {
   private userRole$ = new BehaviorSubject<string | null>(null);
   private initialized$ = new BehaviorSubject<boolean>(false);
 
-  private apiUrl = 'https://localhost:32775/api/auth';
+  get apiUrl(): string {
+    return this.configService.config.authApiUrl;
+  }
 
   private storageKey = 'authToken';
   private authToken?: string;
 
-  constructor(private http: HttpClient) { }
+  constructor(private configService: ConfigService, private http: HttpClient) { }
 
   get isLoggedIn$(): Observable<boolean> {
     return this.loggedIn$.asObservable();

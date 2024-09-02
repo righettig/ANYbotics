@@ -22,24 +22,30 @@ services:
         - action: rebuild
           path: ./anybotics-admin/package.json
 
-  # users-app:
-  #   depends_on:
-  #     - events-service
-  #     - bots-service
-  #   build:
-  #     context: ./anybotics-workforce-ng
-  #   ports:
-  #     - "4001:4200"
-  #   develop:
-  #     context: ./anybotics-workforce-ng
-  #     watch:
-  #       - action: sync
-  #         path: ./anybotics-workforce-ng
-  #         target: /app
-  #         ignore:
-  #           - node_modules/
-  #       - action: rebuild
-  #         path: ./anybotics-workforce-ng/package.json
+  users-app:
+    #depends_on:
+      #- events-service
+      #- bots-service
+    build:
+      context: ./anybotics-workforce-ng
+    ports:
+      - "4001:4200"
+    environment:
+      - AUTH_API_URL=${AUTH_API_URL}
+      - ADMIN_API_URL=${ADMIN_API_URL}
+      - BOTS_API_URL=${BOTS_API_URL}
+      - BEHAVIOURS_API_URL=${BEHAVIOURS_API_URL}
+      - ANYMAL_API_URL=${ANYMAL_API_URL}
+    develop:
+      context: ./anybotics-workforce-ng
+      watch:
+        - action: sync
+          path: ./anybotics-workforce-ng
+          target: /app
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: ./anybotics-workforce-ng/package.json
 
   auth-service:
     build:
