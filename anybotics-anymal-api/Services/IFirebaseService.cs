@@ -1,5 +1,4 @@
-﻿using anybotics_anymal_api.Admin.Controllers;
-using FirebaseAdmin.Auth;
+﻿using FirebaseAdmin.Auth;
 
 namespace anybotics_anymal_api.Services
 {
@@ -9,8 +8,5 @@ namespace anybotics_anymal_api.Services
         Task<string> GetUserEmailAsync(string uid);
         Task<UserRecord> GetUserRecordAsync(string uid);
         Task<string?> GetUserRoleAsync(string userEmail);
-        Task<List<UserInfo>> GetUsersAsync();
-        Task<UserInfo> CreateUserAsync(string email, string password, string role);
-        Task DeleteUserAsync(string uid);
     }
 }

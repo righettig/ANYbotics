@@ -7,6 +7,7 @@ namespace anybotics.admin.Extensions;
 public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddCustomServices(this IServiceCollection services,
+                                                       string firebaseConfigFile,
                                                        string firebaseProjectName,
                                                        string[] corsAllowedOrigins)
     {
@@ -16,8 +17,7 @@ public static class ServiceCollectionExtensions
 
         services.AddSingleton<IUserService, FirebaseUserService>();
 
-        // TODO: read from env variables
-        services.AddFirebaseAndFirestore("anybotics-c5ce9-b8d42a6f97b1.json", firebaseProjectName);
+        services.AddFirebaseAndFirestore(firebaseConfigFile, firebaseProjectName);
 
         return services;
     }

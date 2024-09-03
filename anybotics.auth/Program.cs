@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Firebase project configuration
 var firebaseProjectName = builder.Configuration["FIREBASE_PROJECT_NAME"];
 var firebaseApiKey = builder.Configuration["FIREBASE_API_KEY"];
+var firebaseConfigFile = builder.Configuration["FIREBASE_CONFIG_FILE"];
 
 var corsAllowedOrigins = builder.Configuration["CORS_ALLOWED_ORIGINS"]?.Split(',') ?? [];
 
@@ -20,8 +21,7 @@ builder.Services.AddSingleton(new FirebaseAuthClient(new FirebaseAuthConfig
     Providers = [ new EmailProvider() ]
 }));
 
-// TODO: read from env variables
-builder.Services.AddFirebaseAndFirestore("anybotics-c5ce9-b8d42a6f97b1.json", firebaseProjectName);
+builder.Services.AddFirebaseAndFirestore(firebaseConfigFile, firebaseProjectName);
 
 // Add custom Firebase Authentication service
 builder.Services.AddSingleton<IFirebaseAuthService, FirebaseAuthService>();
