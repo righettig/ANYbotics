@@ -29,6 +29,7 @@ public static class ServiceCollectionExtensions
 
         services.AddCommandHandlers(Assembly.GetExecutingAssembly());
 
+        // TODO
         services.AddFirebaseAndFirestore("anybotics-c5ce9-b8d42a6f97b1.json", "anybotics-c5ce9");
 
         return services;
@@ -40,6 +41,7 @@ public static class ServiceCollectionExtensions
         {
             options.AddPolicy("AllowLocalApps", policyBuilder =>
             {
+                // TODO
                 policyBuilder.WithOrigins("http://localhost:4200", "http://localhost:3000")
                              .AllowAnyHeader()
                              .AllowAnyMethod()

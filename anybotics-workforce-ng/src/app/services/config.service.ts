@@ -15,7 +15,7 @@ export class ConfigService {
   loadConfig(): Promise<void> {
     return new Promise(async (resolve, reject) => {
       try {
-        const response = await firstValueFrom(
+        await firstValueFrom(
           this.http.get(this.configUrl).pipe(
             map((data) => {
               this.config = data;

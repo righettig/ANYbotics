@@ -4,7 +4,6 @@ import { AuthService } from '../services/auth.service';
 import { MatMenuModule } from '@angular/material/menu';
 import { Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { Roles } from '../models/roles.enum';
 
 @Component({
   selector: 'app-user-profile',
@@ -22,15 +21,7 @@ import { Roles } from '../models/roles.enum';
 export class UserProfileComponent {
   private router = inject(Router);
 
-  isAdmin = false;
-
   constructor(private authService: AuthService) { }
-
-  ngOnInit() {
-    this.authService.currentUserRole$.subscribe(
-      (role) => (this.isAdmin = role === Roles.Admin)
-    );
-  }
 
   onLogout() {
     this.authService.logout().then(() => {

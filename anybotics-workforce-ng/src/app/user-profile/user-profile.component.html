@@ -11,12 +11,6 @@
     <mat-icon>settings</mat-icon>
     <span>Settings</span>
   </button>
-  @if (isAdmin) {
-  <button mat-menu-item [routerLink]="['/admin']">
-    <mat-icon>supervisor_account</mat-icon>
-    <span>Admin</span>
-  </button>
-  }
   <button mat-menu-item (click)="onLogout()">
     <mat-icon>logout</mat-icon>
     <span>Logout</span>
