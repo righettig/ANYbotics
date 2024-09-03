@@ -7,8 +7,8 @@ namespace anybotics.admin.Extensions;
 public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddCustomServices(this IServiceCollection services,
-                                                       string firebaseConfigFile,
                                                        string firebaseProjectName,
+                                                       string firebaseConfigFile,
                                                        string[] corsAllowedOrigins)
     {
         services.ConfigureCors(corsAllowedOrigins);
