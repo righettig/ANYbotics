@@ -2,6 +2,7 @@ using anybotics.auth.Services;
 using anybotics_anymal_common.Extensions;
 using Firebase.Auth;
 using Firebase.Auth.Providers;
+using Google.Api;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -25,6 +26,9 @@ builder.Services.AddFirebaseAndFirestore(firebaseConfigFile, firebaseProjectName
 
 // Add custom Firebase Authentication service
 builder.Services.AddSingleton<IFirebaseAuthService, FirebaseAuthService>();
+
+var rabbitMqUrl = builder.Configuration["RABBITMQ_URL"];
+builder.Services.AddSingleton(sp => new RabbitMQPublisherService(rabbitMqUrl, "user.created"));
 
 // Set up JWT Bearer authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

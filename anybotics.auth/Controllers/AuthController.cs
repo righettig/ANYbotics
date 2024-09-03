@@ -7,7 +7,8 @@ public record LoginRequest(string Email, string Password);
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController(IFirebaseAuthService firebaseAuthService) : ControllerBase
+public class AuthController(IFirebaseAuthService firebaseAuthService,
+                            RabbitMQPublisherService rabbitMQPublisherService) : ControllerBase
 {
     [HttpPost("signup")]
     public async Task<IActionResult> Signup(string email, string password)
@@ -16,6 +17,10 @@ public class AuthController(IFirebaseAuthService firebaseAuthService) : Controll
 
         if (token is not null)
         {
+            // Publish an event to RabbitMQ
+            var userData = Newtonsoft.Json.JsonConvert.SerializeObject(new { email });
+            rabbitMQPublisherService.PublishUserCreatedEvent(userData);
+
             return Ok(token);
         }
 
